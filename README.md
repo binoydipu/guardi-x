@@ -1,16 +1,10 @@
-# guardix
+# Guardi-X
 
-A new Flutter project.
+The Ultimate Security App
 
-## Getting Started
+## Developers
 
-This project is a starting point for a Flutter application.
+This project is developed by:
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- [Binoy Bhushan Barman Dipu](https://github.com/binoydipu)
+- [Md. Ashfak Uzzaman Chowdhury](https://github.com/Ashfak-Uzzaman)
