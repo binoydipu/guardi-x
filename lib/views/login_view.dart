@@ -34,7 +34,7 @@ class _LoginViewState extends State<LoginView> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              const SizedBox(height: 80),
+              const SizedBox(height: 65),
               const Text(
                 'Login Here',
                 style: TextStyle(
@@ -64,13 +64,13 @@ class _LoginViewState extends State<LoginView> {
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   contentPadding:
-                      const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+                      const EdgeInsets.symmetric(vertical: 17, horizontal: 15),
                   label: const Text(
                     'Email',
                     style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
                   ),
                   filled: true,
-                  fillColor: const Color.fromARGB(255, 233, 247, 255),
+                  fillColor: const Color.fromARGB(18, 0, 53, 102),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide.none,
                     borderRadius: BorderRadius.circular(10),
@@ -99,13 +99,13 @@ class _LoginViewState extends State<LoginView> {
                 autocorrect: false,
                 decoration: InputDecoration(
                   contentPadding:
-                      const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+                      const EdgeInsets.symmetric(vertical: 17, horizontal: 15),
                   label: const Text(
                     'Password',
                     style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
                   ),
                   filled: true,
-                  fillColor: const Color.fromARGB(255, 233, 247, 255),
+                  fillColor: const Color.fromARGB(18, 0, 53, 102),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide.none,
                     borderRadius: BorderRadius.circular(10),
@@ -158,7 +158,7 @@ class _LoginViewState extends State<LoginView> {
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.of(context).pushNamedAndRemoveUntil(
-                          '/welcome/',
+                          '/home/',
                           (route) => false,
                         );
                       },
@@ -172,7 +172,7 @@ class _LoginViewState extends State<LoginView> {
                           fontWeight: FontWeight.bold,
                         ),
                         padding: const EdgeInsets.symmetric(
-                          vertical: 16,
+                          vertical: 15,
                         ),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12)),
