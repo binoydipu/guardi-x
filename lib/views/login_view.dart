@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
+import 'package:guardix/constants/routes.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -158,7 +159,7 @@ class _LoginViewState extends State<LoginView> {
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.of(context).pushNamedAndRemoveUntil(
-                          '/home/',
+                          navigationMenuRoute,
                           (route) => false,
                         );
                       },
@@ -186,7 +187,7 @@ class _LoginViewState extends State<LoginView> {
               TextButton(
                 onPressed: () async {
                   Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/register/',
+                    registerRoute,
                     (route) => false,
                   );
                 },
