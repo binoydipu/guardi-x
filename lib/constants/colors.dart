@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 // Primary Colors
 const midnightBlueColor = Color(0xFF003566);
 const skyBlueColor = Color(0xFF3A86FF);
+const softBlueColor = Color.fromARGB(255, 164, 190, 231);
 
 // Accent Colors
 const safetyOrangeColor = Color(0xFFFF6F00);
