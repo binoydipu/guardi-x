@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:guardix/constants/colors.dart';
+import 'package:guardix/constants/routes.dart';
 import 'package:guardix/views/home_view.dart';
 import 'package:guardix/views/login_view.dart';
 import 'package:guardix/views/register_view.dart';
+import 'package:guardix/views/verify_email_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,10 +31,10 @@ class MyApp extends StatelessWidget {
       ),
       home: const WelcomeView(),
       routes: {
-        '/login/': (context) => const LoginView(),
-        '/register/': (context) => const RegisterView(),
-        '/welcome/': (context) => const WelcomeView(),
-        '/home/': (context) => const HomeView(),
+        loginRoute: (context) => const LoginView(),
+        registerRoute: (context) => const RegisterView(),
+        verifyEmailRoute: (context) => const VerifyEmailView(),
+        homeRoute: (context) => const HomeView(),
       },
     );
   }

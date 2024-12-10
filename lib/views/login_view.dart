@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
+import 'package:guardix/service/auth/auth_exception.dart';
+import 'package:guardix/service/auth/auth_service.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -157,6 +159,43 @@ class _LoginViewState extends State<LoginView> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
+                        final email = _email.text;
+                        final password = _password.text;
+/*
+              try {
+                await AuthService.firebase().logIn(
+                  email: email,
+                  password: password,
+                );
+                final user = AuthService.firebase().currentUser;
+
+                if (user?.isEmailVerified ?? false) {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    notesRoute,
+                    (route) =>
+                        false, // This predicate ensures that all previous routes are removed.
+                  );
+                } else {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    verifyEmailRoute,
+                    (route) =>
+                        false, // This predicate ensures that all previous routes are removed.
+                  );
+                }
+
+                // Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const NotesView()),(route) => false,);
+                //Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder: (context) => const NotesView()),(route) => false,);
+                // Navigator.pushNamedAndRemoveUntil(context, '/notes/', (route) => false);
+                //Navigator.of(context).pushNamedAndRemoveUntil(...) method pushes a named route onto the navigator stack and removes all previous routes until the given predicate returns true.
+              } on UserNotFoundAuthException {
+                await showErrorDialog(context, 'User not found');
+              } on WrongPasswordAuthException {
+                await showErrorDialog(context, 'Wrong password');
+              } on GenericAuthException {
+                await showErrorDialog(context, 'Authantication Error');
+              }
+*/
+                        ///
                         Navigator.of(context).pushNamedAndRemoveUntil(
                           '/home/',
                           (route) => false,
