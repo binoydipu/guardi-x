@@ -19,16 +19,18 @@ class _RegisterViewState extends State<RegisterView> {
   late final TextEditingController _password;
   late final TextEditingController _confirmPassword;
 
-  String _emailErrorText =
-      ''; // Will show message if email is not valid at the bottom of the text field
+// Will show message if email is not valid at the bottom of the text field
+  String _emailErrorText = '';
   String _mobileErrorText = '';
   String _passwordErrorText = '';
   String _confirmPasswordErrorText = '';
 
-  bool emailValid = false;
+  bool _emailValid = false;
   bool _mobileValid = false;
   bool _passwordValid = false;
   bool _confirmPasswordValid = false;
+
+  bool isButtonActive = false;
 
   @override
   void initState() {
@@ -36,6 +38,97 @@ class _RegisterViewState extends State<RegisterView> {
     _mobile = TextEditingController();
     _password = TextEditingController();
     _confirmPassword = TextEditingController();
+
+    _email.addListener(() {
+      final String value = _email.text;
+      // Update the error text based on validation
+      setState(() {
+        print('hola ');
+        if (value.isNotEmpty && ValidationUtils.validateEmail(value)) {
+          print('hola 1');
+          _emailErrorText = '';
+          _emailValid = true;
+        } else {
+          print('hola 2');
+          print(value);
+          _emailErrorText = value.isEmpty
+              ? 'Please enter your  email address'
+              : 'Please enter a valid  email address';
+          _emailValid = false;
+        }
+
+        isButtonActive = _emailValid &&
+            _mobileValid &&
+            _passwordValid &&
+            _confirmPasswordValid;
+      });
+    });
+    _mobile.addListener(() {
+      final String value = _mobile.text;
+
+      // Update the error text based on validation
+      setState(() {
+        if (value.isNotEmpty && ValidationUtils.validateMobile(value)) {
+          _mobileErrorText = '';
+          _mobileValid = true;
+        } else {
+          _mobileErrorText = value.isEmpty
+              ? 'Please enter your mobile nummber'
+              : 'Please enter a valid mobile number';
+          _mobileValid = false;
+        }
+        isButtonActive = _emailValid &&
+            _mobileValid &&
+            _passwordValid &&
+            _confirmPasswordValid;
+      });
+    });
+    _password.addListener(
+      () {
+        final String value = _password.text;
+        // Update the error text based on validation
+        setState(() {
+          if (value.isNotEmpty && ValidationUtils.validatePassword(value)) {
+            _passwordErrorText = '';
+            _passwordValid = true;
+          } else {
+            _passwordErrorText = value.isEmpty
+                ? 'Please enter a strong password'
+                : 'Use at least an uppercase, a lowercase, a special character and a number. The length should be at least 6 and not more than 20';
+            _passwordValid = false;
+          }
+          isButtonActive = _emailValid &&
+              _mobileValid &&
+              _passwordValid &&
+              _confirmPasswordValid;
+        });
+      },
+    );
+    _confirmPassword.addListener(
+      () {
+        final String value = _confirmPassword.text;
+        // Update the error text based on validation
+        setState(() {
+          final password = _password.text;
+          final confirmPassword = _confirmPassword.text;
+          if (confirmPassword.isNotEmpty &&
+              (confirmPassword.compareTo(password) == 0)) {
+            _confirmPasswordErrorText = '';
+            _confirmPasswordValid = true;
+          } else {
+            _confirmPasswordErrorText = value.isEmpty
+                ? 'Please confirm password'
+                : 'Passwords not matched';
+            _confirmPasswordValid = false;
+          }
+          isButtonActive = _emailValid &&
+              _mobileValid &&
+              _passwordValid &&
+              _confirmPasswordValid;
+        });
+      },
+    );
+
     super.initState();
   }
 
@@ -115,21 +208,6 @@ class _RegisterViewState extends State<RegisterView> {
                   // ),
                   // errorText: _emailErrorText,
                 ),
-                onChanged: (value) {
-                  // Update the error text based on validation
-                  setState(() {
-                    if (value.isNotEmpty &&
-                        ValidationUtils.validateEmail(value)) {
-                      _emailErrorText = '';
-                      emailValid = true;
-                    } else {
-                      _emailErrorText = value.isEmpty
-                          ? 'Please enter your  email address'
-                          : 'Please enter a valid  email address';
-                      emailValid = false;
-                    }
-                  });
-                },
               ),
               //if (_emailErrorText.isNotEmpty) // no need this logic
               // This is for error message
@@ -175,21 +253,6 @@ class _RegisterViewState extends State<RegisterView> {
                   // ),
                   // errorText: _mobileErrorText,
                 ),
-                onChanged: (value) {
-                  // Update the error text based on validation
-                  setState(() {
-                    if (value.isNotEmpty &&
-                        ValidationUtils.validateMobile(value)) {
-                      _mobileErrorText = '';
-                      _mobileValid = true;
-                    } else {
-                      _mobileErrorText = value.isEmpty
-                          ? 'Please enter your mobile nummber'
-                          : 'Please enter a valid mobile number';
-                      _mobileValid = false;
-                    }
-                  });
-                },
               ),
 
               Padding(
@@ -234,21 +297,6 @@ class _RegisterViewState extends State<RegisterView> {
                   //   borderRadius: BorderRadius.circular(10),
                   // ),
                 ),
-                onChanged: (value) {
-                  // Update the error text based on validation
-                  setState(() {
-                    if (value.isNotEmpty &&
-                        ValidationUtils.validatePassword(value)) {
-                      _passwordErrorText = '';
-                      _passwordValid = true;
-                    } else {
-                      _passwordErrorText = value.isEmpty
-                          ? 'Please enter a strong password'
-                          : 'Use at least an uppercase, a lowercase, a special character and a number. The length should be at least 6 and not more than 20';
-                      _passwordValid = false;
-                    }
-                  });
-                },
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 8.0, left: 16.0),
@@ -291,23 +339,6 @@ class _RegisterViewState extends State<RegisterView> {
                   //   borderRadius: BorderRadius.circular(10),
                   // ),
                 ),
-                onChanged: (value) {
-                  // Update the error text based on validation
-                  setState(() {
-                    final password = _password.text;
-                    final confirmPassword = _confirmPassword.text;
-                    if (confirmPassword.isNotEmpty &&
-                        (confirmPassword.compareTo(password) == 0)) {
-                      _confirmPasswordErrorText = '';
-                      _confirmPasswordValid = true;
-                    } else {
-                      _confirmPasswordErrorText = value.isEmpty
-                          ? 'Please confirm password'
-                          : 'Passwords not matched';
-                      _confirmPasswordValid = false;
-                    }
-                  });
-                },
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 8.0, left: 16.0),
@@ -321,56 +352,59 @@ class _RegisterViewState extends State<RegisterView> {
                 children: [
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () async {
-                        final email = _email.text;
-                        final mobile = _mobile.text;
-                        final password = _password.text;
-                        final confirmPassword = _confirmPassword.text;
+                      onPressed: isButtonActive
+                          ? () async {
+                              final email = _email.text;
+                              //final mobile = _mobile.text;
+                              final password = _password.text;
+                              final confirmPassword = _confirmPassword.text;
 
-                        if (emailValid &&
-                            _mobileValid &&
-                            _passwordValid &&
-                            _confirmPasswordValid) {
-                          try {
-                            await AuthService.firebase().createUser(
-                              email: email,
-                              password: password,
-                            );
+                              if (password.compareTo(confirmPassword) != 0) {
+                                _confirmPasswordErrorText =
+                                    'Passwords not matched';
+                                _confirmPasswordValid = false;
+                                isButtonActive = false;
+                                _confirmPassword.text = '';
+                                _confirmPasswordErrorText =
+                                    'Passwords not matched';
+                              } else if (_emailValid &&
+                                  _mobileValid &&
+                                  _passwordValid &&
+                                  _confirmPasswordValid &&
+                                  (password.compareTo(confirmPassword) == 0)) {
+                                try {
+                                  await AuthService.firebase().createUser(
+                                    email: email,
+                                    password: password,
+                                  );
 
-                            AuthService.firebase().sendEmailVerification();
-                            Navigator.of(context).pushNamed(verifyEmailRoute);
-                          } on Exception catch (e) {
-                            print(e.toString());
-                          } on WeakPasswordAuthException catch (_) {
-                            await showErrorDialog(
-                              context,
-                              'weak-password',
-                            );
-                          } on EmailAlreadyInUseAuthException catch (_) {
-                            await showErrorDialog(
-                              context,
-                              'Email is already in use',
-                            );
-                          } on InvalidEmailAuthException catch (_) {
-                            await showErrorDialog(
-                              context,
-                              'Invalid Email',
-                            );
-                          } on GenericAuthException catch (e) {
-                            print('So');
-                            print(e.toString());
-                            await showErrorDialog(
-                              context,
-                              'Failed to register',
-                            );
-                          }
-                        }
-
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                          loginRoute,
-                          (route) => false,
-                        );
-                      },
+                                  AuthService.firebase()
+                                      .sendEmailVerification();
+                                  // ignore: use_build_context_synchronously
+                                  Navigator.of(context)
+                                      .pushNamed(verifyEmailRoute);
+                                } on EmailAlreadyInUseAuthException catch (_) {
+                                  await showErrorDialog(
+                                    // ignore: use_build_context_synchronously
+                                    context,
+                                    'Email is already in use',
+                                  );
+                                } on InvalidEmailAuthException catch (_) {
+                                  await showErrorDialog(
+                                    // ignore: use_build_context_synchronously
+                                    context,
+                                    'Invalid Email',
+                                  );
+                                } on GenericAuthException catch (_) {
+                                  await showErrorDialog(
+                                    // ignore: use_build_context_synchronously
+                                    context,
+                                    'Failed to register',
+                                  );
+                                }
+                              }
+                            }
+                          : null,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: midnightBlueColor,
                         elevation: 2,
@@ -395,7 +429,7 @@ class _RegisterViewState extends State<RegisterView> {
               TextButton(
                 onPressed: () async {
                   Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/login/',
+                    loginRoute,
                     (route) => false,
                   );
                 },

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
+import 'package:guardix/constants/routes.dart';
+import 'package:guardix/service/auth/auth_service.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -21,9 +23,11 @@ class _HomeViewState extends State<HomeView> {
             icon: const Icon(Icons.person),
           ),
           IconButton(
-            onPressed: () {
+            onPressed: () async {
+              await AuthService.firebase().logOut();
+              // ignore: use_build_context_synchronously
               Navigator.of(context).pushNamedAndRemoveUntil(
-                '/welcome/',
+                welcomeRoute,
                 (route) => false,
               );
             },
