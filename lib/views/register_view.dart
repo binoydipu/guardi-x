@@ -43,14 +43,10 @@ class _RegisterViewState extends State<RegisterView> {
       final String value = _email.text;
       // Update the error text based on validation
       setState(() {
-        print('hola ');
         if (value.isNotEmpty && ValidationUtils.validateEmail(value)) {
-          print('hola 1');
           _emailErrorText = '';
           _emailValid = true;
         } else {
-          print('hola 2');
-          print(value);
           _emailErrorText = value.isEmpty
               ? 'Please enter your  email address'
               : 'Please enter a valid  email address';
@@ -148,8 +144,7 @@ class _RegisterViewState extends State<RegisterView> {
         padding: const EdgeInsets.all(22.0),
         child: SingleChildScrollView(
           child: Column(
-            crossAxisAlignment:
-                CrossAxisAlignment.start, // Aligns the children to the left
+            // Aligns the children to the left
             children: [
               const SizedBox(height: 65),
               const Text(
@@ -212,13 +207,18 @@ class _RegisterViewState extends State<RegisterView> {
               //if (_emailErrorText.isNotEmpty) // no need this logic
               // This is for error message
               Padding(
-                padding: const EdgeInsets.only(top: 8.0, left: 16.0),
-                child: Text(
-                  _emailErrorText,
-                  style: const TextStyle(color: crimsonRedColor, fontSize: 10),
+                padding: const EdgeInsets.only(top: 1.0, left: 16.0),
+                child: Align(
+                  alignment: Alignment
+                      .centerLeft, // Aligns the error message to the left
+                  child: Text(
+                    _emailErrorText,
+                    style:
+                        const TextStyle(color: crimsonRedColor, fontSize: 10),
+                  ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 17),
               TextField(
                 controller: _mobile,
                 enableSuggestions: true,
@@ -256,13 +256,17 @@ class _RegisterViewState extends State<RegisterView> {
               ),
 
               Padding(
-                padding: const EdgeInsets.only(top: 8.0, left: 16.0),
-                child: Text(
-                  _mobileErrorText,
-                  style: const TextStyle(color: crimsonRedColor, fontSize: 10),
+                padding: const EdgeInsets.only(top: 1.0, left: 16.0),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    _mobileErrorText,
+                    style:
+                        const TextStyle(color: crimsonRedColor, fontSize: 10),
+                  ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 17),
               TextField(
                 controller: _password,
                 obscureText: true,
@@ -299,13 +303,17 @@ class _RegisterViewState extends State<RegisterView> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 8.0, left: 16.0),
-                child: Text(
-                  _passwordErrorText,
-                  style: const TextStyle(color: crimsonRedColor, fontSize: 10),
+                padding: const EdgeInsets.only(top: 1.0, left: 16.0),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    _passwordErrorText,
+                    style:
+                        const TextStyle(color: crimsonRedColor, fontSize: 10),
+                  ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 17),
               TextField(
                 controller: _confirmPassword,
                 obscureText: true,
@@ -341,10 +349,14 @@ class _RegisterViewState extends State<RegisterView> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 8.0, left: 16.0),
-                child: Text(
-                  _confirmPasswordErrorText,
-                  style: const TextStyle(color: crimsonRedColor, fontSize: 10),
+                padding: const EdgeInsets.only(top: 1.0, left: 16.0),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    _confirmPasswordErrorText,
+                    style:
+                        const TextStyle(color: crimsonRedColor, fontSize: 10),
+                  ),
                 ),
               ),
               const SizedBox(height: 25),
@@ -526,3 +538,6 @@ class _RegisterViewState extends State<RegisterView> {
     );
   }
 }
+
+
+// I gave you a prmpt in this code : "// Hey chat GPT. Listen. I want to make this field to align left. help me.". help to resolve this please.

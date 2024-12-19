@@ -38,6 +38,7 @@ class MyApp extends StatelessWidget {
         verifyEmailRoute: (context) => const VerifyEmailView(),
         homeRoute: (context) => const HomeView(),
         welcomeRoute: (context) => const WelcomeView(),
+        initializeRout: (context) => const InitializeView(),
       },
     );
   }

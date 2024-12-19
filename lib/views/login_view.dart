@@ -164,6 +164,12 @@ class _LoginViewState extends State<LoginView> {
                         final email = _email.text;
                         final password = _password.text;
 
+                        if (email.isEmpty || password.isEmpty) {
+                          await showErrorDialog(context,
+                              'Provide registered email and password to sign in');
+                          return;
+                        }
+
                         try {
                           await AuthService.firebase().logIn(
                             email: email,
@@ -192,17 +198,18 @@ class _LoginViewState extends State<LoginView> {
                         } on WrongPasswordAuthException {
                           // ignore: use_build_context_synchronously
                           await showErrorDialog(context, 'Wrong password');
+                        } on InvalidCredentialAuthException {
+                          await showErrorDialog(
+                              // ignore: use_build_context_synchronously
+                              context,
+                              'Please check your email and password');
                         } on GenericAuthException {
+                          // ignore: use_build_context_synchronously
                           await showErrorDialog(
                               // ignore: use_build_context_synchronously
                               context,
                               'Authantication Error');
                         }
-                        // ignore: use_build_context_synchronously
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                          homeRoute,
-                          (route) => false,
-                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: midnightBlueColor,

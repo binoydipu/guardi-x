@@ -76,6 +76,8 @@ class FirebaseAuthProvider implements AuthProvider {
         throw UserNotFoundAuthException();
       } else if (e.code == 'wrong-password') {
         throw WrongPasswordAuthException();
+      } else if (e.code == 'invalid-credential') {
+        throw InvalidCredentialAuthException();
       } else {
         throw GenericAuthException();
       }
