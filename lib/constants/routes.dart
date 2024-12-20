@@ -1,6 +1,12 @@
+const welcomeRoute = '/welcome/';
 const loginRoute = '/login/';
 const registerRoute = '/register/';
-const homeRoute = '/home/';
 const verifyEmailRoute = '/verifyEmail/';
-const welcomeRoute = '/Welcome/';
 const initializeRout = 'initialize';
+const navigationMenuRoute = '/navigation/';
+const homeRoute = '/home/';
+const reportRoute = '/report/';
+const trackRoute = '/track/';
+const sosRoute = '/sos/';
+const aboutUsRoute = '/aboutus/';
+

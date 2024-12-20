@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
 
+
 class WelcomeView extends StatelessWidget {
   const WelcomeView({super.key});
 
