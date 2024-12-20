@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
+import 'package:guardix/constants/routes.dart';
+
 
 class WelcomeView extends StatelessWidget {
   const WelcomeView({super.key});
@@ -10,7 +12,7 @@ class WelcomeView extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: SingleChildScrollView(
-          //child: Expanded(
+          child: Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -76,7 +78,7 @@ class WelcomeView extends StatelessWidget {
                     Expanded(
                       child: TextButton(
                         onPressed: () {
-                          Navigator.of(context).pushNamed('/register/');
+                          Navigator.of(context).pushNamed(registerRoute);
                         },
                         style: TextButton.styleFrom(
                           textStyle: const TextStyle(
@@ -104,7 +106,7 @@ class WelcomeView extends StatelessWidget {
                 const SizedBox(height: 50),
               ],
             ),
-          //),
+          ),
         ),
       ),
     );

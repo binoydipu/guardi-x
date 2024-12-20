@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
+import 'package:guardix/service/auth/auth_service.dart';
 import 'package:guardix/enums/drawer_action.dart';
 import 'package:guardix/settings_view/app_language_view.dart';
 import 'package:guardix/settings_view/emergency_view.dart';
@@ -55,6 +56,11 @@ class _HomeViewState extends State<HomeView> {
             },
             icon: const Icon(Icons.person),
           ),
+          IconButton(
+            onPressed: () async {
+              await AuthService.firebase().logOut();
+              // ignore: use_build_context_synchronously
+
         ],
       ),
       drawer: Drawer(
@@ -188,6 +194,7 @@ class _HomeViewState extends State<HomeView> {
             } else if (id == 9) {
               // currentPage = DrawerAction.logout;
               // TODO: Add Confirm Logout
+
               Navigator.of(context).pushNamedAndRemoveUntil(
                 welcomeRoute,
                 (route) => false,

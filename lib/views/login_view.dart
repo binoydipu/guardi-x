@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
+import 'package:guardix/service/auth/auth_exception.dart';
+import 'package:guardix/service/auth/auth_service.dart';
+import 'package:guardix/utilities/dialogs/error_dialog.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -157,11 +160,56 @@ class _LoginViewState extends State<LoginView> {
                 children: [
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                          navigationMenuRoute,
-                          (route) => false,
-                        );
+                      onPressed: () async {
+                        final email = _email.text;
+                        final password = _password.text;
+
+                        if (email.isEmpty || password.isEmpty) {
+                          await showErrorDialog(context,
+                              'Provide registered email and password to sign in');
+                          return;
+                        }
+
+                        try {
+                          await AuthService.firebase().logIn(
+                            email: email,
+                            password: password,
+                          );
+                          final user = AuthService.firebase().currentUser;
+
+                          if (user?.isEmailVerified ?? false) {
+                            // ignore: use_build_context_synchronously
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                              homeRoute,
+                              (route) =>
+                                  false, // This predicate ensures that all previous routes are removed.
+                            );
+                          } else {
+                            // ignore: use_build_context_synchronously
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                              verifyEmailRoute,
+                              (route) =>
+                                  false, // This predicate ensures that all previous routes are removed.
+                            );
+                          }
+                        } on UserNotFoundAuthException {
+                          // ignore: use_build_context_synchronously
+                          await showErrorDialog(context, 'User not found');
+                        } on WrongPasswordAuthException {
+                          // ignore: use_build_context_synchronously
+                          await showErrorDialog(context, 'Wrong password');
+                        } on InvalidCredentialAuthException {
+                          await showErrorDialog(
+                              // ignore: use_build_context_synchronously
+                              context,
+                              'Please check your email and password');
+                        } on GenericAuthException {
+                          // ignore: use_build_context_synchronously
+                          await showErrorDialog(
+                              // ignore: use_build_context_synchronously
+                              context,
+                              'Authantication Error');
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: midnightBlueColor,

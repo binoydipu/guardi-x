@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
+
+import 'package:guardix/views/verify_email_view.dart';
+import 'package:guardix/service/auth/auth_service.dart';
 import 'package:guardix/navigation_menu.dart';
 import 'package:guardix/views/about_us_view.dart';
 import 'package:guardix/views/home_view.dart';
@@ -34,17 +37,52 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const WelcomeView(),
+      home: const InitializeView(),
       routes: {
         welcomeRoute: (context) => const WelcomeView(),
         loginRoute: (context) => const LoginView(),
         registerRoute: (context) => const RegisterView(),
+        verifyEmailRoute: (context) => const VerifyEmailView(),
+        initializeRout: (context) => const InitializeView(),
         navigationMenuRoute: (context) => const NavigationMenu(),
         homeRoute: (context) => const HomeView(),
         reportRoute: (context) => const ReportView(),
         trackRoute: (context) => const TrackView(),
         sosRoute: (context) => const SosView(),
         aboutUsRoute: (context) => const AboutUsView(),
+      },
+    );
+  }
+}
+
+class InitializeView extends StatelessWidget {
+  const InitializeView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: AuthService.firebase().initialize(),
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.done:
+            final user = AuthService.firebase().currentUser;
+
+            if (user != null) {
+              if (user.isEmailVerified) {
+                //print('Email is verified');
+
+                return const HomeView();
+              } else {
+                return const VerifyEmailView();
+              }
+            } else {
+              return const WelcomeView();
+            }
+
+          default:
+            //return const Text('Loading...');
+            return const CircularProgressIndicator();
+        }
       },
     );
   }

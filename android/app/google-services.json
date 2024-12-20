@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1008903002947",
+    "project_id": "guardix-ac-project-1",
+    "storage_bucket": "guardix-ac-project-1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1008903002947:android:e44b909f84f23c56bcedf6",
+        "android_client_info": {
+          "package_name": "com.example.guardix"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD06NbspWIpWcCX2_PF9BEyQoQez7xe4kI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
