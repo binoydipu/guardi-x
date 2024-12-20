@@ -60,7 +60,14 @@ class _HomeViewState extends State<HomeView> {
             onPressed: () async {
               await AuthService.firebase().logOut();
               // ignore: use_build_context_synchronously
-
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                welcomeRoute,
+                (route) => false,
+              );
+              // TODO: Confirm Logout Dialog
+            },
+            icon: const Icon(Icons.logout),
+          ),
         ],
       ),
       drawer: Drawer(
@@ -192,13 +199,14 @@ class _HomeViewState extends State<HomeView> {
             } else if (id == 8) {
               currentPage = DrawerAction.settings;
             } else if (id == 9) {
-              // currentPage = DrawerAction.logout;
-              // TODO: Add Confirm Logout
+              // TODO: Remove Logout
 
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                welcomeRoute,
-                (route) => false,
-              );
+              // await AuthService.firebase().logOut();
+              // // ignore: use_build_context_synchronously
+              // Navigator.of(context).pushNamedAndRemoveUntil(
+              //   welcomeRoute,
+              //   (route) => false,
+              // );
             }
           });
         },

@@ -71,7 +71,7 @@ class InitializeView extends StatelessWidget {
               if (user.isEmailVerified) {
                 //print('Email is verified');
 
-                return const HomeView();
+                return const NavigationMenu();
               } else {
                 return const VerifyEmailView();
               }
