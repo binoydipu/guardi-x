@@ -180,7 +180,7 @@ class _LoginViewState extends State<LoginView> {
                           if (user?.isEmailVerified ?? false) {
                             // ignore: use_build_context_synchronously
                             Navigator.of(context).pushNamedAndRemoveUntil(
-                              homeRoute,
+                              navigationMenuRoute,
                               (route) =>
                                   false, // This predicate ensures that all previous routes are removed.
                             );
@@ -235,7 +235,7 @@ class _LoginViewState extends State<LoginView> {
               TextButton(
                 onPressed: () async {
                   Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/register/',
+                    registerRoute,
                     (route) => false,
                   );
                 },
