@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
+import 'package:guardix/constants/routes.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -46,25 +47,32 @@ class HomePage extends StatelessWidget {
                               ),
                             ],
                           ),
-                          child: const Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Icon(
-                                  Icons.report,
-                                  size: 50,
-                                ),
-                                Text(
-                                  'Want to report a crime?',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: blackColor,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.of(context)
+                                    .pushNamed(selectCategoryRoute);
+                              },
+                              child: const Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Icon(
+                                    Icons.report,
+                                    size: 50,
                                   ),
-                                ),
-                              ],
+                                  Text(
+                                    'Want to report a crime?',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: blackColor,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),

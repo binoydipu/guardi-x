@@ -3,6 +3,7 @@ import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
 import 'package:guardix/service/auth/auth_exception.dart';
 import 'package:guardix/service/auth/auth_service.dart';
+import 'package:guardix/utilities/decorations/input_decoration_template.dart';
 import 'package:guardix/utilities/dialogs/error_dialog.dart';
 
 class LoginView extends StatefulWidget {
@@ -66,34 +67,7 @@ class _LoginViewState extends State<LoginView> {
                 enableSuggestions: false,
                 autocorrect: false,
                 keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 17, horizontal: 15),
-                  label: const Text(
-                    'Email',
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-                  ),
-                  filled: true,
-                  fillColor: const Color.fromARGB(18, 0, 53, 102),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: midnightBlueColor,
-                      width: 2.5,
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: crimsonRedColor,
-                      width: 2.5,
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
+                decoration: buildInputDecoration(label: 'Email'),
               ),
               const SizedBox(height: 20),
               TextField(
@@ -101,34 +75,7 @@ class _LoginViewState extends State<LoginView> {
                 obscureText: true,
                 enableSuggestions: false,
                 autocorrect: false,
-                decoration: InputDecoration(
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 17, horizontal: 15),
-                  label: const Text(
-                    'Password',
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-                  ),
-                  filled: true,
-                  fillColor: const Color.fromARGB(18, 0, 53, 102),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: midnightBlueColor,
-                      width: 2.5,
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: crimsonRedColor,
-                      width: 2.5,
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
+                decoration: buildInputDecoration(label: 'Password'),
               ),
               const SizedBox(height: 10),
               Row(
@@ -279,8 +226,8 @@ class _LoginViewState extends State<LoginView> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8)),
                     ),
-                    child: Image.network(
-                      'https://cdn-icons-png.flaticon.com/128/6424/6424087.png',
+                    child: Image.asset(
+                      'assets/images/google_icon.png',
                       width: 22,
                       height: 22,
                       color: midnightBlueColor,
@@ -297,10 +244,10 @@ class _LoginViewState extends State<LoginView> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8)),
                     ),
-                    child: Image.network(
-                      'https://img.icons8.com/?size=50&id=118467&format=png',
-                      width: 25,
-                      height: 25,
+                    child: Image.asset(
+                      'assets/images/facebook_icon.png',
+                      width: 22,
+                      height: 22,
                       color: midnightBlueColor,
                     ),
                   ),
@@ -315,10 +262,10 @@ class _LoginViewState extends State<LoginView> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8)),
                     ),
-                    child: Image.network(
-                      'https://img.icons8.com/?size=30&id=95294&format=png',
-                      width: 25,
-                      height: 25,
+                    child: Image.asset(
+                      'assets/images/apple_icon.png',
+                      width: 22,
+                      height: 22,
                       color: midnightBlueColor,
                     ),
                   ),
