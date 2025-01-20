@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/views/home_view.dart';
-import 'package:guardix/views/report_view.dart';
+import 'package:guardix/views/report/report_view.dart';
 import 'package:guardix/views/sos_view.dart';
 import 'package:guardix/views/track_view.dart';
 

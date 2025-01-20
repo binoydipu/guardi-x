@@ -18,3 +18,6 @@ const blackColor = Color(0xFF000000);
 
 // Error/Warning COlors
 const crimsonRedColor = Color(0xFFFF0033);
+
+// For specific Use
+const textInputFillColor = Color.fromARGB(18, 0, 53, 102);

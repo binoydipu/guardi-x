@@ -3,6 +3,7 @@ import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
 import 'package:guardix/service/auth/auth_exception.dart';
 import 'package:guardix/service/auth/auth_service.dart';
+import 'package:guardix/utilities/decorations/input_decoration_template.dart';
 import 'package:guardix/utilities/dialogs/error_dialog.dart';
 
 class LoginView extends StatefulWidget {
@@ -66,34 +67,7 @@ class _LoginViewState extends State<LoginView> {
                 enableSuggestions: false,
                 autocorrect: false,
                 keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 17, horizontal: 15),
-                  label: const Text(
-                    'Email',
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-                  ),
-                  filled: true,
-                  fillColor: const Color.fromARGB(18, 0, 53, 102),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: midnightBlueColor,
-                      width: 2.5,
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: crimsonRedColor,
-                      width: 2.5,
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
+                decoration: buildInputDecoration(label: 'Email'),
               ),
               const SizedBox(height: 20),
               TextField(
@@ -101,34 +75,7 @@ class _LoginViewState extends State<LoginView> {
                 obscureText: true,
                 enableSuggestions: false,
                 autocorrect: false,
-                decoration: InputDecoration(
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 17, horizontal: 15),
-                  label: const Text(
-                    'Password',
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-                  ),
-                  filled: true,
-                  fillColor: const Color.fromARGB(18, 0, 53, 102),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: midnightBlueColor,
-                      width: 2.5,
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: crimsonRedColor,
-                      width: 2.5,
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
+                decoration: buildInputDecoration(label: 'Password'),
               ),
               const SizedBox(height: 10),
               Row(

@@ -3,6 +3,7 @@ import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
 import 'package:guardix/service/auth/auth_exception.dart';
 import 'package:guardix/service/auth/auth_service.dart';
+import 'package:guardix/utilities/decorations/input_decoration_template.dart';
 import 'package:guardix/utilities/dialogs/error_dialog.dart';
 import 'package:guardix/utilities/validation_utils.dart';
 
@@ -174,38 +175,8 @@ class _RegisterViewState extends State<RegisterView> {
                 enableSuggestions: false,
                 autocorrect: false,
                 keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 17, horizontal: 15),
-                  label: const Text(
-                    'Email',
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-                  ),
-                  filled: true,
-                  fillColor: const Color.fromARGB(18, 0, 53, 102),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: midnightBlueColor,
-                      width: 2.5,
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  // errorBorder: OutlineInputBorder(
-                  //   borderSide: const BorderSide(
-                  //     color: crimsonRedColor,
-                  //     width: 2.5,
-                  //   ),
-                  //   borderRadius: BorderRadius.circular(10),
-                  // ),
-                  // errorText: _emailErrorText,
-                ),
+                decoration: buildInputDecoration(label: 'Email'),
               ),
-              //if (_emailErrorText.isNotEmpty) // no need this logic
-              // This is for error message
               Padding(
                 padding: const EdgeInsets.only(top: 1.0, left: 16.0),
                 child: Align(
@@ -224,37 +195,8 @@ class _RegisterViewState extends State<RegisterView> {
                 enableSuggestions: true,
                 autocorrect: false,
                 keyboardType: TextInputType.phone,
-                decoration: InputDecoration(
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 17, horizontal: 15),
-                  label: const Text(
-                    'Mobile Number',
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-                  ),
-                  filled: true,
-                  fillColor: const Color.fromARGB(18, 0, 53, 102),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: midnightBlueColor,
-                      width: 2.5,
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  // errorBorder: OutlineInputBorder(
-                  //   borderSide: const BorderSide(
-                  //     color: crimsonRedColor,
-                  //     width: 2.5,
-                  //   ),
-                  //   borderRadius: BorderRadius.circular(10),
-                  // ),
-                  // errorText: _mobileErrorText,
-                ),
+                decoration: buildInputDecoration(label: 'Mobile Number'),
               ),
-
               Padding(
                 padding: const EdgeInsets.only(top: 1.0, left: 16.0),
                 child: Align(
@@ -273,34 +215,7 @@ class _RegisterViewState extends State<RegisterView> {
                 enableSuggestions: false,
                 autocorrect: false,
                 keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 17, horizontal: 15),
-                  label: const Text(
-                    'Password',
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-                  ),
-                  filled: true,
-                  fillColor: const Color.fromARGB(18, 0, 53, 102),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: midnightBlueColor,
-                      width: 2.5,
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  // errorBorder: OutlineInputBorder(
-                  //   borderSide: const BorderSide(
-                  //     color: crimsonRedColor,
-                  //     width: 2.5,
-                  //   ),
-                  //   borderRadius: BorderRadius.circular(10),
-                  // ),
-                ),
+                decoration: buildInputDecoration(label: 'Password'),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 1.0, left: 16.0),
@@ -319,34 +234,7 @@ class _RegisterViewState extends State<RegisterView> {
                 obscureText: true,
                 enableSuggestions: false,
                 autocorrect: false,
-                decoration: InputDecoration(
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 17, horizontal: 15),
-                  label: const Text(
-                    'Confirm Password',
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-                  ),
-                  filled: true,
-                  fillColor: const Color.fromARGB(18, 0, 53, 102),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: midnightBlueColor,
-                      width: 2.5,
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  // errorBorder: OutlineInputBorder(
-                  //   borderSide: const BorderSide(
-                  //     color: crimsonRedColor,
-                  //     width: 2.5,
-                  //   ),
-                  //   borderRadius: BorderRadius.circular(10),
-                  // ),
-                ),
+                decoration: buildInputDecoration(label: 'Confirm Password'),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 1.0, left: 16.0),
