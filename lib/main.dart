@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
-
 import 'package:guardix/views/verify_email_view.dart';
 import 'package:guardix/service/auth/auth_service.dart';
 import 'package:guardix/navigation_menu.dart';
