@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
+import 'package:guardix/views/incidents/ongoing_incidents_view.dart';
 
 import 'package:guardix/views/report/category_selection_view.dart';
+import 'package:guardix/views/report/report_details_view.dart';
 import 'package:guardix/views/report/report_form_view.dart';
 import 'package:guardix/views/verify_email_view.dart';
 import 'package:guardix/service/auth/auth_service.dart';
@@ -54,6 +56,8 @@ class MyApp extends StatelessWidget {
         aboutUsRoute: (context) => const AboutUsView(),
         selectCategoryRoute: (context) => const CategorySelectionView(),
         reportFormRoute: (context) => const ReportFormView(),
+        ongoingIncidentsRoute: (context) => const OngoingIncidentsView(),
+        reportDetailsRoute: (context) => const ReportDetailsView(),
       },
     );
   }
@@ -70,11 +74,8 @@ class InitializeView extends StatelessWidget {
         switch (snapshot.connectionState) {
           case ConnectionState.done:
             final user = AuthService.firebase().currentUser;
-
             if (user != null) {
               if (user.isEmailVerified) {
-                //print('Email is verified');
-
                 return const NavigationMenu();
               } else {
                 return const VerifyEmailView();
@@ -84,7 +85,6 @@ class InitializeView extends StatelessWidget {
             }
 
           default:
-            //return const Text('Loading...');
             return const CircularProgressIndicator();
         }
       },

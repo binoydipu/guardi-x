@@ -142,25 +142,31 @@ class HomePage extends StatelessWidget {
                               ),
                             ],
                           ),
-                          child: const Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Icon(
-                                  Icons.live_help,
-                                  size: 50,
-                                ),
-                                Text(
-                                  'Ongoing Incidents',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: blackColor,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.of(context)
+                                    .pushNamed(ongoingIncidentsRoute);
+                              },
+                              child: const Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Icon(
+                                    Icons.live_help,
+                                    size: 50,
                                   ),
-                                ),
-                              ],
+                                  Text(
+                                    'Ongoing Incidents',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: blackColor,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),

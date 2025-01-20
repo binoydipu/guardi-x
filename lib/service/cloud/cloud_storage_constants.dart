@@ -1,0 +1,21 @@
+const reportCollectionName = 'reports';
+
+const ownerEmailFieldName = 'user_email';
+
+const categoryFieldName = 'report_category';
+
+const victimNameFieldName = 'victim_name';
+const victimAddressFieldName = 'victim_address';
+const victimContactFieldName = 'victim_contact';
+const witnessNameFieldName = 'witness_name';
+const witnessContactFieldName = 'witness_contact';
+
+const dateOfCrimeFieldName = 'date_of_crime';
+const timeOfCrimeFieldName = 'time_of_crime';
+const locationOfCrimeFieldName = 'location_of_crime';
+const descriptionOfCrimeFieldName = 'description_of_crime';
+const injuryTypeFieldName = 'injury_type';
+
+const policeStationFieldName = 'police_station';
+
+const reportStatusFieldName = 'report_status';

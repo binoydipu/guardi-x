@@ -12,3 +12,5 @@ const aboutUsRoute = '/aboutus/';
 
 const selectCategoryRoute = '/report/select-category/';
 const reportFormRoute = '/report/report-form/';
+const ongoingIncidentsRoute = '/ongoing-incidents/';
+const reportDetailsRoute = '/report/details/';

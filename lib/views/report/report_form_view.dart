@@ -1,8 +1,13 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
+import 'package:guardix/constants/routes.dart';
+import 'package:guardix/service/auth/auth_service.dart';
+import 'package:guardix/service/cloud/cloud_storage_exceptions.dart';
+import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/utilities/decorations/input_decoration_template.dart';
+import 'package:guardix/utilities/dialogs/error_dialog.dart';
+import 'package:guardix/utilities/dialogs/report_created_dialog.dart';
 import 'package:guardix/utilities/dialogs/submit_report_dialog.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -14,6 +19,8 @@ class ReportFormView extends StatefulWidget {
 }
 
 class _ReportFormViewState extends State<ReportFormView> {
+  late final FirebaseCloudStorage _cloudStorage;
+
   final _formKey = GlobalKey<FormState>();
 
   late final TextEditingController _victimName;
@@ -107,6 +114,7 @@ class _ReportFormViewState extends State<ReportFormView> {
 
   @override
   void initState() {
+    _cloudStorage = FirebaseCloudStorage();
     _victimName = TextEditingController();
     _victimAddress = TextEditingController();
     _victimContact = TextEditingController();
@@ -340,9 +348,11 @@ class _ReportFormViewState extends State<ReportFormView> {
                     child: Text(
                       _imagesErrorText,
                       style: TextStyle(
-                            color: _imagesErrorText == 'Optional' ? midnightBlueColor : crimsonRedColor, 
-                            fontSize: 12,
-                          ),
+                        color: _imagesErrorText == 'Optional'
+                            ? midnightBlueColor
+                            : crimsonRedColor,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
                 ),
@@ -371,18 +381,58 @@ class _ReportFormViewState extends State<ReportFormView> {
                             await showReportSubmissionDialog(context);
                         if (context.mounted) {
                           if (isSubmitted) {
-                            // String victimName = _victimName.text;
-                            // String victimAddress = _victimAddress.text;
-                            // String victimContact = _victimContact.text;
-                            // String witnessName = _witnessName.text;
-                            // String witnessContact = _witnessContact.text;
+                            final ownerEmail =
+                                AuthService.firebase().currentUser!.email;
+                            final victimName = _victimName.text;
+                            final victimAddress = _victimAddress.text;
+                            final victimContact = _victimContact.text;
+                            final witnessName = _witnessName.text;
+                            final witnessContact = _witnessContact.text;
 
-                            // String dateOfCrime = _dateOfCrime.text;
-                            // String timeOfCrime = _timeOfCrime.text;
-                            // String locationOfCrime = _locationOfCrime.text;
-                            // String descriptionOfCrime = _descriptionOfCrime.text;
-                            // String injuryType = _injuryType.text;
-                            // TODO: Save in Firebase Cloud
+                            final dateOfCrime = _dateOfCrime.text;
+                            final timeOfCrime = _timeOfCrime.text;
+                            final locationOfCrime = _locationOfCrime.text;
+                            final descriptionOfCrime = _descriptionOfCrime.text;
+                            final injuryType = _injuryType.text;
+
+                            try {
+                              _cloudStorage.createNewReport(
+                                ownerEmail: ownerEmail,
+                                category: category,
+                                victimName: victimName,
+                                victimAddress: victimAddress,
+                                victimContact: victimContact,
+                                witnessName: witnessName,
+                                witnessContact: witnessContact,
+                                dateOfCrime: dateOfCrime,
+                                timeOfCrime: timeOfCrime,
+                                locationOfCrime: locationOfCrime,
+                                descriptionOfCrime: descriptionOfCrime,
+                                injuryType: injuryType,
+                                policeStation: _selectedPoliceStation!,
+                                reportStatus: 'PENDING',
+                              );
+                              bool reportCreated =
+                                  await showReportCreatedDialog(
+                                context,
+                                'Report created successfully.',
+                              );
+                              if (reportCreated) {
+                                if (context.mounted) {
+                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                                    navigationMenuRoute,
+                                    (route) => false,
+                                  );
+                                }
+                              }
+                            } on CouldNotCreateReportException catch (_) {
+                              if (context.mounted) {
+                                await showErrorDialog(
+                                  context,
+                                  'Could not create report',
+                                );
+                              }
+                            } on Exception catch (_) {}
                           }
                         }
                       } else {
