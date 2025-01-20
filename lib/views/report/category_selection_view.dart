@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
+import 'package:guardix/utilities/decorations/input_decoration_template.dart';
 
 class CategorySelectionView extends StatefulWidget {
   const CategorySelectionView({super.key});
@@ -75,24 +76,7 @@ class _CategorySelectionViewState extends State<CategorySelectionView> {
                 color: midnightBlueColor,
               ),
               dropdownColor: Colors.blue[50],
-              decoration: InputDecoration(
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 17, horizontal: 15),
-                labelText: 'Select Category',
-                filled: true,
-                fillColor: textInputFillColor,
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(
-                    color: midnightBlueColor,
-                    width: 2.5,
-                  ),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
+              decoration: buildInputDecoration(label: 'Select Category'),
             ),
             const Spacer(),
             Container(

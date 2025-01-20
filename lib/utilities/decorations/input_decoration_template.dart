@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
 
 InputDecoration buildInputDecoration({
-  required String label
+  required String label,
+  Widget? suffixIcon,
 }) {
   return InputDecoration(
-    contentPadding: const EdgeInsets.symmetric(vertical: 17, horizontal: 15),
+    contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
     label: Text(
       label,
-      style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
     ),
     filled: true,
     fillColor: textInputFillColor,
@@ -19,9 +20,25 @@ InputDecoration buildInputDecoration({
     focusedBorder: OutlineInputBorder(
       borderSide: const BorderSide(
         color: midnightBlueColor,
-        width: 2.5,
+        width: 2,
       ),
       borderRadius: BorderRadius.circular(10),
     ),
+    errorBorder: OutlineInputBorder(
+      borderSide: const BorderSide(
+        color: crimsonRedColor,
+        width: 2,
+      ),
+      borderRadius: BorderRadius.circular(10),
+    ),
+    focusedErrorBorder: OutlineInputBorder(
+      borderSide: const BorderSide(
+        color: crimsonRedColor,
+        width: 2,
+      ),
+      borderRadius: BorderRadius.circular(10),
+    ),
+    errorStyle: const TextStyle(color: crimsonRedColor),
+    suffixIcon: suffixIcon,
   );
 }

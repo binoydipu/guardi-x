@@ -226,8 +226,8 @@ class _LoginViewState extends State<LoginView> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8)),
                     ),
-                    child: Image.network(
-                      'https://cdn-icons-png.flaticon.com/128/6424/6424087.png',
+                    child: Image.asset(
+                      'assets/images/google_icon.png',
                       width: 22,
                       height: 22,
                       color: midnightBlueColor,
@@ -244,10 +244,10 @@ class _LoginViewState extends State<LoginView> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8)),
                     ),
-                    child: Image.network(
-                      'https://img.icons8.com/?size=50&id=118467&format=png',
-                      width: 25,
-                      height: 25,
+                    child: Image.asset(
+                      'assets/images/facebook_icon.png',
+                      width: 22,
+                      height: 22,
                       color: midnightBlueColor,
                     ),
                   ),
@@ -262,10 +262,10 @@ class _LoginViewState extends State<LoginView> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8)),
                     ),
-                    child: Image.network(
-                      'https://img.icons8.com/?size=30&id=95294&format=png',
-                      width: 25,
-                      height: 25,
+                    child: Image.asset(
+                      'assets/images/apple_icon.png',
+                      width: 22,
+                      height: 22,
                       color: midnightBlueColor,
                     ),
                   ),
