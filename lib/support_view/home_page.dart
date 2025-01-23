@@ -1,9 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  void _makePhoneCall(String phoneNumber) async {
+    final Uri phoneUri = Uri(
+      scheme: 'tel',
+      path: phoneNumber,
+    );
+
+    if (await canLaunchUrl(phoneUri)) {
+      await launchUrl(phoneUri);
+    } else {
+      _showSnackBar('Could not launch the dialer');
+    }
+  }
+
+  void _sendMessage(String phoneNumber) async {
+    final Uri smsUri = Uri(
+      scheme: 'sms',
+      path: phoneNumber,
+    );
+
+    if (await canLaunchUrl(smsUri)) {
+      await launchUrl(smsUri);
+    } else {
+      _showSnackBar('Could not launch the messaging app');
+    }
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -98,25 +136,31 @@ class HomePage extends StatelessWidget {
                               ),
                             ],
                           ),
-                          child: const Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Icon(
-                                  Icons.history,
-                                  size: 50,
-                                ),
-                                Text(
-                                  'View Your Case History',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: blackColor,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.of(context).pushNamed(trackRoute);
+                              },
+                              child: const Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Icon(
+                                    Icons.history,
+                                    size: 50,
                                   ),
-                                ),
-                              ],
+                                  Text(
+                                    'View Your Case History',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: blackColor,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -150,7 +194,8 @@ class HomePage extends StatelessWidget {
                                     .pushNamed(ongoingIncidentsRoute);
                               },
                               child: const Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Icon(
                                     Icons.live_help,
@@ -221,16 +266,154 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 15),
-                  const SingleChildScrollView(
+                  SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [],
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            constraints: const BoxConstraints(
+                              minWidth: 150,
+                              maxWidth: 200,
+                            ),
+                            decoration: BoxDecoration(
+                              color: softBlueColor,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Image.asset(
+                                  'assets/images/lawyer_icon.png',
+                                  height: 50,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        'Mr. Abc Xyz',
+                                        style: TextStyle(
+                                          color: midnightBlueColor,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const Text(
+                                        'Crime Lawyer',
+                                        style: TextStyle(
+                                          color: blackColor,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          IconButton(
+                                            onPressed: () =>
+                                                _makePhoneCall('123999'),
+                                            icon: const Icon(
+                                              Icons.call,
+                                              color: midnightBlueColor,
+                                            ),
+                                          ),
+                                          IconButton(
+                                            onPressed: () => _sendMessage('123999'),
+                                            icon: const Icon(
+                                              Icons.message,
+                                              color: midnightBlueColor,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            constraints: const BoxConstraints(
+                              minWidth: 150,
+                              maxWidth: 200,
+                            ),
+                            decoration: BoxDecoration(
+                              color: softBlueColor,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Image.asset(
+                                  'assets/images/lawyer_icon.png',
+                                  height: 50,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        'Mr. Abc Xyz',
+                                        style: TextStyle(
+                                          color: midnightBlueColor,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const Text(
+                                        'Crime Lawyer',
+                                        style: TextStyle(
+                                          color: blackColor,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          IconButton(
+                                            onPressed: () =>
+                                                _makePhoneCall('123888'),
+                                            icon: const Icon(
+                                              Icons.call,
+                                              color: midnightBlueColor,
+                                            ),
+                                          ),
+                                          IconButton(
+                                            onPressed: () => _sendMessage('123888'),
+                                            icon: const Icon(
+                                              Icons.message,
+                                              color: midnightBlueColor,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),

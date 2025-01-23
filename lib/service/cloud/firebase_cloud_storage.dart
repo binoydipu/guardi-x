@@ -40,6 +40,20 @@ class FirebaseCloudStorage {
             category == null || category == '' || report.category == category));
   }
 
+  /// Get all the reports of current user
+  Stream<Iterable<CloudReport>> getMyReports({
+    required String userEmail,
+    String? reportStatus,
+  }) {
+    return reports.snapshots().map((event) => event.docs
+        .map((doc) => CloudReport.fromSnapshot(doc))
+        .where((report) =>
+            (reportStatus == null ||
+                reportStatus == '' ||
+                report.reportStatus == reportStatus) &&
+            report.ownerEmail == userEmail));
+  }
+
   /// Takes a snapshot at a point of time, and returns
   Future<Iterable<CloudReport>> getCategoryReports({
     required String category,

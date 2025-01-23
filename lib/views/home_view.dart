@@ -11,6 +11,7 @@ import 'package:guardix/settings_view/settings_view.dart';
 import 'package:guardix/support_view/contacts_view.dart';
 import 'package:guardix/support_view/home_page.dart';
 import 'package:guardix/support_view/legal_info_view.dart';
+import 'package:guardix/utilities/dialogs/logout_dialog.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -24,7 +25,8 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    StatelessWidget container = const HomePage();
+    Widget container = const HomePage();
+    
     if (currentPage == DrawerAction.home) {
       container = const HomePage();
     } else if (currentPage == DrawerAction.contacts) {
@@ -57,15 +59,7 @@ class _HomeViewState extends State<HomeView> {
             icon: const Icon(Icons.person),
           ),
           IconButton(
-            onPressed: () async {
-              await AuthService.firebase().logOut();
-              // ignore: use_build_context_synchronously
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                welcomeRoute,
-                (route) => false,
-              );
-              // TODO: Confirm Logout Dialog
-            },
+            onPressed: () => _handleLogout(context),
             icon: const Icon(Icons.logout),
           ),
         ],
@@ -160,7 +154,7 @@ class _HomeViewState extends State<HomeView> {
           ),
           menuItem(4, 'Notification', Icons.notifications,
               currentPage == DrawerAction.notification ? true : false),
-          menuItem(5, 'Location', Icons.location_on,
+          menuItem(5, 'Locations', Icons.location_on,
               currentPage == DrawerAction.location ? true : false),
           menuItem(6, 'Emergency', Icons.emergency,
               currentPage == DrawerAction.emergency ? true : false),
@@ -198,17 +192,11 @@ class _HomeViewState extends State<HomeView> {
               currentPage = DrawerAction.language;
             } else if (id == 8) {
               currentPage = DrawerAction.settings;
-            } else if (id == 9) {
-              // TODO: Remove Logout
-
-              // await AuthService.firebase().logOut();
-              // // ignore: use_build_context_synchronously
-              // Navigator.of(context).pushNamedAndRemoveUntil(
-              //   welcomeRoute,
-              //   (route) => false,
-              // );
             }
           });
+          if (id == 9) {
+            _handleLogout(context);
+          }
         },
         splashColor: softBlueColor,
         child: Padding(
@@ -238,5 +226,18 @@ class _HomeViewState extends State<HomeView> {
         ),
       ),
     );
+  }
+  
+  void _handleLogout(BuildContext context) async {
+    bool isLoggedout = await showLogOutDialog(context);
+    if(isLoggedout) {
+      await AuthService.firebase().logOut();
+      if(context.mounted) {
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          welcomeRoute,
+          (route) => false,
+        );
+      }
+    }
   }
 }

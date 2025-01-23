@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
 import 'package:guardix/utilities/decorations/input_decoration_template.dart';
+import 'package:guardix/views/report/report_constants.dart';
 
 class CategorySelectionView extends StatefulWidget {
   const CategorySelectionView({super.key});
@@ -11,22 +12,13 @@ class CategorySelectionView extends StatefulWidget {
 }
 
 class _CategorySelectionViewState extends State<CategorySelectionView> {
-  final List<String> _categoryList = [
-    '',
-    'Eve Teasing',
-    'Robbery',
-    'Missing Human',
-    'Kidnapping',
-    'Accident',
-    'Missing Things',
-  ];
 
   String? _selectedCategory;
   bool isButtonActive = false;
 
   @override
   void initState() {
-    _selectedCategory = _categoryList[0];
+    _selectedCategory = categoryList[0];
     super.initState();
   }
 
@@ -57,7 +49,7 @@ class _CategorySelectionViewState extends State<CategorySelectionView> {
             const SizedBox(height: 30),
             DropdownButtonFormField(
               value: _selectedCategory,
-              items: _categoryList
+              items: categoryList
                   .map(
                     (e) => DropdownMenuItem(
                       value: e,

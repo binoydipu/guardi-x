@@ -35,7 +35,12 @@ class _SosViewState extends State<SosView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('SOS Emergency'),
+        title: const Text(
+          'SOS Emergency',
+          style: TextStyle(color: whiteColor),
+        ),
+        centerTitle: true,
+        backgroundColor: midnightBlueColor,
       ),
       body: ListView(
         padding: const EdgeInsets.only(top: 25.0, left: 25.0, right: 25.0),

@@ -21,14 +21,6 @@ class LocationView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Center(
-          child: Text(
-            'Explore LiveSafe',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-      ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [

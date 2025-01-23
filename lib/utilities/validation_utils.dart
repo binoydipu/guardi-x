@@ -8,7 +8,7 @@ class ValidationUtils {
     return emailRegex.hasMatch(email);
   }
 
-//    validate password
+  // validate password
   static const String passwordPattern =
       r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,20}$';
   static final RegExp passwordRegex = RegExp(passwordPattern);
@@ -18,7 +18,6 @@ class ValidationUtils {
   }
 
   // validate mobile
-
   static const String mobilePattern = r'^(\+88)?01[3-9][0-9]{8}$';
   static final RegExp mobileRegex = RegExp(mobilePattern);
 

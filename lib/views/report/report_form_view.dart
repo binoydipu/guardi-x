@@ -9,6 +9,8 @@ import 'package:guardix/utilities/decorations/input_decoration_template.dart';
 import 'package:guardix/utilities/dialogs/error_dialog.dart';
 import 'package:guardix/utilities/dialogs/report_created_dialog.dart';
 import 'package:guardix/utilities/dialogs/submit_report_dialog.dart';
+import 'package:guardix/utilities/validation_utils.dart';
+import 'package:guardix/views/report/report_constants.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ReportFormView extends StatefulWidget {
@@ -37,16 +39,6 @@ class _ReportFormViewState extends State<ReportFormView> {
   late final TextEditingController _evidenceImage;
 
   late final ImagePicker _imagePicker;
-
-  final List<String> _policeStationList = [
-    '',
-    'Sylhet',
-    'Moulovibazar',
-    'Hobiganj',
-    'Sunamgonj',
-    'Dhaka',
-    'Chittagong',
-  ];
 
   String? _selectedPoliceStation;
   List<XFile>? _selectedImages = [];
@@ -112,6 +104,15 @@ class _ReportFormViewState extends State<ReportFormView> {
     return null;
   }
 
+  String? _validateContact(String? value) {
+    if (value == null || value.isEmpty) {
+      return '*Required Field';
+    } else if(!ValidationUtils.validateMobile(value)) {
+      return '*Invalid Number';
+    }
+    return null;
+  }
+
   @override
   void initState() {
     _cloudStorage = FirebaseCloudStorage();
@@ -125,7 +126,7 @@ class _ReportFormViewState extends State<ReportFormView> {
     _timeOfCrime = TextEditingController();
     _descriptionOfCrime = TextEditingController();
     _injuryType = TextEditingController();
-    _selectedPoliceStation = _policeStationList[0];
+    _selectedPoliceStation = policeStationList[0];
     _imagePicker = ImagePicker();
     _evidenceImage = TextEditingController();
 
@@ -210,7 +211,7 @@ class _ReportFormViewState extends State<ReportFormView> {
                   controller: _victimContact,
                   keyboardType: TextInputType.phone,
                   decoration: buildInputDecoration(label: 'Victim Contact'),
-                  validator: (value) => _validateNotEmpty(value),
+                  validator: (value) => _validateContact(value),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
                 const SizedBox(height: 17),
@@ -226,7 +227,7 @@ class _ReportFormViewState extends State<ReportFormView> {
                   controller: _witnessContact,
                   keyboardType: TextInputType.phone,
                   decoration: buildInputDecoration(label: 'Witness Contact'),
-                  validator: (value) => _validateNotEmpty(value),
+                  validator: (value) => _validateContact(value),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
                 const SizedBox(height: 25),
@@ -279,7 +280,9 @@ class _ReportFormViewState extends State<ReportFormView> {
                 const SizedBox(height: 17),
                 TextFormField(
                   controller: _descriptionOfCrime,
-                  keyboardType: TextInputType.text,
+                  keyboardType: TextInputType.multiline,
+                  maxLines: 5,
+                  minLines: 1,
                   decoration:
                       buildInputDecoration(label: 'Description of Crime'),
                   validator: (value) => _validateNotEmpty(value),
@@ -305,7 +308,7 @@ class _ReportFormViewState extends State<ReportFormView> {
                 const SizedBox(height: 17),
                 DropdownButtonFormField(
                   value: _selectedPoliceStation,
-                  items: _policeStationList
+                  items: policeStationList
                       .map(
                         (e) => DropdownMenuItem(
                           value: e,
@@ -410,7 +413,7 @@ class _ReportFormViewState extends State<ReportFormView> {
                                 descriptionOfCrime: descriptionOfCrime,
                                 injuryType: injuryType,
                                 policeStation: _selectedPoliceStation!,
-                                reportStatus: 'PENDING',
+                                reportStatus: 'Pending',
                               );
                               bool reportCreated =
                                   await showReportCreatedDialog(
