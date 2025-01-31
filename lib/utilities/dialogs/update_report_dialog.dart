@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:guardix/utilities/dialogs/generic_dialog.dart';
 
-Future<bool> showDeleteDialog({
-  required BuildContext context,
-  String? title,
-  String? description,
-}) {
+Future<bool> showUpdateReportDialog(BuildContext context) {
   return showGenericDialog(
     context: context,
-    title: title ?? 'Delete',
-    content: description ?? 'Are you sure want to delete this item?',
+    title: 'Update Report',
+    content: 'Are you sure want to update the report?',
     optionsBuilder: () => {
       'Cancel': false,
       'Yes': true,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
+import 'package:guardix/service/auth/auth_constants.dart';
 import 'package:guardix/views/incidents/ongoing_incidents_view.dart';
 
 import 'package:guardix/views/report/category_selection_view.dart';
@@ -75,7 +76,7 @@ class InitializeView extends StatelessWidget {
           case ConnectionState.done:
             final user = AuthService.firebase().currentUser;
             if (user != null) {
-              if (user.isEmailVerified) {
+              if (user.email == adminEmail || user.isEmailVerified) {
                 return const NavigationMenu();
               } else {
                 return const VerifyEmailView();

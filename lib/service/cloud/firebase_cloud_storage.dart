@@ -19,10 +19,32 @@ class FirebaseCloudStorage {
   /// update a report status
   Future<void> updateReport({
     required String documentId,
+    required String victimName,
+    required String victimAddress,
+    required String victimContact,
+    required String witnessName,
+    required String witnessContact,
+    required String dateOfCrime,
+    required String timeOfCrime,
+    required String locationOfCrime,
+    required String descriptionOfCrime,
+    required String injuryType,
+    required String policeStation,
     required String reportStatus,
   }) async {
     try {
       await reports.doc(documentId).update({
+        victimNameFieldName: victimName,
+        victimAddressFieldName: victimAddress,
+        victimContactFieldName: victimContact,
+        witnessNameFieldName: witnessName,
+        witnessContactFieldName: witnessContact,
+        dateOfCrimeFieldName: dateOfCrime,
+        timeOfCrimeFieldName: timeOfCrime,
+        locationOfCrimeFieldName: locationOfCrime,
+        descriptionOfCrimeFieldName: descriptionOfCrime,
+        injuryTypeFieldName: injuryType,
+        policeStationFieldName: policeStation,
         reportStatusFieldName: reportStatus,
       });
     } catch (e) {

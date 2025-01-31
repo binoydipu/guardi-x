@@ -5,6 +5,7 @@ import 'package:guardix/service/auth/auth_service.dart';
 import 'package:guardix/service/cloud/cloud_report.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/utilities/decorations/input_decoration_template.dart';
+import 'package:guardix/views/report/report_constants.dart';
 import 'package:guardix/views/report/report_list_view.dart';
 
 class TrackView extends StatefulWidget {
@@ -18,27 +19,14 @@ class _TrackViewState extends State<TrackView> {
   late final FirebaseCloudStorage _cloudStorage;
   String get userEmail => AuthService.firebase().currentUser!.email;
 
-  final List<String> _filterList = [
-    '',
-    'Pending',
-    'Under Review',
-    'Investigating',
-    'Action Taken',
-    'Resolved',
-    'Unresolved',
-    'Closed',
-    'Escalated',
-    'Awaiting Response',
-    'Duplicate Report',
-    'Rejected',
-    'Follow-Up Required',
-  ];
+  late final List<String> _filterList;
 
   String? _selectedFilter;
 
   @override
   void initState() {
     _cloudStorage = FirebaseCloudStorage();
+    _filterList = reportStatusList;
     _selectedFilter = _filterList[0];
     super.initState();
   }

@@ -21,6 +21,8 @@ class ReportFormView extends StatefulWidget {
 }
 
 class _ReportFormViewState extends State<ReportFormView> {
+  String get userEmail => AuthService.firebase().currentUser!.email;
+
   late final FirebaseCloudStorage _cloudStorage;
 
   final _formKey = GlobalKey<FormState>();
@@ -129,8 +131,6 @@ class _ReportFormViewState extends State<ReportFormView> {
     _selectedPoliceStation = policeStationList[0];
     _imagePicker = ImagePicker();
     _evidenceImage = TextEditingController();
-
-    _injuryType.addListener(() {});
 
     super.initState();
   }
@@ -384,8 +384,7 @@ class _ReportFormViewState extends State<ReportFormView> {
                             await showReportSubmissionDialog(context);
                         if (context.mounted) {
                           if (isSubmitted) {
-                            final ownerEmail =
-                                AuthService.firebase().currentUser!.email;
+                            final ownerEmail = userEmail;
                             final victimName = _victimName.text;
                             final victimAddress = _victimAddress.text;
                             final victimContact = _victimContact.text;

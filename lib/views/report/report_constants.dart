@@ -17,3 +17,19 @@ final List<String> policeStationList = [
   'Dhaka',
   'Chittagong',
 ];
+
+final List<String> reportStatusList = [
+    '',
+    'Pending',
+    'Under Review',
+    'Investigating',
+    'Action Taken',
+    'Resolved',
+    'Unresolved',
+    'Closed',
+    'Escalated',
+    'Awaiting Response',
+    'Duplicate Report',
+    'Rejected',
+    'Follow-Up Required',
+  ];

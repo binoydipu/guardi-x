@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
+import 'package:guardix/service/auth/auth_constants.dart';
 import 'package:guardix/service/auth/auth_exception.dart';
 import 'package:guardix/service/auth/auth_service.dart';
 import 'package:guardix/utilities/decorations/input_decoration_template.dart';
@@ -124,7 +125,7 @@ class _LoginViewState extends State<LoginView> {
                           );
                           final user = AuthService.firebase().currentUser;
 
-                          if (user?.isEmailVerified ?? false) {
+                          if (user!.email == adminEmail || user.isEmailVerified) {
                             // ignore: use_build_context_synchronously
                             Navigator.of(context).pushNamedAndRemoveUntil(
                               navigationMenuRoute,

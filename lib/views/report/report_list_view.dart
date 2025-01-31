@@ -102,47 +102,37 @@ class ReportListView extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       IconButton(
-                        onPressed: () {
-                          
-                        },
+                        onPressed: () {},
                         icon: const Icon(
-                          Icons.arrow_upward, 
+                          Icons.arrow_upward,
                           color: midnightBlueColor,
                         ),
                       ),
                       IconButton(
-                        onPressed: () {
-                          
-                        },
+                        onPressed: () {},
                         icon: const Icon(
-                          Icons.arrow_downward, 
+                          Icons.arrow_downward,
                           color: midnightBlueColor,
                         ),
                       ),
                       IconButton(
-                        onPressed: () {
-                          
-                        },
+                        onPressed: () {},
                         icon: const Icon(
-                          Icons.comment, 
+                          Icons.comment,
                           color: midnightBlueColor,
                         ),
                       ),
                       IconButton(
-                        onPressed: () {
-                          
-                        },
+                        onPressed: () {},
                         icon: const Icon(
-                          Icons.share, 
+                          Icons.share,
                           color: midnightBlueColor,
                         ),
                       ),
                       IconButton(
-                        onPressed: () {
-                          
-                        },
+                        onPressed: () {},
                         icon: const Icon(
-                          Icons.report_gmailerrorred, 
+                          Icons.report_gmailerrorred,
                           color: midnightBlueColor,
                         ),
                       ),
@@ -153,28 +143,6 @@ class ReportListView extends StatelessWidget {
             ),
           ),
         );
-
-        // return ListTile(
-        //   onTap: () {
-        //     onTap(report);
-        //   },
-        //   title: Text(
-        //     report.category,
-        //     maxLines: 1,
-        //     softWrap: true,
-        //     style: const TextStyle(
-        //       color: blackColor,
-        //       fontWeight: FontWeight.bold,
-        //     ),
-        //     overflow: TextOverflow.ellipsis,
-        //   ),
-        //   subtitle: Text(
-        //     report.descriptionOfCrime,
-        //     maxLines: 2,
-        //     softWrap: true,
-        //     overflow: TextOverflow.ellipsis,
-        //   ),
-        // );
       },
     );
   }
