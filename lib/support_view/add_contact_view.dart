@@ -97,18 +97,19 @@ class _AddContactsViewState extends State<AddContactsView> {
                   // This happens because ListView.builder is infinite in height by default, and Flutter needs to know how much space it should take.
                   // Expanded forces it to fill the 'remaining space' inside the Column. Visual explanation is given bellow of the code!!
                   child: _filteredContacts == null || _filteredContacts!.isEmpty
-                      ? const Center(child: Text('No Contacts Found'))
+                      ? const Center(child: Text('No Contact Found'))
                       : ListView.builder(
                           itemCount: _filteredContacts!.length,
                           itemBuilder: (context, index) {
                             Contact contact = _filteredContacts![index];
                             return ListTile(
+                              onTap: () {},
                               title: Text(contact.displayName.isNotEmpty
                                   ? contact.displayName
-                                  : "No Name"),
+                                  : "Unnamed Contact"),
                               subtitle: Text(contact.phones.isNotEmpty
                                   ? contact.phones.first.number
-                                  : "Number Not Added!"),
+                                  : "Number Not Added"),
                               leading: (contact.photo != null &&
                                       contact.photo!.isNotEmpty)
                                   ? CircleAvatar(

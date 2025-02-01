@@ -3,6 +3,7 @@ import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
 import 'package:guardix/service/auth/auth_exception.dart';
 import 'package:guardix/service/auth/auth_service.dart';
+import 'package:guardix/service/cloud/firebase_user_cloud_storage.dart';
 import 'package:guardix/utilities/decorations/input_decoration_template.dart';
 import 'package:guardix/utilities/dialogs/error_dialog.dart';
 import 'package:guardix/utilities/validation_utils.dart';
@@ -15,17 +16,20 @@ class RegisterView extends StatefulWidget {
 }
 
 class _RegisterViewState extends State<RegisterView> {
+  late final TextEditingController _name;
   late final TextEditingController _email;
-  late final TextEditingController _mobile;
+  late final TextEditingController _phone;
   late final TextEditingController _password;
   late final TextEditingController _confirmPassword;
 
 // Will show message if email is not valid at the bottom of the text field
+  String _nameErrorText = '';
   String _emailErrorText = '';
   String _mobileErrorText = '';
   String _passwordErrorText = '';
   String _confirmPasswordErrorText = '';
 
+  bool _nameNotEmpty = false;
   bool _emailValid = false;
   bool _mobileValid = false;
   bool _passwordValid = false;
@@ -35,10 +39,30 @@ class _RegisterViewState extends State<RegisterView> {
 
   @override
   void initState() {
+    _name = TextEditingController();
     _email = TextEditingController();
-    _mobile = TextEditingController();
+    _phone = TextEditingController();
     _password = TextEditingController();
     _confirmPassword = TextEditingController();
+
+    _name.addListener(() {
+      final String value = _name.text;
+
+      setState(() {
+        if (value.isNotEmpty) {
+          _nameErrorText = '';
+          _nameNotEmpty = true;
+        } else {
+          _nameErrorText = 'Please enter your name';
+        }
+
+        isButtonActive = _nameNotEmpty &&
+            _emailValid &&
+            _mobileValid &&
+            _passwordValid &&
+            _confirmPasswordValid;
+      });
+    });
 
     _email.addListener(() {
       final String value = _email.text;
@@ -54,14 +78,15 @@ class _RegisterViewState extends State<RegisterView> {
           _emailValid = false;
         }
 
-        isButtonActive = _emailValid &&
+        isButtonActive = _nameNotEmpty &&
+            _emailValid &&
             _mobileValid &&
             _passwordValid &&
             _confirmPasswordValid;
       });
     });
-    _mobile.addListener(() {
-      final String value = _mobile.text;
+    _phone.addListener(() {
+      final String value = _phone.text;
 
       // Update the error text based on validation
       setState(() {
@@ -74,7 +99,9 @@ class _RegisterViewState extends State<RegisterView> {
               : 'Please enter a valid mobile number';
           _mobileValid = false;
         }
-        isButtonActive = _emailValid &&
+
+        isButtonActive = _nameNotEmpty &&
+            _emailValid &&
             _mobileValid &&
             _passwordValid &&
             _confirmPasswordValid;
@@ -94,7 +121,9 @@ class _RegisterViewState extends State<RegisterView> {
                 : 'Use at least an uppercase, a lowercase, a special character and a number. The length should be at least 6 and not more than 20';
             _passwordValid = false;
           }
-          isButtonActive = _emailValid &&
+
+          isButtonActive = _nameNotEmpty &&
+              _emailValid &&
               _mobileValid &&
               _passwordValid &&
               _confirmPasswordValid;
@@ -118,7 +147,9 @@ class _RegisterViewState extends State<RegisterView> {
                 : 'Passwords not matched';
             _confirmPasswordValid = false;
           }
-          isButtonActive = _emailValid &&
+
+          isButtonActive = _nameNotEmpty &&
+              _emailValid &&
               _mobileValid &&
               _passwordValid &&
               _confirmPasswordValid;
@@ -132,7 +163,7 @@ class _RegisterViewState extends State<RegisterView> {
   @override
   void dispose() {
     _email.dispose();
-    _mobile.dispose();
+    _phone.dispose();
     _password.dispose();
     _confirmPassword.dispose();
     super.dispose();
@@ -147,7 +178,7 @@ class _RegisterViewState extends State<RegisterView> {
           child: Column(
             // Aligns the children to the left
             children: [
-              const SizedBox(height: 65),
+              const SizedBox(height: 40),
               const Text(
                 'Create Account',
                 style: TextStyle(
@@ -157,19 +188,39 @@ class _RegisterViewState extends State<RegisterView> {
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
               const Center(
                 child: Text(
-                  'Create an account so that you can join the movement for "Safer Communities"',
+                  'Join The Movement of "Safer Communities"',
                   style: TextStyle(
                     color: blackColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
                   ),
                   textAlign: TextAlign.center,
                 ),
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _name,
+                enableSuggestions: false,
+                autocorrect: false,
+                keyboardType: TextInputType.name,
+                decoration: buildInputDecoration(label: 'Name'),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 1.0, left: 16.0),
+                child: Align(
+                  alignment: Alignment
+                      .centerLeft, // Aligns the error message to the left
+                  child: Text(
+                    _nameErrorText,
+                    style:
+                        const TextStyle(color: crimsonRedColor, fontSize: 10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
               TextField(
                 controller: _email,
                 enableSuggestions: false,
@@ -189,9 +240,9 @@ class _RegisterViewState extends State<RegisterView> {
                   ),
                 ),
               ),
-              const SizedBox(height: 17),
+              const SizedBox(height: 10),
               TextField(
-                controller: _mobile,
+                controller: _phone,
                 enableSuggestions: true,
                 autocorrect: false,
                 keyboardType: TextInputType.phone,
@@ -208,7 +259,7 @@ class _RegisterViewState extends State<RegisterView> {
                   ),
                 ),
               ),
-              const SizedBox(height: 17),
+              const SizedBox(height: 10),
               TextField(
                 controller: _password,
                 obscureText: true,
@@ -228,7 +279,7 @@ class _RegisterViewState extends State<RegisterView> {
                   ),
                 ),
               ),
-              const SizedBox(height: 17),
+              const SizedBox(height: 10),
               TextField(
                 controller: _confirmPassword,
                 obscureText: true,
@@ -254,8 +305,9 @@ class _RegisterViewState extends State<RegisterView> {
                     child: ElevatedButton(
                       onPressed: isButtonActive
                           ? () async {
+                              final name = _name.text;
                               final email = _email.text;
-                              //final mobile = _mobile.text;
+                              final phone = _phone.text;
                               final password = _password.text;
                               final confirmPassword = _confirmPassword.text;
 
@@ -267,7 +319,8 @@ class _RegisterViewState extends State<RegisterView> {
                                 _confirmPassword.text = '';
                                 _confirmPasswordErrorText =
                                     'Passwords not matched';
-                              } else if (_emailValid &&
+                              } else if (_nameNotEmpty &&
+                                  _emailValid &&
                                   _mobileValid &&
                                   _passwordValid &&
                                   _confirmPasswordValid &&
@@ -280,6 +333,14 @@ class _RegisterViewState extends State<RegisterView> {
 
                                   AuthService.firebase()
                                       .sendEmailVerification();
+
+                                  String userId =
+                                      AuthService.firebase().currentUser!.id;
+                                  FirebaseUserCloudStorage().createNewUser(
+                                      userId: userId,
+                                      userName: name,
+                                      email: email,
+                                      phone: phone);
                                   // ignore: use_build_context_synchronously
                                   Navigator.of(context)
                                       .pushNamed(verifyEmailRoute);
@@ -342,19 +403,19 @@ class _RegisterViewState extends State<RegisterView> {
                       borderRadius: BorderRadius.circular(12)),
                 ),
                 child: const Text(
-                  'Already have an account',
+                  'Already have an account?',
                   style: TextStyle(
-                    color: blackColor,
+                    color: skyBlueColor,
                     fontWeight: FontWeight.w800,
                     fontSize: 16,
                   ),
                 ),
               ),
-              const SizedBox(height: 25),
+              const SizedBox(height: 15),
               const Text(
                 'Or continue with',
                 style: TextStyle(
-                  color: skyBlueColor,
+                  color: blackColor,
                   fontWeight: FontWeight.w800,
                   fontSize: 16,
                 ),
