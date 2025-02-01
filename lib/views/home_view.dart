@@ -26,7 +26,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     Widget container = const HomePage();
-    
+
     if (currentPage == DrawerAction.home) {
       container = const HomePage();
     } else if (currentPage == DrawerAction.contacts) {
@@ -227,12 +227,12 @@ class _HomeViewState extends State<HomeView> {
       ),
     );
   }
-  
+
   void _handleLogout(BuildContext context) async {
     bool isLoggedout = await showLogOutDialog(context);
-    if(isLoggedout) {
+    if (isLoggedout) {
       await AuthService.firebase().logOut();
-      if(context.mounted) {
+      if (context.mounted) {
         Navigator.of(context).pushNamedAndRemoveUntil(
           welcomeRoute,
           (route) => false,
