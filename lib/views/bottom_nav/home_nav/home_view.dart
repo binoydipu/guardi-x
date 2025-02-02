@@ -3,14 +3,14 @@ import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
 import 'package:guardix/service/auth/auth_service.dart';
 import 'package:guardix/enums/drawer_action.dart';
-import 'package:guardix/settings_view/app_language_view.dart';
-import 'package:guardix/settings_view/emergency_view.dart';
-import 'package:guardix/settings_view/location_view.dart';
-import 'package:guardix/settings_view/notification_view.dart';
-import 'package:guardix/settings_view/settings_view.dart';
-import 'package:guardix/support_view/contacts_view.dart';
-import 'package:guardix/support_view/home_page.dart';
-import 'package:guardix/support_view/legal_info_view.dart';
+import 'package:guardix/views/drawer/app_language_view.dart';
+import 'package:guardix/views/drawer/emergency_view.dart';
+import 'package:guardix/views/drawer/location_view.dart';
+import 'package:guardix/views/drawer/notification_view.dart';
+import 'package:guardix/views/drawer/settings_view.dart';
+import 'package:guardix/views/drawer/contacts_view.dart';
+import 'package:guardix/views/bottom_nav/home_page.dart';
+import 'package:guardix/views/drawer/legal_info_view.dart';
 import 'package:guardix/utilities/dialogs/logout_dialog.dart';
 
 class HomeView extends StatefulWidget {

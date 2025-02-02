@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
-import 'package:guardix/views/home_view.dart';
-import 'package:guardix/views/report/report_view.dart';
-import 'package:guardix/views/sos_view.dart';
-import 'package:guardix/views/track_view.dart';
+import 'package:guardix/views/bottom_nav/home_nav/home_view.dart';
+import 'package:guardix/views/bottom_nav/report_view.dart';
+import 'package:guardix/views/bottom_nav/sos_view.dart';
+import 'package:guardix/views/bottom_nav/track_view.dart';
 
 class NavigationMenu extends StatefulWidget {
   const NavigationMenu({super.key});
