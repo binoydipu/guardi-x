@@ -6,6 +6,26 @@ import 'package:guardix/service/cloud/cloud_storage_exceptions.dart';
 class FirebaseCloudStorage {
   final reports = FirebaseFirestore.instance.collection(reportCollectionName);
 
+  final users = FirebaseFirestore.instance.collection(userCollectionName);
+
+  void createNewUser({
+    required String userId,
+    required String userName,
+    required String email,
+    required String phone,
+  }) async {
+    try {
+      await users.doc(userId).set({
+        userIdFieldName: userId,
+        userNameFiellName: userName,
+        userEmailFieldName: email,
+        userPhoneFieldName: phone,
+      });
+    } catch (e) {
+      throw CouldNotAddUserException();
+    }
+  }
+
   Future<void> deleteReport({
     required String documentId,
   }) async {

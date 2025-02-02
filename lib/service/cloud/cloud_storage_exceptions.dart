@@ -9,3 +9,5 @@ class CouldNotGetAllReportsException extends CloudStorageExceptions {}
 class CouldNotUpdateReportException extends CloudStorageExceptions {}
 
 class CouldNotDeleteReportException extends CloudStorageExceptions {}
+
+class CouldNotAddUserException extends CloudStorageExceptions {}

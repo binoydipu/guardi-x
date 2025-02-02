@@ -19,3 +19,10 @@ const injuryTypeFieldName = 'injury_type';
 const policeStationFieldName = 'police_station';
 
 const reportStatusFieldName = 'report_status';
+
+// Users
+const userCollectionName = 'Users';
+const userIdFieldName = 'user_id';
+const userNameFiellName = 'user_name';
+const userEmailFieldName = 'email';
+const userPhoneFieldName = 'phone';
