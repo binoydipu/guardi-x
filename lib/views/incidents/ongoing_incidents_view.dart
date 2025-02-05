@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
 import 'package:guardix/service/auth/auth_service.dart';
-import 'package:guardix/service/cloud/cloud_report.dart';
+import 'package:guardix/service/cloud/model/cloud_report.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/utilities/decorations/input_decoration_template.dart';
+import 'package:guardix/views/report/report_constants.dart';
 import 'package:guardix/views/report/report_list_view.dart';
 
 class OngoingIncidentsView extends StatefulWidget {
@@ -18,22 +19,12 @@ class _OngoingIncidentsViewState extends State<OngoingIncidentsView> {
   late final FirebaseCloudStorage _cloudStorage;
   String get userEmail => AuthService.firebase().currentUser!.email;
 
-  final List<String> _categoryList = [
-    '',
-    'Eve Teasing',
-    'Robbery',
-    'Missing Human',
-    'Kidnapping',
-    'Accident',
-    'Missing Things',
-  ];
-
   String? _selectedCategory;
 
   @override
   void initState() {
     _cloudStorage = FirebaseCloudStorage();
-    _selectedCategory = _categoryList[0];
+    _selectedCategory = categoryList[0];
     super.initState();
   }
 
@@ -76,7 +67,7 @@ class _OngoingIncidentsViewState extends State<OngoingIncidentsView> {
             padding: const EdgeInsets.only(left: 16.0, right: 16.0),
             child: DropdownButtonFormField(
               value: _selectedCategory,
-              items: _categoryList
+              items: categoryList
                   .map(
                     (e) => DropdownMenuItem(
                       value: e,

@@ -59,4 +59,34 @@ class CloudReport {
         injuryType = snapshot.data()[injuryTypeFieldName] as String,
         policeStation = snapshot.data()[policeStationFieldName] as String,
         reportStatus = snapshot.data()[reportStatusFieldName] as String;
+
+  @override
+  String toString() {
+    return '''
+    📌 $category Report:
+    ---------------------------
+    🔹 Category: $category
+    📧 Reported by: $ownerEmail
+
+    👤 Victim Information:
+    - Name: $victimName
+    - Address: $victimAddress
+    - Contact: $victimContact
+
+    👀 Witness Information:
+    - Name: $witnessName
+    - Contact: $witnessContact
+
+    📅 Date & Time of Crime:
+    - Date: $dateOfCrime
+    - Time: $timeOfCrime
+
+    📍 Location: $locationOfCrime
+    📝 Description: $descriptionOfCrime
+    🤕 Injury Type: $injuryType
+    🚔 Police Station: $policeStation
+
+    📜 Report Status: $reportStatus
+    ''';
+  }
 }

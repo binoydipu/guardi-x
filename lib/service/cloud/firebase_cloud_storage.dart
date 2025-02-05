@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:guardix/service/cloud/cloud_report.dart';
+import 'package:guardix/service/cloud/model/cloud_report.dart';
 import 'package:guardix/service/cloud/cloud_storage_constants.dart';
 import 'package:guardix/service/cloud/cloud_storage_exceptions.dart';
 

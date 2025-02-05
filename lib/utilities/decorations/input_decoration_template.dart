@@ -3,6 +3,7 @@ import 'package:guardix/constants/colors.dart';
 
 InputDecoration buildInputDecoration({
   required String label,
+  Widget? prefixIcon,
   Widget? suffixIcon,
 }) {
   return InputDecoration(
@@ -39,6 +40,7 @@ InputDecoration buildInputDecoration({
       borderRadius: BorderRadius.circular(10),
     ),
     errorStyle: const TextStyle(color: crimsonRedColor),
+    prefixIcon: prefixIcon,
     suffixIcon: suffixIcon,
   );
 }

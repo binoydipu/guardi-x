@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
-import 'package:guardix/service/cloud/cloud_report.dart';
+import 'package:guardix/service/cloud/model/cloud_report.dart';
+import 'package:share_plus/share_plus.dart';
 
 typedef ReportCallback = void Function(CloudReport report);
 
@@ -123,21 +124,25 @@ class ReportListView extends StatelessWidget {
                         ),
                       ),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Share.share(report.toString());
+                        },
                         icon: const Icon(
                           Icons.share,
                           color: midnightBlueColor,
                         ),
                       ),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          
+                        },
                         icon: const Icon(
-                          Icons.report_gmailerrorred,
+                          Icons.flag,
                           color: midnightBlueColor,
                         ),
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),

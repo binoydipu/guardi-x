@@ -45,6 +45,9 @@ class _ReportFormViewState extends State<ReportFormView> {
   String? _selectedPoliceStation;
   List<XFile>? _selectedImages = [];
   String _imagesErrorText = 'Optional';
+  late final String category;
+  bool _isInitialized = false;
+  bool _isNonCrimeReport = false;
 
   Future<void> _selectDate(BuildContext context) async {
     DateTime? selectedDate = await showDatePicker(
@@ -109,7 +112,7 @@ class _ReportFormViewState extends State<ReportFormView> {
   String? _validateContact(String? value) {
     if (value == null || value.isEmpty) {
       return '*Required Field';
-    } else if(!ValidationUtils.validateMobile(value)) {
+    } else if (!ValidationUtils.validateMobile(value)) {
       return '*Invalid Number';
     }
     return null;
@@ -136,6 +139,18 @@ class _ReportFormViewState extends State<ReportFormView> {
   }
 
   @override
+  void didChangeDependencies() {
+    if (!_isInitialized) {
+      category = ModalRoute.of(context)?.settings.arguments as String;
+      _isNonCrimeReport = category == 'Lost Items' ||
+          category == 'Missing Human' ||
+          category == 'Missing Pet';
+      _isInitialized = true;
+    }
+    super.didChangeDependencies();
+  }
+
+  @override
   void dispose() {
     _victimName.dispose();
     _victimAddress.dispose();
@@ -153,9 +168,6 @@ class _ReportFormViewState extends State<ReportFormView> {
 
   @override
   Widget build(BuildContext context) {
-    final String category =
-        ModalRoute.of(context)?.settings.arguments as String;
-
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -231,9 +243,11 @@ class _ReportFormViewState extends State<ReportFormView> {
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
                 const SizedBox(height: 25),
-                const Text(
-                  'Crime Information',
-                  style: TextStyle(
+                Text(
+                  _isNonCrimeReport
+                      ? 'Incident Information'
+                      : 'Crime Information',
+                  style: const TextStyle(
                     fontSize: 16,
                     color: blackColor,
                     fontWeight: FontWeight.bold,
@@ -245,7 +259,8 @@ class _ReportFormViewState extends State<ReportFormView> {
                   readOnly: true,
                   onTap: () => _selectDate(context),
                   decoration: buildInputDecoration(
-                    label: 'Date of Crime',
+                    label:
+                        'Date of ${_isNonCrimeReport ? 'Incident' : 'Crime'}',
                     suffixIcon: const Icon(
                       Icons.calendar_month,
                       color: midnightBlueColor,
@@ -260,7 +275,7 @@ class _ReportFormViewState extends State<ReportFormView> {
                   readOnly: true,
                   onTap: () => _selectTime(context),
                   decoration: buildInputDecoration(
-                    label: 'Time of Crime',
+                    label: 'Time of ${_isNonCrimeReport ? 'Incident' : 'Crime'}',
                     suffixIcon: const Icon(
                       Icons.access_time_filled,
                       color: midnightBlueColor,
@@ -273,7 +288,7 @@ class _ReportFormViewState extends State<ReportFormView> {
                 TextFormField(
                   controller: _locationOfCrime,
                   keyboardType: TextInputType.text,
-                  decoration: buildInputDecoration(label: 'Location of Crime'),
+                  decoration: buildInputDecoration(label: 'Location of ${_isNonCrimeReport ? 'Incident' : 'Crime'}'),
                   validator: (value) => _validateNotEmpty(value),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
@@ -284,7 +299,7 @@ class _ReportFormViewState extends State<ReportFormView> {
                   maxLines: 5,
                   minLines: 1,
                   decoration:
-                      buildInputDecoration(label: 'Description of Crime'),
+                      buildInputDecoration(label: 'Description of ${_isNonCrimeReport ? 'Incident' : 'Crime'}'),
                   validator: (value) => _validateNotEmpty(value),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),

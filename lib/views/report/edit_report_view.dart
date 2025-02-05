@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/service/auth/auth_constants.dart';
 import 'package:guardix/service/auth/auth_service.dart';
-import 'package:guardix/service/cloud/cloud_report.dart';
+import 'package:guardix/service/cloud/model/cloud_report.dart';
 import 'package:guardix/service/cloud/cloud_storage_exceptions.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/utilities/decorations/input_decoration_template.dart';
@@ -42,7 +42,6 @@ class _EditReportViewState extends State<EditReportView> {
 
   String? _selectedPoliceStation;
   String? _selectedStatus;
-  late final List<String> _reportStatusList;
 
   Future<void> _selectDate(BuildContext context) async {
     DateTime? selectedDate = await showDatePicker(
@@ -90,6 +89,7 @@ class _EditReportViewState extends State<EditReportView> {
   }
 
   bool _isInitialized = false;
+  bool _isNonCrimeReport = false;
 
   @override
   void initState() {
@@ -104,7 +104,6 @@ class _EditReportViewState extends State<EditReportView> {
     _timeOfCrime = TextEditingController();
     _descriptionOfCrime = TextEditingController();
     _injuryType = TextEditingController();
-    _reportStatusList = reportStatusList;
     super.initState();
   }
 
@@ -124,6 +123,9 @@ class _EditReportViewState extends State<EditReportView> {
       _injuryType.text = report.injuryType;
       _selectedPoliceStation = report.policeStation;
       _selectedStatus = report.reportStatus;
+      _isNonCrimeReport = report.category == 'Lost Items' ||
+          report.category == 'Missing Human' ||
+          report.category == 'Missing Pet';
       _isInitialized = true;
     }
     super.didChangeDependencies();
@@ -258,9 +260,11 @@ class _EditReportViewState extends State<EditReportView> {
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
                 const SizedBox(height: 25),
-                const Text(
-                  'Crime Information',
-                  style: TextStyle(
+                Text(
+                  _isNonCrimeReport
+                      ? 'Incident Information'
+                      : 'Crime Information',
+                  style: const TextStyle(
                     fontSize: 16,
                     color: blackColor,
                     fontWeight: FontWeight.bold,
@@ -272,7 +276,7 @@ class _EditReportViewState extends State<EditReportView> {
                   readOnly: true,
                   onTap: () => _selectDate(context),
                   decoration: buildInputDecoration(
-                    label: 'Date of Crime',
+                    label: 'Date of ${_isNonCrimeReport ? 'Incident' : 'Crime'}',
                     suffixIcon: const Icon(
                       Icons.calendar_month,
                       color: midnightBlueColor,
@@ -287,7 +291,7 @@ class _EditReportViewState extends State<EditReportView> {
                   readOnly: true,
                   onTap: () => _selectTime(context),
                   decoration: buildInputDecoration(
-                    label: 'Time of Crime',
+                    label: 'Time of ${_isNonCrimeReport ? 'Incident' : 'Crime'}',
                     suffixIcon: const Icon(
                       Icons.access_time_filled,
                       color: midnightBlueColor,
@@ -300,7 +304,7 @@ class _EditReportViewState extends State<EditReportView> {
                 TextFormField(
                   controller: _locationOfCrime,
                   keyboardType: TextInputType.text,
-                  decoration: buildInputDecoration(label: 'Location of Crime'),
+                  decoration: buildInputDecoration(label: 'Location of ${_isNonCrimeReport ? 'Incident' : 'Crime'}'),
                   validator: (value) => _validateNotEmpty(value),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
@@ -311,7 +315,7 @@ class _EditReportViewState extends State<EditReportView> {
                   maxLines: 5,
                   minLines: 1,
                   decoration:
-                      buildInputDecoration(label: 'Description of Crime'),
+                      buildInputDecoration(label: 'Description of ${_isNonCrimeReport ? 'Incident' : 'Crime'}'),
                   validator: (value) => _validateNotEmpty(value),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
@@ -364,7 +368,7 @@ class _EditReportViewState extends State<EditReportView> {
                 userEmail == adminEmail
                     ? DropdownButtonFormField(
                         value: _selectedStatus,
-                        items: _reportStatusList
+                        items: reportStatusList
                             .map(
                               (e) => DropdownMenuItem(
                                 value: e,

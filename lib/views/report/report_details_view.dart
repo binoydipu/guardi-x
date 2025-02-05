@@ -3,12 +3,13 @@ import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
 import 'package:guardix/service/auth/auth_constants.dart';
 import 'package:guardix/service/auth/auth_service.dart';
-import 'package:guardix/service/cloud/cloud_report.dart';
+import 'package:guardix/service/cloud/model/cloud_report.dart';
 import 'package:guardix/service/cloud/cloud_storage_exceptions.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/utilities/dialogs/delete_dialog.dart';
 import 'package:guardix/utilities/dialogs/error_dialog.dart';
 import 'package:guardix/utilities/dialogs/report_created_dialog.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ReportDetailsView extends StatefulWidget {
   const ReportDetailsView({super.key});
@@ -23,6 +24,7 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
   late final FirebaseCloudStorage _cloudStorage;
   late final CloudReport report;
   bool _isInitialized = false;
+  bool _isNonCrimeReport = false;
 
   @override
   void initState() {
@@ -34,6 +36,9 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
   void didChangeDependencies() {
     if (!_isInitialized) {
       report = ModalRoute.of(context)?.settings.arguments as CloudReport;
+      _isNonCrimeReport = report.category == 'Lost Items' ||
+          report.category == 'Missing Human' ||
+          report.category == 'Missing Pet';
       _isInitialized = true;
     }
     super.didChangeDependencies();
@@ -54,55 +59,99 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
                 },
               )
             : null,
-        actions: userEmail == adminEmail || userEmail == report.ownerEmail ? [
-          IconButton(
-            onPressed: () {
-              Navigator.of(context).pushNamed(
-                editReportRoute,
-                arguments: report,
-              );
-            },
-            icon: const Icon(
-              Icons.edit,
-              color: whiteColor,
-            ),
-          ),
-          IconButton(
-            onPressed: () async {
-              bool isDeleted = await showDeleteDialog(
-                  context: context,
-                  title: 'Delete Report',
-                  description: 'Are you sure want to delete this report?');
-              if (context.mounted) {
-                if (isDeleted) {
-                  try {
-                    _cloudStorage.deleteReport(documentId: report.documentId);
-                    bool reportDeleted = await showReportCreatedDialog(
-                      context,
-                      'Report updated successfully.',
-                    );
-                    if (reportDeleted) {
+        actions: userEmail == adminEmail || userEmail == report.ownerEmail
+            ? [
+                PopupMenuButton(
+                  icon: const Icon(
+                    Icons.more_vert,
+                    color: whiteColor,
+                  ),
+                  onSelected: (String value) async {
+                    if (value == 'Edit') {
+                      Navigator.of(context).pushNamed(
+                        editReportRoute,
+                        arguments: report,
+                      );
+                    } else if (value == 'Share') {
+                      Share.share(report.toString());
+                    } else if (value == 'Delete') {
+                      bool isDeleted = await showDeleteDialog(
+                        context: context,
+                        title: 'Delete Report',
+                        description: 'Are you sure want to delete this report?',
+                      );
                       if (context.mounted) {
-                        Navigator.of(context).pop();
+                        if (isDeleted) {
+                          try {
+                            _cloudStorage.deleteReport(
+                                documentId: report.documentId);
+                            bool reportDeleted = await showReportCreatedDialog(
+                              context,
+                              'Report updated successfully.',
+                            );
+                            if (reportDeleted) {
+                              if (context.mounted) {
+                                Navigator.of(context).pop();
+                              }
+                            }
+                          } on CouldNotDeleteReportException catch (_) {
+                            if (context.mounted) {
+                              await showErrorDialog(
+                                context,
+                                'Could not delete report',
+                              );
+                            }
+                          } on Exception catch (_) {}
+                        }
                       }
                     }
-                  } on CouldNotDeleteReportException catch (_) {
-                    if (context.mounted) {
-                      await showErrorDialog(
-                        context,
-                        'Could not delete report',
-                      );
-                    }
-                  } on Exception catch (_) {}
-                }
-              }
-            },
-            icon: const Icon(
-              Icons.delete,
-              color: whiteColor,
-            ),
-          ),
-        ] : null,
+                  },
+                  itemBuilder: (context) {
+                    return [
+                      const PopupMenuItem<String>(
+                        value: 'Edit',
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            'Edit',
+                            style: TextStyle(
+                              color: blackColor,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const PopupMenuItem<String>(
+                        value: 'Share',
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            'Share',
+                            style: TextStyle(
+                              color: blackColor,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const PopupMenuItem<String>(
+                        value: 'Delete',
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            'Delete',
+                            style: TextStyle(
+                              color: blackColor,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ];
+                  },
+                ),
+              ]
+            : null,
         title: const Text(
           'Report Details',
           style: TextStyle(color: whiteColor),
@@ -176,7 +225,7 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
               ),
               const SizedBox(height: 20),
               Text(
-                'Date of Crime: ${report.dateOfCrime}',
+                'Date of ${_isNonCrimeReport ? 'Incident' : 'Crime'}: ${report.dateOfCrime}',
                 style: const TextStyle(
                   fontSize: 15,
                   color: blackColor,
@@ -185,7 +234,7 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
               ),
               const SizedBox(height: 10),
               Text(
-                'TIme of Crime: ${report.timeOfCrime}',
+                'TIme of ${_isNonCrimeReport ? 'Incident' : 'Crime'}: ${report.timeOfCrime}',
                 style: const TextStyle(
                   fontSize: 15,
                   color: blackColor,
@@ -193,7 +242,7 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
               ),
               const SizedBox(height: 10),
               Text(
-                'Location of Crime: ${report.locationOfCrime}',
+                'Location of ${_isNonCrimeReport ? 'Incident' : 'Crime'}: ${report.locationOfCrime}',
                 style: const TextStyle(
                   fontSize: 15,
                   color: blackColor,
@@ -220,25 +269,93 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
                 'Report Status: ${report.reportStatus}',
                 style: const TextStyle(
                   fontSize: 15,
-                  color: midnightBlueColor,
+                  color: crimsonRedColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 20),
-              const Text(
-                'Report Description:',
-                style: TextStyle(
+              Text(
+                '${_isNonCrimeReport ? 'Incident' : 'Crime'} Description:',
+                style: const TextStyle(
                   fontSize: 15,
                   color: blackColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
-                'Report Status: ${report.descriptionOfCrime}',
+                report.descriptionOfCrime,
                 style: const TextStyle(
                   fontSize: 15,
                   color: blackColor,
                 ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    children: [
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.arrow_upward,
+                          color: midnightBlueColor,
+                        ),
+                      ),
+                      const Text('Upvote'),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.arrow_downward,
+                          color: midnightBlueColor,
+                        ),
+                      ),
+                      const Text('Downvote'),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.comment,
+                          color: midnightBlueColor,
+                        ),
+                      ),
+                      const Text('Comment'),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          Share.share(report.toString());
+                        },
+                        icon: const Icon(
+                          Icons.share,
+                          color: midnightBlueColor,
+                        ),
+                      ),
+                      const Text('Share'),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.flag,
+                          color: midnightBlueColor,
+                        ),
+                      ),
+                      const Text('Flag'),
+                    ],
+                  ),
+                ],
               ),
               const SizedBox(height: 20),
             ],
