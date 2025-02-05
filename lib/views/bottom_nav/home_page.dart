@@ -1,6 +1,8 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
+import 'package:guardix/utilities/decorations/banner_image_decoration.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
@@ -11,6 +13,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final List<String> _bannerImageUrls = [
+    "assets/images/pic2.jpg",
+    "assets/images/pic1.jpg",
+    "assets/images/pic2.jpg",
+    "assets/images/pic3.jpg",
+    "assets/images/pic1.jpg",
+  ];
+
   void _makePhoneCall(String phoneNumber) async {
     final Uri phoneUri = Uri(
       scheme: 'tel',
@@ -43,6 +53,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  int _currentBannerId = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,10 +62,68 @@ class _HomePageState extends State<HomePage> {
         scrollDirection: Axis.vertical,
         child: Column(
           children: [
-            Image.asset(
-              'assets/images/home_banner.jpg',
-              height: 180,
-              width: double.infinity,
+            Column(
+              children: [
+                CarouselSlider(
+                  options: CarouselOptions(
+                    // height: 180.0,
+                    aspectRatio: 16 / 8,
+                    viewportFraction: 0.8,
+                    initialPage: 0,
+                    enableInfiniteScroll: true,
+                    reverse: false,
+                    autoPlay: true,
+                    autoPlayInterval: const Duration(seconds: 3),
+                    autoPlayAnimationDuration:
+                        const Duration(milliseconds: 800),
+                    autoPlayCurve: Curves.fastOutSlowIn,
+                    enlargeCenterPage: true,
+                    enlargeFactor: 0.3,
+                    scrollDirection: Axis.horizontal,
+                    onPageChanged: (index, reason) {
+                      setState(() {
+                        _currentBannerId = index;
+                      });
+                    },
+                  ),
+                  items: _bannerImageUrls.map((imageUrl) {
+                    return Builder(
+                      builder: (BuildContext context) {
+                        return Container(
+                          width: MediaQuery.of(context).size.width,
+                          margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                          decoration: BoxDecoration(
+                            color: crimsonRedColor,
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: buildBannerDecoration(
+                            imageUrl: imageUrl,
+                            borderRadius: 15,
+                            color: softBlueColor,
+                            fit: BoxFit.fill,
+                          ),
+                        );
+                      },
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    for (int i = 0; i < _bannerImageUrls.length; i++)
+                      Container(
+                        width: i == _currentBannerId ? 20 : 10,
+                        height: i == _currentBannerId ? 4 : 3,
+                        margin: const EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          color: i == _currentBannerId ? midnightBlueColor : softBlueColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                  ],
+                ),
+              ],
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -324,7 +394,8 @@ class _HomePageState extends State<HomePage> {
                                             ),
                                           ),
                                           IconButton(
-                                            onPressed: () => _sendMessage('123999'),
+                                            onPressed: () =>
+                                                _sendMessage('123999'),
                                             icon: const Icon(
                                               Icons.message,
                                               color: midnightBlueColor,
@@ -393,7 +464,8 @@ class _HomePageState extends State<HomePage> {
                                             ),
                                           ),
                                           IconButton(
-                                            onPressed: () => _sendMessage('123888'),
+                                            onPressed: () =>
+                                                _sendMessage('123888'),
                                             icon: const Icon(
                                               Icons.message,
                                               color: midnightBlueColor,

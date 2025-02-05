@@ -72,6 +72,19 @@ class FirebaseCloudStorage {
     }
   }
 
+  Future<CloudReport> getReport({
+    required String documentId,
+  }) async {
+    try {
+      return await reports.where('documentId', isEqualTo: documentId)
+        .get().then(
+          (value) => CloudReport.fromSnapshot(value.docs.first),
+        );
+    } catch (e) {
+      throw Exception("Failed to load report: $e");
+    }
+  }
+
   /// Get all the reports of that category live as they are occuring in reports collection
   Stream<Iterable<CloudReport>> allCategoryReports({
     String? category,

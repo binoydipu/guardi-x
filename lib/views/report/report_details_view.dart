@@ -36,6 +36,7 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
   void didChangeDependencies() {
     if (!_isInitialized) {
       report = ModalRoute.of(context)?.settings.arguments as CloudReport;
+      
       _isNonCrimeReport = report.category == 'Lost Items' ||
           report.category == 'Missing Human' ||
           report.category == 'Missing Pet';
