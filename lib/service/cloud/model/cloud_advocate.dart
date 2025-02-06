@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 
 @immutable
 class CloudAdvocate {
+  final String documentId;
   final String advocateName;
   final String advocateType;
   final String advocateEmail;
@@ -11,6 +12,7 @@ class CloudAdvocate {
   final String advocateAddress;
 
   const CloudAdvocate({
+    required this.documentId,
     required this.advocateName,
     required this.advocateType,
     required this.advocateEmail,
@@ -19,7 +21,8 @@ class CloudAdvocate {
   });
 
   CloudAdvocate.fromSnapshot(QueryDocumentSnapshot<Map<String, dynamic>> snapshot)
-      : advocateName = snapshot.data()[advocateNameFieldName] as String,
+      : documentId = snapshot.id,
+        advocateName = snapshot.data()[advocateNameFieldName] as String,
         advocateType = snapshot.data()[advocateTypeFieldName] as String,
         advocateEmail = snapshot.data()[advocateEmailFieldName] as String,
         advocatePhone = snapshot.data()[advocatePhoneFieldName] as String,

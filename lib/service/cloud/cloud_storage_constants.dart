@@ -36,3 +36,10 @@ const advocateTypeFieldName = 'advocate_type';
 const advocateEmailFieldName = 'advocate_email';
 const advocatePhoneFieldName = 'advocate_phone';
 const advocateAddressFieldName = 'advocate_address';
+
+
+// Legal Info
+const legalInfoCollectionName = 'legal_info';
+
+const lawTitleFieldName = 'law_title';
+const lawDescriptionFieldName = 'law_description';

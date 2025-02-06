@@ -15,3 +15,11 @@ class CouldNotDeleteReportException extends CloudStorageExceptions {}
 class CouldNotAddUserException extends CloudStorageExceptions {}
 
 class CouldNotCreateAdvocateException extends CloudStorageExceptions {}
+
+class CouldNotDeleteAdvocateException extends CloudStorageExceptions {}
+
+class CouldNotCreateLawException extends CloudStorageExceptions {}
+
+class CouldNotDeleteLawException extends CloudStorageExceptions {}
+
+class CouldNotUpdateLawException extends CloudStorageExceptions {}

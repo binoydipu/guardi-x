@@ -6,6 +6,7 @@ import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/service/cloud/model/cloud_advocate.dart';
 import 'package:guardix/utilities/decorations/banner_text_decoration.dart';
 import 'package:guardix/utilities/decorations/card_decoration.dart';
+import 'package:guardix/utilities/dialogs/delete_dialog.dart';
 import 'package:guardix/views/bottom_nav/home/advocate_list_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -133,6 +134,13 @@ class _HomePageState extends State<HomePage> {
                           decoration: BoxDecoration(
                             color: softBlueColor,
                             borderRadius: BorderRadius.circular(15),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.black26,
+                                blurRadius: 6.0,
+                                offset: Offset(4.0, 4.0),
+                              ),
+                            ],
                           ),
                           child: buildBannerDecoration(
                             title: item['title'],
@@ -213,7 +221,7 @@ class _HomePageState extends State<HomePage> {
                     width: double.infinity,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
-                      color: safetyOrangeColor,
+                      color: softBlueColor,
                       boxShadow: const [
                         BoxShadow(
                           color: lightGreyColor,
@@ -264,18 +272,35 @@ class _HomePageState extends State<HomePage> {
                           case ConnectionState.waiting:
                           case ConnectionState.active:
                             if (snapshot.hasData) {
-                              final advocates = snapshot.data as Iterable<CloudAdvocate>;
+                              final advocates =
+                                  snapshot.data as Iterable<CloudAdvocate>;
                               return AdvocateListView(
                                 advocates: advocates,
-                                onTap: (report) {},
-                                onCall: (phoneNumber) => _makePhoneCall(phoneNumber),
-                                onMessage: (phoneNumber) => _sendMessage(phoneNumber),
+                                onLongPress: (advocate) async {
+                                  bool isDeleted = await showDeleteDialog(
+                                    context: context,
+                                    title: 'Delete Advocate',
+                                    description: 'Do you want to delete this advocate?',
+                                  );
+                                  if(isDeleted) {
+                                    _cloudStorage.deleteAdvocate(
+                                      documentId: advocate.documentId);
+                                  }
+                                },
+                                onCall: (phoneNumber) =>
+                                    _makePhoneCall(phoneNumber),
+                                onMessage: (phoneNumber) =>
+                                    _sendMessage(phoneNumber),
                               );
                             } else {
-                              return const Center(child: Text('No advocates found.'));
+                              return const Center(
+                                child: Text('No advocates found.'),
+                              );
                             }
                           default:
-                            return const Center(child: CircularProgressIndicator());
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
                         }
                       },
                     ),

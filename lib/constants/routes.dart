@@ -12,6 +12,7 @@ const aboutUsRoute = '/aboutus/';
 const adminPanelRoute = '/admin-panel/';
 
 const addNewAdvocateRoute = '/admin/add-new-advocate';
+const addNewLegalInfoRoute = '/admin/add-new-legal-info';
 
 const selectCategoryRoute = '/report/select-category/';
 const reportFormRoute = '/report/report-form/';

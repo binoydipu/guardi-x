@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:guardix/service/cloud/model/cloud_advocate.dart';
+import 'package:guardix/service/cloud/model/cloud_legal_info.dart';
 import 'package:guardix/service/cloud/model/cloud_report.dart';
 import 'package:guardix/service/cloud/cloud_storage_constants.dart';
 import 'package:guardix/service/cloud/cloud_storage_exceptions.dart';
@@ -8,11 +9,51 @@ class FirebaseCloudStorage {
   final reports = FirebaseFirestore.instance.collection(reportCollectionName);
   final users = FirebaseFirestore.instance.collection(userCollectionName);
   final advocates = FirebaseFirestore.instance.collection(advocateCollectionName);
+  final legalInfos = FirebaseFirestore.instance.collection(legalInfoCollectionName);
+
+  Stream<Iterable<CloudLegalInfo>> getAllLegalInfos() {
+    return legalInfos.snapshots().map((event) => event.docs
+        .map((doc) => CloudLegalInfo.fromSnapshot(doc)));
+  }
+
+  Future<void> deleteLegalInfo({
+    required String documentId,
+  }) async {
+    try {
+      await legalInfos.doc(documentId).delete();
+    } catch (e) {
+      throw CouldNotDeleteLawException();
+    }
+  }
+
+  void addNewLegalInfo({
+    required String lawTitle,
+    required String lawDescription,
+  }) async {
+    try {
+      await legalInfos.add({
+        lawTitleFieldName: lawTitle,
+        lawDescriptionFieldName: lawDescription,
+      });
+    } catch (e) {
+      throw CouldNotCreateLawException();
+    }
+  }
 
   /// Get all the advocates
   Stream<Iterable<CloudAdvocate>> getAllAdvocates() {
     return advocates.snapshots().map((event) => event.docs
         .map((doc) => CloudAdvocate.fromSnapshot(doc)));
+  }
+
+  Future<void> deleteAdvocate({
+    required String documentId,
+  }) async {
+    try {
+      await advocates.doc(documentId).delete();
+    } catch (e) {
+      throw CouldNotDeleteAdvocateException();
+    }
   }
 
   void addNewAdvocate({

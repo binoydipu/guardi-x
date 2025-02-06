@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:guardix/admin/actions/add_legal_info.dart';
 import 'package:guardix/admin/actions/add_new_advocate.dart';
 import 'package:guardix/admin/view/admin_panel.dart';
 import 'package:guardix/constants/colors.dart';
@@ -65,6 +66,7 @@ class MyApp extends StatelessWidget {
         reportDetailsRoute: (context) => const ReportDetailsView(),
         editReportRoute: (context) => const EditReportView(),
         addNewAdvocateRoute: (context) => const AddNewAdvocate(),
+        addNewLegalInfoRoute: (context) => const AddLegalInfo(),
       },
     );
   }

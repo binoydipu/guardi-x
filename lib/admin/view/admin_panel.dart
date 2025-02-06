@@ -65,6 +65,36 @@ class _AdminPanelState extends State<AdminPanel> {
                 ),
               ],
             ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(addNewLegalInfoRoute);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: midnightBlueColor,
+                      elevation: 2,
+                      shadowColor: midnightBlueColor,
+                      foregroundColor: whiteColor,
+                      textStyle: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 15,
+                      ),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: const Text(
+                      'Add New Legal Info',
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),

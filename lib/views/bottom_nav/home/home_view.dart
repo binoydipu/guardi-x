@@ -11,7 +11,7 @@ import 'package:guardix/views/drawer/notification_view.dart';
 import 'package:guardix/views/drawer/settings_view.dart';
 import 'package:guardix/views/drawer/contacts/contacts_view.dart';
 import 'package:guardix/views/bottom_nav/home_page.dart';
-import 'package:guardix/views/drawer/legal_info_view.dart';
+import 'package:guardix/views/drawer/legal_info/legal_info_view.dart';
 import 'package:guardix/utilities/dialogs/logout_dialog.dart';
 
 class HomeView extends StatefulWidget {

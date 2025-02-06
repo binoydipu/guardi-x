@@ -102,7 +102,7 @@ class _AddNewAdvocateState extends State<AddNewAdvocate> {
             child: Column(
               children: [
                 const Text(
-                  'Personal Information',
+                  'Advocate Information',
                   style: TextStyle(
                     fontSize: 16,
                     color: blackColor,

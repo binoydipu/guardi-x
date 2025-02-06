@@ -7,14 +7,14 @@ typedef AdvocateContactCallback = void Function(String phoneNumber);
 
 class AdvocateListView extends StatelessWidget {
   final Iterable<CloudAdvocate> advocates;
-  final AdvocateCallback onTap;
+  final AdvocateCallback onLongPress;
   final AdvocateContactCallback onCall;
   final AdvocateContactCallback onMessage;
 
   const AdvocateListView({
     super.key,
     required this.advocates,
-    required this.onTap,
+    required this.onLongPress,
     required this.onCall,
     required this.onMessage,
   });
@@ -28,8 +28,8 @@ class AdvocateListView extends StatelessWidget {
         final advocate = advocates.elementAt(index);
 
         return InkWell(
-          onTap: () {
-            onTap(advocate);
+          onLongPress: () {
+            onLongPress(advocate);
           },
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -47,10 +47,10 @@ class AdvocateListView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Center(
+                  Center(
                     child: Image(
                       fit: BoxFit.contain, 
-                      image: AssetImage('assets/images/lawyer.png') as ImageProvider,
+                      image: index % 2 == 0 ? const AssetImage('assets/images/lawyer.png') : const AssetImage('assets/images/lawyer_icon.png') as ImageProvider,
                       height: 90,
                     ),
                   ),
