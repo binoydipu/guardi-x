@@ -5,8 +5,8 @@ import 'package:guardix/service/cloud/cloud_storage_exceptions.dart';
 
 class FirebaseCloudStorage {
   final reports = FirebaseFirestore.instance.collection(reportCollectionName);
-
   final users = FirebaseFirestore.instance.collection(userCollectionName);
+  final advocates = FirebaseFirestore.instance.collection(advocateCollectionName);
 
   void createNewUser({
     required String userId,
@@ -76,12 +76,10 @@ class FirebaseCloudStorage {
     required String documentId,
   }) async {
     try {
-      return await reports.where('documentId', isEqualTo: documentId)
-        .get().then(
-          (value) => CloudReport.fromSnapshot(value.docs.first),
-        );
+      final doc = await reports.doc(documentId).get();
+      return CloudReport.fromDocSnapshot(doc);
     } catch (e) {
-      throw Exception("Failed to load report: $e");
+      throw CouldNotGetReportException();
     }
   }
 

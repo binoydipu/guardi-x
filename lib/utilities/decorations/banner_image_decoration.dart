@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Container buildBannerDecoration({
+Container buildBannerFromImage({
   required String imageUrl,
   double? height,
   double? width,

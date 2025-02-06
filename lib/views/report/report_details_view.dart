@@ -22,27 +22,39 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
   String? get userEmail => AuthService.firebase().currentUser!.email;
 
   late final FirebaseCloudStorage _cloudStorage;
-  late final CloudReport report;
-  bool _isInitialized = false;
+  late CloudReport report;
+
+  bool _isFirstTime = true;
   bool _isNonCrimeReport = false;
 
   @override
   void initState() {
     _cloudStorage = FirebaseCloudStorage();
+    _isFirstTime = true;
     super.initState();
   }
 
   @override
   void didChangeDependencies() {
-    if (!_isInitialized) {
+    if (_isFirstTime) {
       report = ModalRoute.of(context)?.settings.arguments as CloudReport;
-      
       _isNonCrimeReport = report.category == 'Lost Items' ||
           report.category == 'Missing Human' ||
           report.category == 'Missing Pet';
-      _isInitialized = true;
+    } else {
+      _fetchReport();
     }
     super.didChangeDependencies();
+  }
+
+  Future<void> _fetchReport() async {
+    try {
+      final fetchedReport =
+          await _cloudStorage.getReport(documentId: report.documentId);
+      setState(() {
+        report = fetchedReport;
+      });
+    } catch (_) {}
   }
 
   @override
@@ -69,6 +81,7 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
                   ),
                   onSelected: (String value) async {
                     if (value == 'Edit') {
+                      _isFirstTime = false;
                       Navigator.of(context).pushNamed(
                         editReportRoute,
                         arguments: report,

@@ -1,7 +1,7 @@
+// Report
 const reportCollectionName = 'reports';
 
 const ownerEmailFieldName = 'user_email';
-
 const categoryFieldName = 'report_category';
 
 const victimNameFieldName = 'victim_name';
@@ -22,7 +22,16 @@ const reportStatusFieldName = 'report_status';
 
 // Users
 const userCollectionName = 'Users';
+
 const userIdFieldName = 'user_id';
 const userNameFiellName = 'user_name';
 const userEmailFieldName = 'email';
 const userPhoneFieldName = 'phone';
+
+// Advocate
+const advocateCollectionName = 'advocate';
+
+const advocateNameFieldName = 'advocate_name';
+const advocateEmailFieldName = 'advocate_email';
+const advocatePhoneFieldName = 'advocate_phone';
+const advocateAddressFieldName = 'advocate_phone';

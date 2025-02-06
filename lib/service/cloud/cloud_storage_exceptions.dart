@@ -4,6 +4,8 @@ class CloudStorageExceptions implements Exception {
 
 class CouldNotCreateReportException extends CloudStorageExceptions {}
 
+class CouldNotGetReportException extends CloudStorageExceptions {}
+
 class CouldNotGetAllReportsException extends CloudStorageExceptions {}
 
 class CouldNotUpdateReportException extends CloudStorageExceptions {}

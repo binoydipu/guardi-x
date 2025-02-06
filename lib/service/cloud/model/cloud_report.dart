@@ -60,6 +60,23 @@ class CloudReport {
         policeStation = snapshot.data()[policeStationFieldName] as String,
         reportStatus = snapshot.data()[reportStatusFieldName] as String;
 
+  CloudReport.fromDocSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot)
+      : documentId = snapshot.id,
+        category = snapshot.data()?[categoryFieldName] ?? '',
+        ownerEmail = snapshot.data()?[ownerEmailFieldName] as String? ?? '',
+        victimName = snapshot.data()?[victimNameFieldName] as String? ?? '',
+        victimAddress = snapshot.data()?[victimAddressFieldName] as String? ?? '',
+        victimContact = snapshot.data()?[victimContactFieldName] as String? ?? '',
+        witnessName = snapshot.data()?[witnessNameFieldName] as String? ?? '',
+        witnessContact = snapshot.data()?[witnessContactFieldName] as String? ?? '',
+        dateOfCrime = snapshot.data()?[dateOfCrimeFieldName] as String? ?? '',
+        timeOfCrime = snapshot.data()?[timeOfCrimeFieldName] as String? ?? '',
+        locationOfCrime = snapshot.data()?[locationOfCrimeFieldName] as String? ?? '',
+        descriptionOfCrime = snapshot.data()?[descriptionOfCrimeFieldName] as String? ?? '',
+        injuryType = snapshot.data()?[injuryTypeFieldName] as String? ?? '',
+        policeStation = snapshot.data()?[policeStationFieldName] as String? ?? '',
+        reportStatus = snapshot.data()?[reportStatusFieldName] as String? ?? '';
+
   @override
   String toString() {
     return '''
