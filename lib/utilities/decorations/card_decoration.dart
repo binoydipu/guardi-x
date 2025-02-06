@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guardix/constants/colors.dart';
 
 Widget buildCard({
   required BuildContext context,
@@ -29,7 +30,6 @@ Widget buildCard({
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(16.0),
-        // splashColor: softBlueColor,
         highlightColor: Colors.transparent,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -37,14 +37,14 @@ Widget buildCard({
             Icon(
               icon,
               size: 45,
-              color: Colors.white,
+              color: whiteColor,
             ),
             const SizedBox(height: 5),
             Text(
               text,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                color: Colors.white,
+                color: whiteColor,
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
               ),

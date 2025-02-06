@@ -2,8 +2,11 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
+import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
+import 'package:guardix/service/cloud/model/cloud_advocate.dart';
 import 'package:guardix/utilities/decorations/banner_text_decoration.dart';
 import 'package:guardix/utilities/decorations/card_decoration.dart';
+import 'package:guardix/views/bottom_nav/home/advocate_list_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
@@ -14,10 +17,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late final FirebaseCloudStorage _cloudStorage;
+
   final List<Map<String, dynamic>> _banners = [
     {
       'title': "Stay Alert",
-      'text': "Report suspicious activities immediately to keep your community safe.",
+      'text':
+          "Report suspicious activities immediately to keep your community safe.",
       'backgroundColors': [Colors.blue, Colors.black],
       'textColor': whiteColor,
     },
@@ -46,7 +52,6 @@ class _HomePageState extends State<HomePage> {
       'textColor': blackColor,
     },
   ];
-
 
   void _makePhoneCall(String phoneNumber) async {
     final Uri phoneUri = Uri(
@@ -81,6 +86,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   int _currentBannerId = 0;
+
+  @override
+  void initState() {
+    _cloudStorage = FirebaseCloudStorage();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -170,7 +181,8 @@ class _HomePageState extends State<HomePage> {
                           icon: Icons.warning,
                           text: 'Want to report a crime?',
                           onTap: () {
-                            Navigator.of(context).pushNamed(selectCategoryRoute);
+                            Navigator.of(context)
+                                .pushNamed(selectCategoryRoute);
                           },
                         ),
                         const SizedBox(width: 12),
@@ -188,7 +200,8 @@ class _HomePageState extends State<HomePage> {
                           icon: Icons.live_help,
                           text: 'Ongoing Incidents',
                           onTap: () {
-                            Navigator.of(context).pushNamed(ongoingIncidentsRoute);
+                            Navigator.of(context)
+                                .pushNamed(ongoingIncidentsRoute);
                           },
                         ),
                       ],
@@ -242,151 +255,29 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   const SizedBox(height: 15),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            constraints: const BoxConstraints(
-                              minWidth: 150,
-                              maxWidth: 200,
-                            ),
-                            decoration: BoxDecoration(
-                              color: softBlueColor,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Image.asset(
-                                  'assets/images/lawyer_icon.png',
-                                  height: 50,
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        'Mr. Abc Xyz',
-                                        style: TextStyle(
-                                          color: midnightBlueColor,
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      const Text(
-                                        'Crime Lawyer',
-                                        style: TextStyle(
-                                          color: blackColor,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          IconButton(
-                                            onPressed: () =>
-                                                _makePhoneCall('123999'),
-                                            icon: const Icon(
-                                              Icons.call,
-                                              color: midnightBlueColor,
-                                            ),
-                                          ),
-                                          IconButton(
-                                            onPressed: () =>
-                                                _sendMessage('123999'),
-                                            icon: const Icon(
-                                              Icons.message,
-                                              color: midnightBlueColor,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            constraints: const BoxConstraints(
-                              minWidth: 150,
-                              maxWidth: 200,
-                            ),
-                            decoration: BoxDecoration(
-                              color: softBlueColor,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Image.asset(
-                                  'assets/images/lawyer_icon.png',
-                                  height: 50,
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        'Mr. Abc Xyz',
-                                        style: TextStyle(
-                                          color: midnightBlueColor,
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      const Text(
-                                        'Crime Lawyer',
-                                        style: TextStyle(
-                                          color: blackColor,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          IconButton(
-                                            onPressed: () =>
-                                                _makePhoneCall('123888'),
-                                            icon: const Icon(
-                                              Icons.call,
-                                              color: midnightBlueColor,
-                                            ),
-                                          ),
-                                          IconButton(
-                                            onPressed: () =>
-                                                _sendMessage('123888'),
-                                            icon: const Icon(
-                                              Icons.message,
-                                              color: midnightBlueColor,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
+                  SizedBox(
+                    height: 255,
+                    child: StreamBuilder(
+                      stream: _cloudStorage.getAllAdvocates(),
+                      builder: (context, snapshot) {
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.waiting:
+                          case ConnectionState.active:
+                            if (snapshot.hasData) {
+                              final advocates = snapshot.data as Iterable<CloudAdvocate>;
+                              return AdvocateListView(
+                                advocates: advocates,
+                                onTap: (report) {},
+                                onCall: (phoneNumber) => _makePhoneCall(phoneNumber),
+                                onMessage: (phoneNumber) => _sendMessage(phoneNumber),
+                              );
+                            } else {
+                              return const Center(child: Text('No advocates found.'));
+                            }
+                          default:
+                            return const Center(child: CircularProgressIndicator());
+                        }
+                      },
                     ),
                   ),
                 ],

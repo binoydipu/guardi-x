@@ -9,9 +9,13 @@ const reportRoute = '/report/';
 const trackRoute = '/track/';
 const sosRoute = '/sos/';
 const aboutUsRoute = '/aboutus/';
+const adminPanelRoute = '/admin-panel/';
+
+const addNewAdvocateRoute = '/admin/add-new-advocate';
 
 const selectCategoryRoute = '/report/select-category/';
 const reportFormRoute = '/report/report-form/';
 const ongoingIncidentsRoute = '/ongoing-incidents/';
 const reportDetailsRoute = '/report/details/';
 const editReportRoute = '/report/edit/';
+

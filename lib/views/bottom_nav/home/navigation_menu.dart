@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
-import 'package:guardix/views/bottom_nav/home_nav/home_view.dart';
+import 'package:guardix/views/bottom_nav/home/home_view.dart';
 import 'package:guardix/views/bottom_nav/report_view.dart';
 import 'package:guardix/views/bottom_nav/sos_view.dart';
 import 'package:guardix/views/bottom_nav/track_view.dart';

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
+import 'package:guardix/service/auth/auth_constants.dart';
 import 'package:guardix/service/auth/auth_service.dart';
 import 'package:guardix/enums/drawer_action.dart';
 import 'package:guardix/views/drawer/app_language_view.dart';
@@ -22,6 +23,7 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   DrawerAction currentPage = DrawerAction.home;
+  String? get userEmail => AuthService.firebase().currentUser!.email;
 
   @override
   Widget build(BuildContext context) {
@@ -71,23 +73,22 @@ class _HomeViewState extends State<HomeView> {
             children: [
               drawerList(),
               const Divider(color: softBlueColor),
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: TextButton(
+              userEmail == adminEmail
+                ? TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
-                    Navigator.of(context).pushNamed(aboutUsRoute);
+                    Navigator.of(context).pushNamed(adminPanelRoute);
                   },
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        Icons.info_outlined,
+                        Icons.admin_panel_settings,
                         color: midnightBlueColor,
                       ),
                       SizedBox(width: 5),
                       Text(
-                        'About us',
+                        'Admin Panel',
                         style: TextStyle(
                           color: midnightBlueColor,
                           fontSize: 16,
@@ -96,6 +97,29 @@ class _HomeViewState extends State<HomeView> {
                       ),
                     ],
                   ),
+                ) : const SizedBox(),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pushNamed(aboutUsRoute);
+                },
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.info_outlined,
+                      color: midnightBlueColor,
+                    ),
+                    SizedBox(width: 5),
+                    Text(
+                      'About us',
+                      style: TextStyle(
+                        color: midnightBlueColor,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

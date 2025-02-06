@@ -32,6 +32,7 @@ const userPhoneFieldName = 'phone';
 const advocateCollectionName = 'advocate';
 
 const advocateNameFieldName = 'advocate_name';
+const advocateTypeFieldName = 'advocate_type';
 const advocateEmailFieldName = 'advocate_email';
 const advocatePhoneFieldName = 'advocate_phone';
-const advocateAddressFieldName = 'advocate_phone';
+const advocateAddressFieldName = 'advocate_address';

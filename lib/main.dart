@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:guardix/admin/actions/add_new_advocate.dart';
+import 'package:guardix/admin/view/admin_panel.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
 import 'package:guardix/service/auth/auth_constants.dart';
@@ -11,9 +13,9 @@ import 'package:guardix/views/report/report_details_view.dart';
 import 'package:guardix/views/report/report_form_view.dart';
 import 'package:guardix/views/verify_email_view.dart';
 import 'package:guardix/service/auth/auth_service.dart';
-import 'package:guardix/views/bottom_nav/home_nav/navigation_menu.dart';
+import 'package:guardix/views/bottom_nav/home/navigation_menu.dart';
 import 'package:guardix/views/about_us_view.dart';
-import 'package:guardix/views/bottom_nav/home_nav/home_view.dart';
+import 'package:guardix/views/bottom_nav/home/home_view.dart';
 import 'package:guardix/views/login_view.dart';
 import 'package:guardix/views/register_view.dart';
 import 'package:guardix/views/bottom_nav/report_view.dart';
@@ -56,11 +58,13 @@ class MyApp extends StatelessWidget {
         trackRoute: (context) => const TrackView(),
         sosRoute: (context) => const SosView(),
         aboutUsRoute: (context) => const AboutUsView(),
+        adminPanelRoute: (context) => const AdminPanel(),
         selectCategoryRoute: (context) => const CategorySelectionView(),
         reportFormRoute: (context) => const ReportFormView(),
         ongoingIncidentsRoute: (context) => const OngoingIncidentsView(),
         reportDetailsRoute: (context) => const ReportDetailsView(),
         editReportRoute: (context) => const EditReportView(),
+        addNewAdvocateRoute: (context) => const AddNewAdvocate(),
       },
     );
   }

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:guardix/service/cloud/model/cloud_advocate.dart';
 import 'package:guardix/service/cloud/model/cloud_report.dart';
 import 'package:guardix/service/cloud/cloud_storage_constants.dart';
 import 'package:guardix/service/cloud/cloud_storage_exceptions.dart';
@@ -7,6 +8,32 @@ class FirebaseCloudStorage {
   final reports = FirebaseFirestore.instance.collection(reportCollectionName);
   final users = FirebaseFirestore.instance.collection(userCollectionName);
   final advocates = FirebaseFirestore.instance.collection(advocateCollectionName);
+
+  /// Get all the advocates
+  Stream<Iterable<CloudAdvocate>> getAllAdvocates() {
+    return advocates.snapshots().map((event) => event.docs
+        .map((doc) => CloudAdvocate.fromSnapshot(doc)));
+  }
+
+  void addNewAdvocate({
+    required String advocateName,
+    required String advocateType,
+    required String advocateEmail,
+    required String advocatePhone,
+    required String advocateAddress,
+  }) async {
+    try {
+      await advocates.add({
+        advocateNameFieldName: advocateName,
+        advocateTypeFieldName: advocateType,
+        advocateEmailFieldName: advocateEmail,
+        advocatePhoneFieldName: advocatePhone,
+        advocateAddressFieldName: advocateAddress,
+      });
+    } catch (e) {
+      throw CouldNotCreateAdvocateException();
+    }
+  }
 
   void createNewUser({
     required String userId,

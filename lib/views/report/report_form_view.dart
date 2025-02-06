@@ -457,7 +457,7 @@ class _ReportFormViewState extends State<ReportFormView> {
                           SnackBar(
                             content: const Text('Fill all required fields'),
                             action: SnackBarAction(
-                              label: 'Undo',
+                              label: 'Ok',
                               onPressed: () {},
                             ),
                           ),

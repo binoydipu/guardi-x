@@ -8,15 +8,23 @@ class AboutUsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: midnightBlueColor,
-        foregroundColor: whiteColor,
+        leading: Navigator.canPop(context)
+            ? IconButton(
+                icon: const Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  color: whiteColor,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            : null,
         title: const Text(
           'About Us',
-          style: TextStyle(
-            color: whiteColor,
-            fontWeight: FontWeight.w500,
-          ),
+          style: TextStyle(color: whiteColor),
         ),
+        centerTitle: true,
+        backgroundColor: midnightBlueColor,
       ),
       body: const SingleChildScrollView(
         child: Padding(
