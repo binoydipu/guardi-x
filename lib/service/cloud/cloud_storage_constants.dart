@@ -19,6 +19,10 @@ const injuryTypeFieldName = 'injury_type';
 const policeStationFieldName = 'police_station';
 
 const reportStatusFieldName = 'report_status';
+const flagsFieldName = 'flags';
+const upvotesFieldName = 'upvotes';
+const downvotesFieldName = 'downvotes';
+const userActionsFieldName = 'user-actions';
 
 // Users
 const userCollectionName = 'Users';

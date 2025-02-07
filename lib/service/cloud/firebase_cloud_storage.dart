@@ -4,16 +4,19 @@ import 'package:guardix/service/cloud/model/cloud_legal_info.dart';
 import 'package:guardix/service/cloud/model/cloud_report.dart';
 import 'package:guardix/service/cloud/cloud_storage_constants.dart';
 import 'package:guardix/service/cloud/cloud_storage_exceptions.dart';
+import 'package:guardix/utilities/helpers/merge_date_and_time.dart';
 
 class FirebaseCloudStorage {
   final reports = FirebaseFirestore.instance.collection(reportCollectionName);
   final users = FirebaseFirestore.instance.collection(userCollectionName);
-  final advocates = FirebaseFirestore.instance.collection(advocateCollectionName);
-  final legalInfos = FirebaseFirestore.instance.collection(legalInfoCollectionName);
+  final advocates =
+      FirebaseFirestore.instance.collection(advocateCollectionName);
+  final legalInfos =
+      FirebaseFirestore.instance.collection(legalInfoCollectionName);
 
   Stream<Iterable<CloudLegalInfo>> getAllLegalInfos() {
-    return legalInfos.snapshots().map((event) => event.docs
-        .map((doc) => CloudLegalInfo.fromSnapshot(doc)));
+    return legalInfos.snapshots().map(
+        (event) => event.docs.map((doc) => CloudLegalInfo.fromSnapshot(doc)));
   }
 
   Future<void> deleteLegalInfo({
@@ -42,8 +45,8 @@ class FirebaseCloudStorage {
 
   /// Get all the advocates
   Stream<Iterable<CloudAdvocate>> getAllAdvocates() {
-    return advocates.snapshots().map((event) => event.docs
-        .map((doc) => CloudAdvocate.fromSnapshot(doc)));
+    return advocates.snapshots().map(
+        (event) => event.docs.map((doc) => CloudAdvocate.fromSnapshot(doc)));
   }
 
   Future<void> deleteAdvocate({
@@ -104,6 +107,22 @@ class FirebaseCloudStorage {
     }
   }
 
+  /// update upvote, downvote and flags
+  Future<void> updateReportUserAction({
+    required String documentId,
+    required int flags,
+    required int upvotes,
+    required int downvotes,
+    required Map<String, List<String>> userActions,
+  }) async {
+    await reports.doc(documentId).update({
+      flagsFieldName: flags,
+      upvotesFieldName: upvotes,
+      downvotesFieldName: downvotes,
+      userActionsFieldName: userActions,
+    });
+  }
+
   /// update a report status
   Future<void> updateReport({
     required String documentId,
@@ -119,6 +138,10 @@ class FirebaseCloudStorage {
     required String injuryType,
     required String policeStation,
     required String reportStatus,
+    required int flags,
+    required int upvotes,
+    required int downvotes,
+    required Map<String, List<String>> userActions,
   }) async {
     try {
       await reports.doc(documentId).update({
@@ -134,6 +157,10 @@ class FirebaseCloudStorage {
         injuryTypeFieldName: injuryType,
         policeStationFieldName: policeStation,
         reportStatusFieldName: reportStatus,
+        flagsFieldName: flags,
+        upvotesFieldName: upvotes,
+        downvotesFieldName: downvotes,
+        userActionsFieldName: userActions,
       });
     } catch (e) {
       throw CouldNotUpdateReportException();
@@ -151,14 +178,69 @@ class FirebaseCloudStorage {
     }
   }
 
+  Stream<CloudReport> getReportStream({
+    required String documentId,
+  }) {
+    try {
+      return reports.doc(documentId).snapshots().map((doc) {
+        return CloudReport.fromDocSnapshot(doc);
+      });
+    } catch (e) {
+      throw CouldNotGetReportException();
+    }
+  }
+
   /// Get all the reports of that category live as they are occuring in reports collection
+  // Stream<Iterable<CloudReport>> allCategoryReports({
+  //   String? category,
+  //   bool? flag,
+  // }) {
+  //   return reports.snapshots().map(
+  //         (event) =>
+  //             event.docs.map((doc) => CloudReport.fromSnapshot(doc)).where(
+  //                   (report) =>
+  //                       (category == null ||
+  //                           category == '' ||
+  //                           report.category == category) &&
+  //                       (flag == null || !flag || (flag && report.flags > 0)),
+  //                 ),
+  //       );
+  // }
+
   Stream<Iterable<CloudReport>> allCategoryReports({
     String? category,
+    bool? flag,
+    bool? sortByUpvote,
+    bool? sortByLatest,
   }) {
-    return reports.snapshots().map((event) => event.docs
-        .map((doc) => CloudReport.fromSnapshot(doc))
-        .where((report) =>
-            category == null || category == '' || report.category == category));
+    return reports.snapshots().map(
+      (event) {
+      final reportsList = event.docs
+          .map((doc) => CloudReport.fromSnapshot(doc))
+          .where(
+            (report) =>
+                (category == null ||
+                    category == '' ||
+                    report.category == category) &&
+                (flag == null || !flag || (flag && report.flags > 0)),
+          )
+          .toList(); 
+
+        if (sortByUpvote == true) {
+          reportsList.sort((a, b) => b.upvotes.compareTo(a.upvotes));
+        }
+
+        if (sortByLatest == true) {
+          reportsList.sort((a, b) {
+            final dateTimeA = mergeDateTime(a.dateOfCrime, a.timeOfCrime);
+            final dateTimeB = mergeDateTime(b.dateOfCrime, b.timeOfCrime);
+
+            return dateTimeB.compareTo(dateTimeA);
+          });
+        }
+        return reportsList;
+      },
+    );
   }
 
   /// Get all the reports of current user
@@ -209,6 +291,9 @@ class FirebaseCloudStorage {
     required String injuryType,
     required String policeStation,
     required String reportStatus,
+    required int flags,
+    required int upvotes,
+    required int downvotes,
   }) async {
     try {
       await reports.add({
@@ -226,6 +311,9 @@ class FirebaseCloudStorage {
         injuryTypeFieldName: injuryType,
         policeStationFieldName: policeStation,
         reportStatusFieldName: reportStatus,
+        flagsFieldName: flags,
+        upvotesFieldName: upvotes,
+        downvotesFieldName: downvotes,
       });
     } catch (e) {
       throw CouldNotCreateReportException();

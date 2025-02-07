@@ -427,7 +427,12 @@ class _EditReportViewState extends State<EditReportView> {
                                   descriptionOfCrime: descriptionOfCrime,
                                   injuryType: injuryType,
                                   policeStation: policeStation!,
-                                  reportStatus: reportStatus!);
+                                  reportStatus: reportStatus!,
+                                  flags: report.flags,
+                                  upvotes: report.upvotes,
+                                  downvotes: report.downvotes,
+                                  userActions: report.userActions,
+                                );
                               bool reportUpdated =
                                   await showReportCreatedDialog(
                                 context,

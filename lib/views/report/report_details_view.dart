@@ -3,11 +3,13 @@ import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
 import 'package:guardix/service/auth/auth_constants.dart';
 import 'package:guardix/service/auth/auth_service.dart';
+import 'package:guardix/service/cloud/cloud_storage_constants.dart';
 import 'package:guardix/service/cloud/model/cloud_report.dart';
 import 'package:guardix/service/cloud/cloud_storage_exceptions.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/utilities/dialogs/delete_dialog.dart';
 import 'package:guardix/utilities/dialogs/error_dialog.dart';
+import 'package:guardix/utilities/dialogs/loading_dialog.dart';
 import 'package:guardix/utilities/dialogs/report_created_dialog.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -20,12 +22,81 @@ class ReportDetailsView extends StatefulWidget {
 
 class _ReportDetailsViewState extends State<ReportDetailsView> {
   String? get userEmail => AuthService.firebase().currentUser!.email;
+  String? get userId => AuthService.firebase().currentUser!.id;
 
   late final FirebaseCloudStorage _cloudStorage;
   late CloudReport report;
+  late String reportId;
 
   bool _isFirstTime = true;
   bool _isNonCrimeReport = false;
+
+  void _updateReportUserAction({
+    required CloudReport report,
+    required String fieldName,
+    required String userId,
+  }) async {
+    final userActions = report.userActions;
+    int flags = report.flags;
+    int upvotes = report.upvotes;
+    int downvotes = report.downvotes;
+    if (userActions.containsKey(userId)) {
+      if (fieldName == flagsFieldName) {
+        if (!userActions[userId]!.contains(flagsFieldName)) {
+          report.userActions[userId]!.add(flagsFieldName);
+          flags++;
+        } else {
+          report.userActions[userId]!.remove(flagsFieldName);
+          flags--;
+        }
+      } else if (fieldName == upvotesFieldName) {
+        if (!userActions[userId]!.contains(upvotesFieldName)) {
+          report.userActions[userId]!.add(upvotesFieldName);
+          upvotes++;
+          if (userActions[userId]!.contains(downvotesFieldName)) {
+            report.userActions[userId]!.remove(downvotesFieldName);
+            downvotes--;
+          }
+        } else {
+          report.userActions[userId]!.remove(upvotesFieldName);
+          upvotes--;
+        }
+      } else if (fieldName == downvotesFieldName) {
+        if (!userActions[userId]!.contains(downvotesFieldName)) {
+          report.userActions[userId]!.add(downvotesFieldName);
+          downvotes++;
+          if (userActions[userId]!.contains(upvotesFieldName)) {
+            report.userActions[userId]!.remove(upvotesFieldName);
+            upvotes--;
+          }
+        } else {
+          report.userActions[userId]!.remove(downvotesFieldName);
+          downvotes--;
+        }
+      }
+    } else {
+      report.userActions[userId] = [fieldName];
+      if (fieldName == flagsFieldName) {
+        flags++;
+      } else if (fieldName == upvotesFieldName) {
+        upvotes++;
+      } else if (fieldName == downvotesFieldName) {
+        downvotes++;
+      }
+    }
+    final loadingDialog = showLoadingDialog(
+      context: context,
+      text: 'Updating Info...',
+    );
+    await _cloudStorage.updateReportUserAction(
+      documentId: report.documentId,
+      userActions: userActions,
+      flags: flags,
+      upvotes: upvotes,
+      downvotes: downvotes,
+    );
+    loadingDialog();
+  }
 
   @override
   void initState() {
@@ -38,23 +109,13 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
   void didChangeDependencies() {
     if (_isFirstTime) {
       report = ModalRoute.of(context)?.settings.arguments as CloudReport;
-      _isNonCrimeReport = report.category == 'Lost Items' ||
-          report.category == 'Missing Human' ||
-          report.category == 'Missing Pet';
-    } else {
-      _fetchReport();
+      reportId = report.documentId;
     }
     super.didChangeDependencies();
   }
 
-  Future<void> _fetchReport() async {
-    try {
-      final fetchedReport =
-          await _cloudStorage.getReport(documentId: report.documentId);
-      setState(() {
-        report = fetchedReport;
-      });
-    } catch (_) {}
+  Stream<CloudReport> _fetchReportStream() {
+    return _cloudStorage.getReportStream(documentId: reportId);
   }
 
   @override
@@ -173,209 +234,294 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
         centerTitle: true,
         backgroundColor: midnightBlueColor,
       ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Category: ${report.category}',
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: blackColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'Posted By: ${report.ownerEmail}',
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: blackColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                'Victim Name: ${report.victimName}',
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: blackColor,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                'Victim Address: ${report.victimAddress}',
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: blackColor,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                'Victim Contact: ${report.victimContact}',
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: blackColor,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'Witness Name: ${report.witnessName}',
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: blackColor,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                'Witness Contact: ${report.witnessContact}',
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: blackColor,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'Date of ${_isNonCrimeReport ? 'Incident' : 'Crime'}: ${report.dateOfCrime}',
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: blackColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                'TIme of ${_isNonCrimeReport ? 'Incident' : 'Crime'}: ${report.timeOfCrime}',
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: blackColor,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                'Location of ${_isNonCrimeReport ? 'Incident' : 'Crime'}: ${report.locationOfCrime}',
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: blackColor,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                'Injury Type: ${report.injuryType}',
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: blackColor,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'Reported Police Station: ${report.policeStation}',
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: blackColor,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                'Report Status: ${report.reportStatus}',
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: crimsonRedColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                '${_isNonCrimeReport ? 'Incident' : 'Crime'} Description:',
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: blackColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                report.descriptionOfCrime,
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: blackColor,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: StreamBuilder<CloudReport>(
+        stream: _fetchReportStream(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+          final report = snapshot.data;
+
+          if (report == null) {
+            return const Center(child: Text('Report not found.'));
+          }
+
+          _isNonCrimeReport = report.category == 'Lost Items' ||
+              report.category == 'Missing Human' ||
+              report.category == 'Missing Pet';
+
+          return SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Column(
+                  Text(
+                    'Category: ${report.category}',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: blackColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    'Posted By: ${report.ownerEmail}',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: blackColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Victim Name: ${report.victimName}',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: blackColor,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Victim Address: ${report.victimAddress}',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: blackColor,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Victim Contact: ${report.victimContact}',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: blackColor,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    'Witness Name: ${report.witnessName}',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: blackColor,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Witness Contact: ${report.witnessContact}',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: blackColor,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    'Date of ${_isNonCrimeReport ? 'Incident' : 'Crime'}: ${report.dateOfCrime}',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: blackColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'TIme of ${_isNonCrimeReport ? 'Incident' : 'Crime'}: ${report.timeOfCrime}',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: blackColor,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Location of ${_isNonCrimeReport ? 'Incident' : 'Crime'}: ${report.locationOfCrime}',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: blackColor,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Injury Type: ${report.injuryType}',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: blackColor,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    'Reported Police Station: ${report.policeStation}',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: blackColor,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Report Status: ${report.reportStatus}',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: crimsonRedColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    '${_isNonCrimeReport ? 'Incident' : 'Crime'} Description:',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: blackColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    report.descriptionOfCrime,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: blackColor,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.arrow_upward,
-                          color: midnightBlueColor,
+                      buildButtonCard(
+                        context: context,
+                        icon: Icons.arrow_upward,
+                        text: 'Upvote',
+                        onTap: () => _updateReportUserAction(
+                          fieldName: upvotesFieldName,
+                          report: report,
+                          userId: userId!,
                         ),
+                        value: report.upvotes,
                       ),
-                      const Text('Upvote'),
+                      const SizedBox(width: 10),
+                      buildButtonCard(
+                        context: context,
+                        icon: Icons.arrow_downward,
+                        text: 'Downvote',
+                        onTap: () => _updateReportUserAction(
+                          fieldName: downvotesFieldName,
+                          report: report,
+                          userId: userId!,
+                        ),
+                        value: report.downvotes,
+                      ),
                     ],
                   ),
-                  Column(
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.arrow_downward,
-                          color: midnightBlueColor,
-                        ),
+                      buildButtonCard(
+                        context: context,
+                        icon: Icons.comment,
+                        text: 'Comment',
+                        onTap: () {},
                       ),
-                      const Text('Downvote'),
+                      const SizedBox(width: 10),
+                      buildButtonCard(
+                        context: context,
+                        icon: Icons.flag,
+                        text: 'Flag',
+                        onTap: () => _updateReportUserAction(
+                          fieldName: flagsFieldName,
+                          report: report,
+                          userId: userId!,
+                        ),
+                        value: report.flags,
+                      ),
                     ],
                   ),
-                  Column(
-                    children: [
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.comment,
-                          color: midnightBlueColor,
-                        ),
-                      ),
-                      const Text('Comment'),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          Share.share(report.toString());
-                        },
-                        icon: const Icon(
-                          Icons.share,
-                          color: midnightBlueColor,
-                        ),
-                      ),
-                      const Text('Share'),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.flag,
-                          color: midnightBlueColor,
-                        ),
-                      ),
-                      const Text('Flag'),
-                    ],
-                  ),
+                  const SizedBox(width: 20),
                 ],
               ),
-              const SizedBox(height: 20),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
+  }
+}
+
+Widget buildButtonCard({
+  required BuildContext context,
+  required IconData icon,
+  required String text,
+  int? value,
+  required VoidCallback onTap,
+}) {
+  return Container(
+    constraints: const BoxConstraints(
+      minWidth: 140,
+    ),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(16.0),
+      gradient: const LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Colors.blue, Colors.black],
+      ),
+      boxShadow: const [
+        BoxShadow(
+          color: Colors.black26,
+          blurRadius: 2.0,
+          offset: Offset(2.0, 2.0),
+        ),
+      ],
+    ),
+    child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16.0),
+        highlightColor: Colors.transparent,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Icon(
+              icon,
+              color: whiteColor,
+            ),
+            const SizedBox(width: 5),
+            Text(
+              text,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: whiteColor,
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(width: 5),
+            if (value != null)
+              Text(
+                _formatNumber(value),
+                textAlign: TextAlign.left,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: whiteColor,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+String _formatNumber(int number) {
+  if (number >= 1000000000) {
+    return '${(number / 1000000000).toStringAsFixed(1)}B';
+  } else if (number >= 1000000) {
+    return '${(number / 1000000).toStringAsFixed(1)}M';
+  } else if (number >= 1000) {
+    return '${(number / 1000).toStringAsFixed(1)}K';
+  } else {
+    return number.toString();
   }
 }

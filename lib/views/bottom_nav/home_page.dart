@@ -8,6 +8,7 @@ import 'package:guardix/utilities/decorations/banner_text_decoration.dart';
 import 'package:guardix/utilities/decorations/card_decoration.dart';
 import 'package:guardix/utilities/dialogs/delete_dialog.dart';
 import 'package:guardix/views/bottom_nav/home/advocate_list_view.dart';
+import 'package:guardix/views/bottom_nav/home/important_locations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
@@ -215,44 +216,19 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  Container(
-                    height: 350,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      color: softBlueColor,
-                      boxShadow: const [
-                        BoxShadow(
-                          color: lightGreyColor,
-                          blurRadius: 3.0,
-                          offset: Offset(2.0, 2.0),
-                        ),
-                      ],
-                    ),
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Icon(
-                            Icons.map_outlined,
-                            size: 80,
-                          ),
-                          Text(
-                            'Google Map Here',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: blackColor,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
+                  const SizedBox(height: 25),
+                  const Text(
+                    'Nearby Important Locations',
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      color: blackColor,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 15),
+                  buildLocations(context: context),
+                  const SizedBox(height: 25),
                   const Text(
                     'Find Expert Advocates for Your Legal Needs',
                     textAlign: TextAlign.left,

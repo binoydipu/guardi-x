@@ -428,6 +428,9 @@ class _ReportFormViewState extends State<ReportFormView> {
                                 injuryType: injuryType,
                                 policeStation: _selectedPoliceStation!,
                                 reportStatus: 'Pending',
+                                flags: 0,
+                                upvotes: 0,
+                                downvotes: 0,
                               );
                               bool reportCreated =
                                   await showReportCreatedDialog(

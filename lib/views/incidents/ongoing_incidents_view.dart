@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
+import 'package:guardix/service/auth/auth_constants.dart';
 import 'package:guardix/service/auth/auth_service.dart';
 import 'package:guardix/service/cloud/model/cloud_report.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
@@ -20,6 +21,9 @@ class _OngoingIncidentsViewState extends State<OngoingIncidentsView> {
   String get userEmail => AuthService.firebase().currentUser!.email;
 
   String? _selectedCategory;
+  bool onlyFlagged = false;
+  bool sortByUpvote = false;
+  bool sortByLatest = false;
 
   @override
   void initState() {
@@ -88,7 +92,57 @@ class _OngoingIncidentsViewState extends State<OngoingIncidentsView> {
               decoration: buildInputDecoration(label: 'Select Category'),
             ),
           ),
-          const SizedBox(height: 20),
+          if(userEmail == adminEmail)
+            Row(
+              children: [
+                Checkbox(
+                  value: onlyFlagged,
+                  onChanged: (value) {
+                    setState(() {
+                      onlyFlagged = value!;
+                    });
+                  },
+                ),
+                const Text(
+                  'Select Flagged Reports',
+                  style: TextStyle(fontSize: 14),
+                ),
+              ],
+            ),
+          Row(
+            children: [
+              const SizedBox(width: 16),
+              const Text(
+                'Sort: ',
+                style: TextStyle(fontSize: 14),
+              ),
+              Checkbox(
+                value: sortByUpvote,
+                onChanged: (value) {
+                  setState(() {
+                    sortByUpvote = value!;
+                  });
+                },
+              ),
+              const Text(
+                'Upvote',
+                style: TextStyle(fontSize: 14),
+              ),
+              Checkbox(
+                value: sortByLatest,
+                onChanged: (value) {
+                  setState(() {
+                    sortByLatest = value!;
+                  });
+                },
+              ),
+              const Text(
+                'Latest',
+                style: TextStyle(fontSize: 14),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
           const Padding(
             padding: EdgeInsets.only(left: 16.0, right: 16.0),
             child: Text(
@@ -104,6 +158,9 @@ class _OngoingIncidentsViewState extends State<OngoingIncidentsView> {
             child: StreamBuilder(
               stream: _cloudStorage.allCategoryReports(
                 category: _selectedCategory,
+                flag: onlyFlagged,
+                sortByUpvote: sortByUpvote,
+                sortByLatest: sortByLatest,
               ),
               builder: (context, snapshot) {
                 switch (snapshot.connectionState) {
