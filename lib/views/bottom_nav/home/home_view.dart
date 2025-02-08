@@ -4,6 +4,8 @@ import 'package:guardix/constants/routes.dart';
 import 'package:guardix/service/auth/auth_constants.dart';
 import 'package:guardix/service/auth/auth_service.dart';
 import 'package:guardix/enums/drawer_action.dart';
+import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
+import 'package:guardix/service/cloud/model/cloud_user.dart';
 import 'package:guardix/views/drawer/app_language_view.dart';
 import 'package:guardix/views/drawer/emergency_view.dart';
 import 'package:guardix/views/drawer/location_view.dart';
@@ -24,6 +26,24 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   DrawerAction currentPage = DrawerAction.home;
   String? get userEmail => AuthService.firebase().currentUser!.email;
+  String? get userId => AuthService.firebase().currentUser!.id;
+  late FirebaseCloudStorage _cloudStorage;
+  late CloudUser cloudUser;
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    _cloudStorage = FirebaseCloudStorage();
+    _getUser();
+    super.initState();
+  }
+
+  void _getUser() async {
+    try {
+      cloudUser = await _cloudStorage.getUser(userId: userId!);
+    } catch (_) {}
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,12 +68,14 @@ class _HomeViewState extends State<HomeView> {
     }
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: midnightBlueColor,
         foregroundColor: whiteColor,
         actions: [
           IconButton(
             onPressed: () {
+              _getUser();
               _showProfileDrawer(context);
             },
             icon: const Icon(Icons.person),
@@ -142,26 +164,25 @@ class _HomeViewState extends State<HomeView> {
             children: [
               const CircleAvatar(
                 radius: 50,
-                backgroundImage:
-                    AssetImage('assets/images/profile_pic.png') as ImageProvider,
+                backgroundImage: AssetImage('assets/images/profile_pic.png')
+                    as ImageProvider,
               ),
               const SizedBox(height: 10),
-              const Text(
-                'John Doe',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              Text(
+                cloudUser.userName,
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 5),
               Text(
-                userEmail!,
+                cloudUser.email,
                 style: const TextStyle(fontSize: 16, color: Colors.grey),
               ),
               const SizedBox(height: 20),
               ListTile(
                 leading: const Icon(Icons.phone, color: Colors.deepPurple),
-                title: const Text('01477885522'),
-                onTap: () {
-                  Navigator.pop(context);
-                },
+                title: Text(cloudUser.phone),
+                onTap: () {},
               ),
               ListTile(
                 leading: const Icon(Icons.edit, color: Colors.blue),
@@ -191,7 +212,7 @@ class _HomeViewState extends State<HomeView> {
                 title: const Text('Logout'),
                 onTap: () {
                   Navigator.pop(context); // Close the drawer
-                  _handleLogout(context);
+                  _handleLogout();
                 },
               ),
             ],
@@ -318,16 +339,16 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  void _handleLogout(BuildContext context) async {
-    bool isLoggedout = await showLogOutDialog(context);
+  void _handleLogout() async {
+    bool isLoggedout = await showLogOutDialog(_scaffoldKey.currentContext!);
     if (isLoggedout) {
       await AuthService.firebase().logOut();
-      if (context.mounted) {
-        Navigator.of(context).pushNamedAndRemoveUntil(
+      if (_scaffoldKey.currentContext != null && _scaffoldKey.currentContext!.mounted) {
+        Navigator.of(_scaffoldKey.currentContext!).pushNamedAndRemoveUntil(
           welcomeRoute,
           (route) => false,
         );
       }
-    }
+    } 
   }
 }

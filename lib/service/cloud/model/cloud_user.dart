@@ -17,8 +17,14 @@ class CloudUser {
   });
 
   CloudUser.fromSnapshot(QueryDocumentSnapshot<Map<String, dynamic>> snapshot)
-      : userId = snapshot.data()[userIdFieldName] as String,
-        userName = snapshot.data()[userNameFiellName] as String,
+      : userId = snapshot.id,
+        userName = snapshot.data()[userNameFieldName] as String,
         email = snapshot.data()[userEmailFieldName] as String,
         phone = snapshot.data()[userPhoneFieldName] as String;
+
+  CloudUser.fromDocSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot)
+      : userId = snapshot.id,
+        userName = snapshot.data()?[userNameFieldName] ?? '',
+        email = snapshot.data()?[userEmailFieldName] as String? ?? '',
+        phone = snapshot.data()?[userPhoneFieldName] as String? ?? '';
 }

@@ -5,6 +5,7 @@ import 'package:guardix/constants/colors.dart';
 import 'package:guardix/service/auth/auth_service.dart';
 import 'package:guardix/service/auth/auth_user.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
+import 'package:guardix/service/cloud/model/cloud_user.dart';
 import 'package:guardix/utilities/decorations/input_decoration_template.dart';
 import 'package:guardix/utilities/dialogs/confirmation_dialog.dart';
 import 'package:guardix/utilities/validation_utils.dart';
@@ -26,9 +27,11 @@ class _EditProfileViewState extends State<EditProfileView> {
 
   late final FirebaseCloudStorage _cloudStorage;
 
-  bool _isInitialized = false;
+  String? get userId => AuthService.firebase().currentUser!.id;
+
   late final ImagePicker _imagePicker;
   XFile? _selectedImage;
+  late CloudUser cloudUser;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -75,12 +78,22 @@ class _EditProfileViewState extends State<EditProfileView> {
     _phone = TextEditingController();
     _password = TextEditingController();
     _imagePicker = ImagePicker();
+    _getUser();
     super.initState();
+  }
+
+  void _getUser() async {
+    cloudUser = await _cloudStorage.getUser(userId: userId!);
+    _name.text = cloudUser.userName;
+    _email.text = cloudUser.email;
+    _phone.text = cloudUser.phone;
   }
 
   @override
   void didChangeDependencies() {
-    if (!_isInitialized) {}
+    setState(() {
+      _getUser();
+    });
     super.didChangeDependencies();
   }
 
@@ -197,6 +210,8 @@ class _EditProfileViewState extends State<EditProfileView> {
                   child: ElevatedButton(
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
+                        // TODO: Re-authenticate User
+                        // TODO: Update Profile
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(

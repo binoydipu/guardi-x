@@ -36,6 +36,17 @@ class _SosViewState extends State<SosView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: Navigator.canPop(context)
+            ? IconButton(
+                icon: const Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  color: whiteColor,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            : null,
         title: const Text(
           'SOS Emergency',
           style: TextStyle(color: whiteColor),
@@ -44,11 +55,10 @@ class _SosViewState extends State<SosView> {
         backgroundColor: midnightBlueColor,
       ),
       body: ListView.builder(
-          padding: const EdgeInsets.only(top: 25.0, left: 25.0, right: 25.0),
           itemCount: 6,
           itemBuilder: (BuildContext context, int index) {
             return Padding(
-              padding: const EdgeInsets.fromLTRB(25, 0, 25, 25),
+              padding: const EdgeInsets.fromLTRB(16, 5, 16, 16),
               child: ElevatedButton(
                 onPressed: () => _makePhoneCall(numbers[index]),
                 style: ElevatedButton.styleFrom(
@@ -57,14 +67,14 @@ class _SosViewState extends State<SosView> {
                   shadowColor: midnightBlueColor,
                   foregroundColor: whiteColor,
                   textStyle: const TextStyle(
-                    fontSize: 22,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                   padding: const EdgeInsets.symmetric(
-                    vertical: 15,
-                    horizontal: 15,
+                    vertical: 12,
+                    horizontal: 12,
                   ),
-                  minimumSize: const Size.fromHeight(100),
+                  minimumSize: const Size.fromHeight(70),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20)),
                 ),

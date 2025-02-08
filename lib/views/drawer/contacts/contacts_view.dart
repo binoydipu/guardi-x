@@ -33,7 +33,7 @@ class _ContactsViewState extends State<ContactsView> {
             size: 35.0,
           ), // Add icon
           label: const Text(
-            "Add New Contact",
+            "Add Trusted Contacts",
             style: TextStyle(
               color: midnightBlueColor,
               fontWeight: FontWeight.bold,
