@@ -9,6 +9,7 @@ import 'package:guardix/service/auth/auth_constants.dart';
 import 'package:guardix/views/incidents/ongoing_incidents_view.dart';
 
 import 'package:guardix/views/report/category_selection_view.dart';
+import 'package:guardix/views/report/comments/comments_view.dart';
 import 'package:guardix/views/report/edit_report_view.dart';
 import 'package:guardix/views/report/report_details_view.dart';
 import 'package:guardix/views/report/report_form_view.dart';
@@ -67,6 +68,7 @@ class MyApp extends StatelessWidget {
         editReportRoute: (context) => const EditReportView(),
         addNewAdvocateRoute: (context) => const AddNewAdvocate(),
         addNewLegalInfoRoute: (context) => const AddLegalInfo(),
+        reportCommentsRoute: (context) => const CommentsView(),
       },
     );
   }

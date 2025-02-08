@@ -4,7 +4,7 @@ import 'package:guardix/service/cloud/model/cloud_legal_info.dart';
 import 'package:guardix/service/cloud/model/cloud_report.dart';
 import 'package:guardix/service/cloud/cloud_storage_constants.dart';
 import 'package:guardix/service/cloud/cloud_storage_exceptions.dart';
-import 'package:guardix/utilities/helpers/merge_date_and_time.dart';
+import 'package:guardix/service/cloud/model/cloud_report_comment.dart';
 
 class FirebaseCloudStorage {
   final reports = FirebaseFirestore.instance.collection(reportCollectionName);
@@ -13,6 +13,53 @@ class FirebaseCloudStorage {
       FirebaseFirestore.instance.collection(advocateCollectionName);
   final legalInfos =
       FirebaseFirestore.instance.collection(legalInfoCollectionName);
+  final reportComments =
+      FirebaseFirestore.instance.collection(reportCommentCollectionName);
+
+  Stream<Iterable<CloudReportComment>> getAllComments({
+    required String reportId,
+  }) {
+    return reportComments
+        .doc(reportId)
+        .collection(commentSubCollectionName)
+        .snapshots()
+        .map((event) =>
+            event.docs.map((doc) => CloudReportComment.fromSnapshot(doc)));
+  }
+
+  Future<void> deleteComment({
+    required String reportId,
+    required String commentId,
+  }) async {
+    try {
+      await reportComments
+          .doc(reportId)
+          .collection(commentSubCollectionName)
+          .doc(commentId)
+          .delete();
+    } catch (e) {
+      throw CouldNotDeleteCommentException();
+    }
+  }
+
+  void addNewComment({
+    required String reportId,
+    required String userId,
+    required String comment,
+  }) async {
+    try {
+      await reportComments
+          .doc(reportId)
+          .collection(commentSubCollectionName)
+          .add({
+        userIdFieldName: userId,
+        commentsFieldName: comment,
+        createdAtFieldName: FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      throw CouldNotAddCommentException();
+    }
+  }
 
   Stream<Iterable<CloudLegalInfo>> getAllLegalInfos() {
     return legalInfos.snapshots().map(

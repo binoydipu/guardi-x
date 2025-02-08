@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
+import 'package:guardix/constants/routes.dart';
 import 'package:guardix/service/auth/auth_service.dart';
 import 'package:guardix/service/cloud/cloud_storage_constants.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/service/cloud/model/cloud_report.dart';
+import 'package:guardix/utilities/decorations/report_status_decoration.dart';
 import 'package:guardix/utilities/helpers/find_time_ago.dart';
+import 'package:guardix/utilities/helpers/format_number.dart';
 import 'package:share_plus/share_plus.dart';
 
 typedef ReportCallback = void Function(CloudReport report);
@@ -90,20 +93,21 @@ class ReportListView extends StatelessWidget {
       itemBuilder: (context, index) {
         final report = reports.elementAt(index);
 
-        return InkWell(
-          onTap: () {
-            onTap(report);
-          },
-          child: Padding(
-            padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 10.0),
-            child: Container(
-              alignment: Alignment.topLeft,
-              decoration: BoxDecoration(
-                color: Colors.blue[50],
-                borderRadius: BorderRadius.circular(5.0),
-              ),
+        return Card(
+          color: whiteColor,
+          elevation: 2.0,
+          margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          child: InkWell(
+            onTap: () {
+              onTap(report);
+            },
+            borderRadius: BorderRadius.circular(8.0),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
@@ -111,55 +115,40 @@ class ReportListView extends StatelessWidget {
                     children: [
                       Text(
                         report.category,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        softWrap: true,
                         style: const TextStyle(
-                          color: blackColor,
-                          fontSize: 15,
+                          color: midnightBlueColor,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Text(
-                        report.reportStatus,
-                        style: const TextStyle(
-                          color: blackColor,
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      buildStatus(reportStatus: report.reportStatus),
                     ],
                   ),
+                  const SizedBox(height: 8),
                   Text(
                     timeAgo(report.createdAt),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    softWrap: true,
                     style: const TextStyle(
-                      color: blackColor,
-                      fontSize: 13,
+                      color: Colors.grey,
+                      fontSize: 12,
                     ),
                   ),
+                  const SizedBox(height: 8),
                   Text(
                     'Date of ${report.isNonCrimeReport ? 'incident' : 'crime'}: ${report.dateOfCrime} at ${report.timeOfCrime}',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    softWrap: true,
                     style: const TextStyle(
                       color: blackColor,
                       fontSize: 13,
                     ),
                   ),
+                  const SizedBox(height: 8),
                   Text(
                     'Posted By: ${report.ownerEmail}',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    softWrap: true,
                     style: const TextStyle(
                       color: blackColor,
                       fontSize: 13,
                     ),
                   ),
+                  const SizedBox(height: 8),
                   Text(
                     'Location: ${report.locationOfCrime}',
                     style: const TextStyle(
@@ -167,69 +156,79 @@ class ReportListView extends StatelessWidget {
                       fontSize: 13,
                     ),
                   ),
+                  const SizedBox(height: 8),
                   Text(
                     report.descriptionOfCrime,
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
-                    softWrap: true,
                     style: const TextStyle(
                       color: blackColor,
                       fontSize: 13,
                     ),
                   ),
+                  const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      SizedBox(
-                        child: Row(
-                          children: [
-                            IconButton(
-                              onPressed: () => _updateReportUserAction(
-                                fieldName: upvotesFieldName,
-                                report: report,
-                                userId: userId!,
-                              ),
-                              icon: const Icon(
-                                Icons.arrow_upward,
-                                color: midnightBlueColor,
-                              ),
+                      Row(
+                        children: [
+                          IconButton(
+                            onPressed: () => _updateReportUserAction(
+                              fieldName: upvotesFieldName,
+                              report: report,
+                              userId: userId!,
                             ),
-                            Text(
-                              '${report.upvotes}',
-                              style: const TextStyle(
-                                color: blackColor,
-                                fontSize: 13,
-                              ),
+                            icon: Icon(
+                              Icons.arrow_upward,
+                              color: report.userActions[userId]
+                                          ?.contains(upvotesFieldName) ??
+                                      false
+                                  ? brightGreenColor
+                                  : midnightBlueColor,
                             ),
-                          ],
-                        ),
+                          ),
+                          Text(
+                            formatNumber(report.upvotes),
+                            style: const TextStyle(
+                              color: blackColor,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(
-                        child: Row(
-                          children: [
-                            IconButton(
-                              onPressed:  () => _updateReportUserAction(
-                                fieldName: downvotesFieldName,
-                                report: report,
-                                userId: userId!,
-                              ),
-                              icon: const Icon(
-                                Icons.arrow_downward,
-                                color: midnightBlueColor,
-                              ),
+                      Row(
+                        children: [
+                          IconButton(
+                            onPressed: () => _updateReportUserAction(
+                              fieldName: downvotesFieldName,
+                              report: report,
+                              userId: userId!,
                             ),
-                            Text(
-                              '${report.downvotes}',
-                              style: const TextStyle(
-                                color: blackColor,
-                                fontSize: 13,
-                              ),
+                            icon: Icon(
+                              Icons.arrow_downward,
+                              color: report.userActions[userId]
+                                          ?.contains(downvotesFieldName) ??
+                                      false
+                                  ? crimsonRedColor
+                                  : midnightBlueColor,
                             ),
-                          ],
-                        ),
+                          ),
+                          Text(
+                            formatNumber(report.downvotes),
+                            style: const TextStyle(
+                              color: blackColor,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
                       ),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.of(context).pushNamed(
+                            reportCommentsRoute,
+                            arguments: report.documentId,
+                          );
+                        },
                         icon: const Icon(
                           Icons.comment,
                           color: midnightBlueColor,
@@ -244,31 +243,33 @@ class ReportListView extends StatelessWidget {
                           color: midnightBlueColor,
                         ),
                       ),
-                      SizedBox(
-                        child: Row(
-                          children: [
-                            IconButton(
-                              onPressed:  () => _updateReportUserAction(
-                                fieldName: flagsFieldName,
-                                report: report,
-                                userId: userId!,
-                              ),
-                              icon: const Icon(
-                                Icons.flag,
-                                color: midnightBlueColor,
-                              ),
+                      Row(
+                        children: [
+                          IconButton(
+                            onPressed: () => _updateReportUserAction(
+                              fieldName: flagsFieldName,
+                              report: report,
+                              userId: userId!,
                             ),
-                            Text(
-                              '${report.flags}  ',
-                              style: TextStyle(
-                                color: report.flags == 0
-                                    ? blackColor
-                                    : crimsonRedColor,
-                                fontSize: 13,
-                              ),
+                            icon: Icon(
+                              Icons.flag,
+                              color: report.userActions[userId]
+                                          ?.contains(flagsFieldName) ??
+                                      false
+                                  ? crimsonRedColor
+                                  : midnightBlueColor,
                             ),
-                          ],
-                        ),
+                          ),
+                          Text(
+                            formatNumber(report.flags),
+                            style: TextStyle(
+                              color: report.flags > 0
+                                  ? crimsonRedColor
+                                  : blackColor,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),

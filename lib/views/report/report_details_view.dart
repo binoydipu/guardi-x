@@ -7,11 +7,13 @@ import 'package:guardix/service/cloud/cloud_storage_constants.dart';
 import 'package:guardix/service/cloud/model/cloud_report.dart';
 import 'package:guardix/service/cloud/cloud_storage_exceptions.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
+import 'package:guardix/utilities/decorations/report_status_decoration.dart';
 import 'package:guardix/utilities/dialogs/delete_dialog.dart';
 import 'package:guardix/utilities/dialogs/error_dialog.dart';
 import 'package:guardix/utilities/dialogs/loading_dialog.dart';
 import 'package:guardix/utilities/dialogs/report_created_dialog.dart';
 import 'package:guardix/utilities/helpers/format_date_time.dart';
+import 'package:guardix/utilities/helpers/format_number.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ReportDetailsView extends StatefulWidget {
@@ -281,7 +283,18 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
                       color: blackColor,
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 25),
+                  const Center(
+                    child: Text(
+                      'Personal Information',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: blackColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 17),
                   Text(
                     'Victim Name: ${report.victimName}',
                     style: const TextStyle(
@@ -305,7 +318,18 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
                       color: blackColor,
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 25),
+                  const Center(
+                    child: Text(
+                      'Witness Information',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: blackColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 17),
                   Text(
                     'Witness Name: ${report.witnessName}',
                     style: const TextStyle(
@@ -321,7 +345,20 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
                       color: blackColor,
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 25),
+                  Center(
+                    child: Text(
+                      report.isNonCrimeReport
+                          ? 'Incident Information'
+                          : 'Crime Information',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: blackColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 17),
                   Text(
                     'Date of ${report.isNonCrimeReport ? 'Incident' : 'Crime'}: ${report.dateOfCrime}',
                     style: const TextStyle(
@@ -354,7 +391,7 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
                       color: blackColor,
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 25),
                   Text(
                     'Reported Police Station: ${report.policeStation}',
                     style: const TextStyle(
@@ -363,35 +400,45 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Text(
-                    'Report Status: ${report.reportStatus}',
-                    style: const TextStyle(
-                      fontSize: 15,
-                      color: crimsonRedColor,
-                      fontWeight: FontWeight.bold,
+                  Row(
+                    children: [
+                      const Text(
+                        'Status: ',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: blackColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      buildStatus(reportStatus: report.reportStatus),
+                    ],
+                  ),
+                  const SizedBox(height: 25),
+                  Center(
+                    child: Text(
+                      '${report.isNonCrimeReport ? 'Incident' : 'Crime'} Description:',
+                      style: const TextStyle(
+                        fontSize: 15,
+                        color: blackColor,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  Text(
-                    '${report.isNonCrimeReport ? 'Incident' : 'Crime'} Description:',
-                    style: const TextStyle(
-                      fontSize: 15,
-                      color: blackColor,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  const SizedBox(height: 10),
                   Text(
                     report.descriptionOfCrime,
+                    textAlign: TextAlign.justify,
                     style: const TextStyle(
                       fontSize: 15,
                       color: blackColor,
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 25),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       buildButtonCard(
+                        report: report,
                         context: context,
                         icon: Icons.arrow_upward,
                         text: 'Upvote',
@@ -404,6 +451,7 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
                       ),
                       const SizedBox(width: 10),
                       buildButtonCard(
+                        report: report,
                         context: context,
                         icon: Icons.arrow_downward,
                         text: 'Downvote',
@@ -421,13 +469,18 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       buildButtonCard(
+                        report: report,
                         context: context,
                         icon: Icons.comment,
                         text: 'Comment',
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.of(context).pushNamed(reportCommentsRoute,
+                              arguments: report.documentId);
+                        },
                       ),
                       const SizedBox(width: 10),
                       buildButtonCard(
+                        report: report,
                         context: context,
                         icon: Icons.flag,
                         text: 'Flag',
@@ -440,7 +493,7 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
                       ),
                     ],
                   ),
-                  const SizedBox(width: 20),
+                  const SizedBox(height: 40),
                 ],
               ),
             ),
@@ -455,58 +508,69 @@ Widget buildButtonCard({
   required BuildContext context,
   required IconData icon,
   required String text,
+  required CloudReport report,
   int? value,
   required VoidCallback onTap,
 }) {
+  Color? iconColor = midnightBlueColor;
+  Color? valueColor = blackColor;
+  String? userId = AuthService.firebase().currentUser!.id;
+  if (text == 'Upvote') {
+    iconColor = report.userActions[userId]?.contains(upvotesFieldName) ?? false
+        ? brightGreenColor
+        : midnightBlueColor;
+  } else if (text == 'Downvote') {
+    iconColor =
+        report.userActions[userId]?.contains(downvotesFieldName) ?? false
+            ? crimsonRedColor
+            : midnightBlueColor;
+  } else if (text == 'Flag') {
+    iconColor = report.userActions[userId]?.contains(flagsFieldName) ?? false
+        ? crimsonRedColor
+        : midnightBlueColor;
+    valueColor = report.flags > 0 ? crimsonRedColor : blackColor;
+  }
+
   return Container(
     constraints: const BoxConstraints(
       minWidth: 140,
     ),
     decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(16.0),
-      gradient: const LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [Colors.blue, Colors.black],
+      border: Border.all(
+        color: softBlueColor,
+        width: 1.0,
       ),
-      boxShadow: const [
-        BoxShadow(
-          color: Colors.black26,
-          blurRadius: 2.0,
-          offset: Offset(2.0, 2.0),
-        ),
-      ],
+      borderRadius: BorderRadius.circular(16.0),
     ),
     child: Padding(
       padding: const EdgeInsets.all(8.0),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(16.0),
-        highlightColor: Colors.transparent,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Icon(
               icon,
-              color: whiteColor,
+              color: iconColor,
             ),
             const SizedBox(width: 5),
             Text(
               text,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                color: whiteColor,
+                color: blackColor,
                 fontSize: 14,
               ),
             ),
             const SizedBox(width: 5),
             if (value != null)
               Text(
-                _formatNumber(value),
+                formatNumber(value),
                 textAlign: TextAlign.left,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: whiteColor,
+                style: TextStyle(
+                  color: valueColor,
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
@@ -516,16 +580,4 @@ Widget buildButtonCard({
       ),
     ),
   );
-}
-
-String _formatNumber(int number) {
-  if (number >= 1000000000) {
-    return '${(number / 1000000000).toStringAsFixed(1)}B';
-  } else if (number >= 1000000) {
-    return '${(number / 1000000).toStringAsFixed(1)}M';
-  } else if (number >= 1000) {
-    return '${(number / 1000).toStringAsFixed(1)}K';
-  } else {
-    return number.toString();
-  }
 }

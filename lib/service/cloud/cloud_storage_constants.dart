@@ -48,3 +48,13 @@ const legalInfoCollectionName = 'legal_info';
 
 const lawTitleFieldName = 'law_title';
 const lawDescriptionFieldName = 'law_description';
+
+
+// Report Comments
+const reportCommentCollectionName = 'report_comment';
+const commentSubCollectionName = 'this_report_comment';
+
+const reportIdFieldName = 'report_id';
+const commentsFieldName = 'comments';
+
+

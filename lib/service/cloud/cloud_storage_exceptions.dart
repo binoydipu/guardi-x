@@ -23,3 +23,7 @@ class CouldNotCreateLawException extends CloudStorageExceptions {}
 class CouldNotDeleteLawException extends CloudStorageExceptions {}
 
 class CouldNotUpdateLawException extends CloudStorageExceptions {}
+
+class CouldNotAddCommentException extends CloudStorageExceptions {}
+
+class CouldNotDeleteCommentException extends CloudStorageExceptions {}

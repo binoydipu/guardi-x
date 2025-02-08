@@ -19,4 +19,5 @@ const reportFormRoute = '/report/report-form/';
 const ongoingIncidentsRoute = '/ongoing-incidents/';
 const reportDetailsRoute = '/report/details/';
 const editReportRoute = '/report/edit/';
+const reportCommentsRoute = '/report/comments/';
 
