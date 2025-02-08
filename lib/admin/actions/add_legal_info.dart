@@ -160,7 +160,7 @@ class _AddLegalInfoState extends State<AddLegalInfo> {
                       backgroundColor: midnightBlueColor,
                     ),
                     child: const Text(
-                      'Proceed',
+                      'Add Legal Info',
                       style: TextStyle(
                         color: whiteColor,
                         fontSize: 16,

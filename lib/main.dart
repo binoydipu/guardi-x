@@ -6,6 +6,7 @@ import 'package:guardix/admin/view/admin_panel.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
 import 'package:guardix/service/auth/auth_constants.dart';
+import 'package:guardix/views/bottom_nav/home/edit_profile_view.dart';
 import 'package:guardix/views/incidents/ongoing_incidents_view.dart';
 
 import 'package:guardix/views/report/category_selection_view.dart';
@@ -59,6 +60,7 @@ class MyApp extends StatelessWidget {
         reportRoute: (context) => const ReportView(),
         trackRoute: (context) => const TrackView(),
         sosRoute: (context) => const SosView(),
+        editProfileRoute: (context) => const EditProfileView(),
         aboutUsRoute: (context) => const AboutUsView(),
         adminPanelRoute: (context) => const AdminPanel(),
         selectCategoryRoute: (context) => const CategorySelectionView(),

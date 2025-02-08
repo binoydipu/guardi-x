@@ -212,7 +212,7 @@ class _AddNewAdvocateState extends State<AddNewAdvocate> {
                       backgroundColor: midnightBlueColor,
                     ),
                     child: const Text(
-                      'Proceed',
+                      'Add Advocate',
                       style: TextStyle(
                         color: whiteColor,
                         fontSize: 16,

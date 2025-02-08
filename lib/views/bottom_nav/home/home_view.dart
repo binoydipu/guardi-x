@@ -28,7 +28,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     Widget container = const HomePage();
-    
+
     if (currentPage == DrawerAction.home) {
       container = const HomePage();
     } else if (currentPage == DrawerAction.contacts) {
@@ -45,8 +45,6 @@ class _HomeViewState extends State<HomeView> {
       container = const AppLanguageView();
     } else if (currentPage == DrawerAction.settings) {
       container = const SettingsView();
-    } else if (currentPage == DrawerAction.logout) {
-      // DONE: Implemented Logout
     }
 
     return Scaffold(
@@ -56,13 +54,9 @@ class _HomeViewState extends State<HomeView> {
         actions: [
           IconButton(
             onPressed: () {
-              // TODO: Profile Drawer
+              _showProfileDrawer(context);
             },
             icon: const Icon(Icons.person),
-          ),
-          IconButton(
-            onPressed: () => _handleLogout(context),
-            icon: const Icon(Icons.logout),
           ),
         ],
       ),
@@ -74,30 +68,31 @@ class _HomeViewState extends State<HomeView> {
               drawerList(),
               const Divider(color: softBlueColor),
               userEmail == adminEmail
-                ? TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pushNamed(adminPanelRoute);
-                  },
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.admin_panel_settings,
-                        color: midnightBlueColor,
+                  ? TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pushNamed(adminPanelRoute);
+                      },
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.admin_panel_settings,
+                            color: midnightBlueColor,
+                          ),
+                          SizedBox(width: 5),
+                          Text(
+                            'Admin Panel',
+                            style: TextStyle(
+                              color: midnightBlueColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(width: 5),
-                      Text(
-                        'Admin Panel',
-                        style: TextStyle(
-                          color: midnightBlueColor,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ) : const SizedBox(),
+                    )
+                  : const SizedBox(),
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -127,6 +122,82 @@ class _HomeViewState extends State<HomeView> {
         ),
       ),
       body: container,
+    );
+  }
+
+  void _showProfileDrawer(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: whiteColor,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircleAvatar(
+                radius: 50,
+                backgroundImage:
+                    AssetImage('assets/images/lawyer.png') as ImageProvider,
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'John Doe',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 5),
+              Text(
+                userEmail!,
+                style: const TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+              const SizedBox(height: 20),
+              ListTile(
+                leading: const Icon(Icons.phone, color: Colors.deepPurple),
+                title: const Text('01477885522'),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.edit, color: Colors.blue),
+                title: const Text('Edit Profile'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.of(context).pushNamed(editProfileRoute);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.history, color: Colors.green),
+                title: const Text('Case History'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.of(context).pushNamed(trackRoute);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.lock, color: Colors.orange),
+                title: const Text('Change Password'),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.logout, color: Colors.red),
+                title: const Text('Logout'),
+                onTap: () {
+                  Navigator.pop(context); // Close the drawer
+                  _handleLogout(context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -186,8 +257,6 @@ class _HomeViewState extends State<HomeView> {
               currentPage == DrawerAction.language ? true : false),
           menuItem(8, 'Settings', Icons.settings,
               currentPage == DrawerAction.settings ? true : false),
-          menuItem(9, 'Logout', Icons.logout,
-              currentPage == DrawerAction.logout ? true : false),
         ],
       ),
     );
@@ -218,9 +287,6 @@ class _HomeViewState extends State<HomeView> {
               currentPage = DrawerAction.settings;
             }
           });
-          if (id == 9) {
-            _handleLogout(context);
-          }
         },
         splashColor: softBlueColor,
         child: Padding(
@@ -251,12 +317,12 @@ class _HomeViewState extends State<HomeView> {
       ),
     );
   }
-  
+
   void _handleLogout(BuildContext context) async {
     bool isLoggedout = await showLogOutDialog(context);
-    if(isLoggedout) {
+    if (isLoggedout) {
       await AuthService.firebase().logOut();
-      if(context.mounted) {
+      if (context.mounted) {
         Navigator.of(context).pushNamedAndRemoveUntil(
           welcomeRoute,
           (route) => false,

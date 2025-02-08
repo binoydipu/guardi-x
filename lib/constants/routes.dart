@@ -7,6 +7,7 @@ const navigationMenuRoute = '/navigation/';
 const homeRoute = '/home/';
 const reportRoute = '/report/';
 const trackRoute = '/track/';
+const editProfileRoute = '/edit-profile/';
 const sosRoute = '/sos/';
 const aboutUsRoute = '/aboutus/';
 const adminPanelRoute = '/admin-panel/';

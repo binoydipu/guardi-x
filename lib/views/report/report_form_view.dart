@@ -510,7 +510,7 @@ class _ReportFormViewState extends State<ReportFormView> {
                       backgroundColor: midnightBlueColor,
                     ),
                     child: const Text(
-                      'Proceed',
+                      'Submit Report',
                       style: TextStyle(
                         color: whiteColor,
                         fontSize: 16,
