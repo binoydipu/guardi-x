@@ -11,6 +11,7 @@ import 'package:guardix/utilities/dialogs/delete_dialog.dart';
 import 'package:guardix/utilities/dialogs/error_dialog.dart';
 import 'package:guardix/utilities/dialogs/loading_dialog.dart';
 import 'package:guardix/utilities/dialogs/report_created_dialog.dart';
+import 'package:guardix/utilities/helpers/format_date_time.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ReportDetailsView extends StatefulWidget {
@@ -29,7 +30,6 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
   late String reportId;
 
   bool _isFirstTime = true;
-  bool _isNonCrimeReport = false;
 
   void _updateReportUserAction({
     required CloudReport report,
@@ -249,10 +249,6 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
             return const Center(child: Text('Report not found.'));
           }
 
-          _isNonCrimeReport = report.category == 'Lost Items' ||
-              report.category == 'Missing Human' ||
-              report.category == 'Missing Pet';
-
           return SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Padding(
@@ -275,6 +271,14 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
                       fontSize: 15,
                       color: blackColor,
                       fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Posted on: ${formatDateTime(report.createdAt)}',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: blackColor,
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -319,7 +323,7 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    'Date of ${_isNonCrimeReport ? 'Incident' : 'Crime'}: ${report.dateOfCrime}',
+                    'Date of ${report.isNonCrimeReport ? 'Incident' : 'Crime'}: ${report.dateOfCrime}',
                     style: const TextStyle(
                       fontSize: 15,
                       color: blackColor,
@@ -328,7 +332,7 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    'TIme of ${_isNonCrimeReport ? 'Incident' : 'Crime'}: ${report.timeOfCrime}',
+                    'TIme of ${report.isNonCrimeReport ? 'Incident' : 'Crime'}: ${report.timeOfCrime}',
                     style: const TextStyle(
                       fontSize: 15,
                       color: blackColor,
@@ -336,7 +340,7 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    'Location of ${_isNonCrimeReport ? 'Incident' : 'Crime'}: ${report.locationOfCrime}',
+                    'Location of ${report.isNonCrimeReport ? 'Incident' : 'Crime'}: ${report.locationOfCrime}',
                     style: const TextStyle(
                       fontSize: 15,
                       color: blackColor,
@@ -369,7 +373,7 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    '${_isNonCrimeReport ? 'Incident' : 'Crime'} Description:',
+                    '${report.isNonCrimeReport ? 'Incident' : 'Crime'} Description:',
                     style: const TextStyle(
                       fontSize: 15,
                       color: blackColor,

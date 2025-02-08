@@ -22,7 +22,8 @@ const reportStatusFieldName = 'report_status';
 const flagsFieldName = 'flags';
 const upvotesFieldName = 'upvotes';
 const downvotesFieldName = 'downvotes';
-const userActionsFieldName = 'user-actions';
+const userActionsFieldName = 'user_actions';
+const createdAtFieldName = 'created_at';
 
 // Users
 const userCollectionName = 'Users';

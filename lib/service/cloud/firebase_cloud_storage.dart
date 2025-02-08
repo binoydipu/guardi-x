@@ -213,34 +213,54 @@ class FirebaseCloudStorage {
     bool? sortByUpvote,
     bool? sortByLatest,
   }) {
-    return reports.snapshots().map(
-      (event) {
-      final reportsList = event.docs
-          .map((doc) => CloudReport.fromSnapshot(doc))
-          .where(
-            (report) =>
-                (category == null ||
-                    category == '' ||
-                    report.category == category) &&
-                (flag == null || !flag || (flag && report.flags > 0)),
-          )
-          .toList(); 
+    Query<Map<String, dynamic>> query = reports;
 
-        if (sortByUpvote == true) {
-          reportsList.sort((a, b) => b.upvotes.compareTo(a.upvotes));
-        }
+    if (sortByUpvote == true) {
+      query = query.orderBy(upvotesFieldName, descending: true);
+    }
 
-        if (sortByLatest == true) {
-          reportsList.sort((a, b) {
-            final dateTimeA = mergeDateTime(a.dateOfCrime, a.timeOfCrime);
-            final dateTimeB = mergeDateTime(b.dateOfCrime, b.timeOfCrime);
+    if (sortByLatest == true) {
+      query = query.orderBy(createdAtFieldName, descending: true);
+    }
 
-            return dateTimeB.compareTo(dateTimeA);
-          });
-        }
-        return reportsList;
-      },
-    );
+    return query.snapshots().map(
+          (event) =>
+              event.docs.map((doc) => CloudReport.fromSnapshot(doc)).where(
+                    (report) =>
+                        (category == null ||
+                            category.isEmpty ||
+                            report.category == category) &&
+                        (flag == null || !flag || (flag && report.flags > 0)),
+                  ),
+        );
+    // return reports.snapshots().map(
+    //   (event) {
+    //   final reportsList = event.docs
+    //       .map((doc) => CloudReport.fromSnapshot(doc))
+    //       .where(
+    //         (report) =>
+    //             (category == null ||
+    //                 category == '' ||
+    //                 report.category == category) &&
+    //             (flag == null || !flag || (flag && report.flags > 0)),
+    //       )
+    //       .toList();
+
+    //     if (sortByUpvote == true) {
+    //       reportsList.sort((a, b) => b.upvotes.compareTo(a.upvotes));
+    //     }
+
+    //     if (sortByLatest == true) {
+    //       reportsList.sort((a, b) {
+    //         final dateTimeA = mergeDateTime(a.dateOfCrime, a.timeOfCrime);
+    //         final dateTimeB = mergeDateTime(b.dateOfCrime, b.timeOfCrime);
+
+    //         return dateTimeB.compareTo(dateTimeA);
+    //       });
+    //     }
+    //     return reportsList;
+    //   },
+    // );
   }
 
   /// Get all the reports of current user
@@ -314,6 +334,7 @@ class FirebaseCloudStorage {
         flagsFieldName: flags,
         upvotesFieldName: upvotes,
         downvotesFieldName: downvotes,
+        createdAtFieldName: FieldValue.serverTimestamp(),
       });
     } catch (e) {
       throw CouldNotCreateReportException();

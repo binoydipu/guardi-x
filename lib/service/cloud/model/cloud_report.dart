@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:guardix/service/cloud/cloud_storage_constants.dart';
 import 'package:flutter/foundation.dart';
+import 'package:guardix/utilities/helpers/format_date_time.dart';
 
 @immutable
 class CloudReport {
@@ -26,7 +27,9 @@ class CloudReport {
   final int flags;
   final int upvotes;
   final int downvotes;
-  final Map<String, List<String>> userActions;  // Map of userId to their actions
+  final Map<String, List<String>> userActions; // Map of userId to their actions
+
+  final DateTime createdAt;
 
   CloudReport({
     required this.documentId,
@@ -47,6 +50,7 @@ class CloudReport {
     required this.flags,
     required this.upvotes,
     required this.downvotes,
+    required this.createdAt,
   }) : userActions = {};
 
   CloudReport.fromSnapshot(QueryDocumentSnapshot<Map<String, dynamic>> snapshot)
@@ -69,6 +73,9 @@ class CloudReport {
         flags = snapshot.data()[flagsFieldName] as int,
         upvotes = snapshot.data()[upvotesFieldName] as int,
         downvotes = snapshot.data()[downvotesFieldName] as int,
+        createdAt =
+            (snapshot.data()[createdAtFieldName] as Timestamp?)?.toDate() ??
+                DateTime.now(),
         userActions = _mapUserActions(snapshot.data()[userActionsFieldName]);
 
   CloudReport.fromDocSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot)
@@ -76,20 +83,29 @@ class CloudReport {
         category = snapshot.data()?[categoryFieldName] ?? '',
         ownerEmail = snapshot.data()?[ownerEmailFieldName] as String? ?? '',
         victimName = snapshot.data()?[victimNameFieldName] as String? ?? '',
-        victimAddress = snapshot.data()?[victimAddressFieldName] as String? ?? '',
-        victimContact = snapshot.data()?[victimContactFieldName] as String? ?? '',
+        victimAddress =
+            snapshot.data()?[victimAddressFieldName] as String? ?? '',
+        victimContact =
+            snapshot.data()?[victimContactFieldName] as String? ?? '',
         witnessName = snapshot.data()?[witnessNameFieldName] as String? ?? '',
-        witnessContact = snapshot.data()?[witnessContactFieldName] as String? ?? '',
+        witnessContact =
+            snapshot.data()?[witnessContactFieldName] as String? ?? '',
         dateOfCrime = snapshot.data()?[dateOfCrimeFieldName] as String? ?? '',
         timeOfCrime = snapshot.data()?[timeOfCrimeFieldName] as String? ?? '',
-        locationOfCrime = snapshot.data()?[locationOfCrimeFieldName] as String? ?? '',
-        descriptionOfCrime = snapshot.data()?[descriptionOfCrimeFieldName] as String? ?? '',
+        locationOfCrime =
+            snapshot.data()?[locationOfCrimeFieldName] as String? ?? '',
+        descriptionOfCrime =
+            snapshot.data()?[descriptionOfCrimeFieldName] as String? ?? '',
         injuryType = snapshot.data()?[injuryTypeFieldName] as String? ?? '',
-        policeStation = snapshot.data()?[policeStationFieldName] as String? ?? '',
+        policeStation =
+            snapshot.data()?[policeStationFieldName] as String? ?? '',
         reportStatus = snapshot.data()?[reportStatusFieldName] as String? ?? '',
         flags = snapshot.data()?[flagsFieldName] as int? ?? 0,
         upvotes = snapshot.data()?[upvotesFieldName] as int? ?? 0,
         downvotes = snapshot.data()?[downvotesFieldName] as int? ?? 0,
+        createdAt =
+            (snapshot.data()?[createdAtFieldName] as Timestamp?)?.toDate() ??
+                DateTime.now(),
         userActions = _mapUserActions(snapshot.data()?[userActionsFieldName]);
 
   @override
@@ -99,6 +115,7 @@ class CloudReport {
     ---------------------------
     🔹 Category: $category
     📧 Reported by: $ownerEmail
+    🕒 Posted on: ${formatDateTime(createdAt)}
 
     👤 Victim Information:
     - Name: $victimName
@@ -109,7 +126,7 @@ class CloudReport {
     - Name: $witnessName
     - Contact: $witnessContact
 
-    📅 Date & Time of Crime:
+    📅 Date & Time of ${isNonCrimeReport ? 'Incident' : 'Crime'}:
     - Date: $dateOfCrime
     - Time: $timeOfCrime
 
@@ -125,19 +142,23 @@ class CloudReport {
     ''';
   }
 
-  // Convert Map<String, dynamic> to Map<String, List<String>>
+  bool get isNonCrimeReport =>
+      category == 'Lost Items' ||
+      category == 'Missing Human' ||
+      category == 'Missing Pet';
+
+  /// Convert Map<String, dynamic> to Map<String, List<String>>
   static Map<String, List<String>> _mapUserActions(dynamic userActionsData) {
     if (userActionsData == null) {
-      return {};  // Return an empty map if userActionsData is null
+      return {};
     }
 
-    // Manually convert each entry into List<String>
     final Map<String, List<String>> result = {};
     userActionsData.forEach((key, value) {
       if (value is List) {
-        result[key] = List<String>.from(value);  // Convert to List<String>
+        result[key] = List<String>.from(value);
       } else {
-        result[key] = [];  // Default to an empty list if the value is not a List
+        result[key] = [];
       }
     });
 

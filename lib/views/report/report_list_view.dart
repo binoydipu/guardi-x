@@ -4,6 +4,7 @@ import 'package:guardix/service/auth/auth_service.dart';
 import 'package:guardix/service/cloud/cloud_storage_constants.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/service/cloud/model/cloud_report.dart';
+import 'package:guardix/utilities/helpers/find_time_ago.dart';
 import 'package:share_plus/share_plus.dart';
 
 typedef ReportCallback = void Function(CloudReport report);
@@ -130,7 +131,17 @@ class ReportListView extends StatelessWidget {
                     ],
                   ),
                   Text(
-                    'Date of crime: ${report.dateOfCrime} at ${report.timeOfCrime}',
+                    timeAgo(report.createdAt),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: true,
+                    style: const TextStyle(
+                      color: blackColor,
+                      fontSize: 13,
+                    ),
+                  ),
+                  Text(
+                    'Date of ${report.isNonCrimeReport ? 'incident' : 'crime'}: ${report.dateOfCrime} at ${report.timeOfCrime}',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     softWrap: true,

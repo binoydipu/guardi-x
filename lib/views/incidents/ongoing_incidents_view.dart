@@ -24,6 +24,7 @@ class _OngoingIncidentsViewState extends State<OngoingIncidentsView> {
   bool onlyFlagged = false;
   bool sortByUpvote = false;
   bool sortByLatest = false;
+  bool _filtersHidden = false;
 
   @override
   void initState() {
@@ -55,104 +56,130 @@ class _OngoingIncidentsViewState extends State<OngoingIncidentsView> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.only(
-                left: 16.0, right: 16.0, top: 10.0, bottom: 5.0),
-            child: Text(
-              'Filter by Category',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
           Padding(
-            padding: const EdgeInsets.only(left: 16.0, right: 16.0),
-            child: DropdownButtonFormField(
-              value: _selectedCategory,
-              items: categoryList
-                  .map(
-                    (e) => DropdownMenuItem(
-                      value: e,
-                      child: Text(e),
-                    ),
-                  )
-                  .toList(),
-              onChanged: (value) {
-                setState(() {
-                  _selectedCategory = value;
-                });
-              },
-              icon: const Icon(
-                Icons.arrow_drop_down,
-                color: midnightBlueColor,
-              ),
-              dropdownColor: Colors.blue[50],
-              decoration: buildInputDecoration(label: 'Select Category'),
-            ),
-          ),
-          if(userEmail == adminEmail)
-            Row(
+            padding: const EdgeInsets.only(left: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Checkbox(
-                  value: onlyFlagged,
-                  onChanged: (value) {
+                _filtersHidden
+                  ? const SizedBox(width: 10) 
+                  : const Text(
+                    'Filter by Category',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                TextButton(
+                  onPressed: () {
                     setState(() {
-                      onlyFlagged = value!;
+                      _filtersHidden = !_filtersHidden;
                     });
                   },
-                ),
-                const Text(
-                  'Select Flagged Reports',
-                  style: TextStyle(fontSize: 14),
+                  child: Text(
+                    '${_filtersHidden ? 'Show' : 'Hide'} Filters',
+                    textAlign: TextAlign.end,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ],
             ),
-          Row(
-            children: [
-              const SizedBox(width: 16),
-              const Text(
-                'Sort: ',
-                style: TextStyle(fontSize: 14),
-              ),
-              Checkbox(
-                value: sortByUpvote,
-                onChanged: (value) {
-                  setState(() {
-                    sortByUpvote = value!;
-                  });
-                },
-              ),
-              const Text(
-                'Upvote',
-                style: TextStyle(fontSize: 14),
-              ),
-              Checkbox(
-                value: sortByLatest,
-                onChanged: (value) {
-                  setState(() {
-                    sortByLatest = value!;
-                  });
-                },
-              ),
-              const Text(
-                'Latest',
-                style: TextStyle(fontSize: 14),
-              ),
-            ],
           ),
-          const SizedBox(height: 10),
-          const Padding(
-            padding: EdgeInsets.only(left: 16.0, right: 16.0),
-            child: Text(
-              'Ongoing Incidents:',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+          if (!_filtersHidden) 
+            Column(
+              children: [
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                  child: DropdownButtonFormField(
+                    value: _selectedCategory,
+                    items: categoryList
+                        .map(
+                          (e) => DropdownMenuItem(
+                            value: e,
+                            child: Text(e),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedCategory = value;
+                      });
+                    },
+                    icon: const Icon(
+                      Icons.arrow_drop_down,
+                      color: midnightBlueColor,
+                    ),
+                    dropdownColor: Colors.blue[50],
+                    decoration: buildInputDecoration(label: 'Select Category'),
+                  ),
+                ),
+                if (userEmail == adminEmail)
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: onlyFlagged,
+                        onChanged: (value) {
+                          setState(() {
+                            onlyFlagged = value!;
+                          });
+                        },
+                      ),
+                      const Text(
+                        'Select Flagged Reports',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                    ],
+                  ),
+                Row(
+                  children: [
+                    const SizedBox(width: 16),
+                    const Text(
+                      'Sort: ',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    Checkbox(
+                      value: sortByUpvote,
+                      onChanged: (value) {
+                        setState(() {
+                          sortByUpvote = value!;
+                        });
+                      },
+                    ),
+                    const Text(
+                      'Upvote',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    Checkbox(
+                      value: sortByLatest,
+                      onChanged: (value) {
+                        setState(() {
+                          sortByLatest = value!;
+                        });
+                      },
+                    ),
+                    const Text(
+                      'Latest',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+              ],
             ),
-          ),
+        // const Padding(
+          //   padding: EdgeInsets.only(left: 16.0, right: 16.0),
+          //   child: Text(
+          //     'Ongoing Incidents:',
+          //     style: TextStyle(
+          //       fontSize: 16,
+          //       fontWeight: FontWeight.bold,
+          //     ),
+          //   ),
+          // ),
           const SizedBox(height: 10),
           Expanded(
             child: StreamBuilder(
