@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:guardix/service/auth/auth_constants.dart';
 import 'package:guardix/service/auth/auth_service.dart';
 import 'package:guardix/service/cloud/model/cloud_legal_info.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
-import 'package:guardix/utilities/dialogs/delete_dialog.dart';
+import 'package:guardix/utilities/dialogs/confirmation_dialog.dart';
 import 'package:guardix/views/drawer/legal_info/legal_info_list_view.dart';
 
 class LegalInfoView extends StatefulWidget {
@@ -48,23 +49,28 @@ class _LegalInfoViewState extends State<LegalInfoView> {
                   case ConnectionState.waiting:
                   case ConnectionState.active:
                     if (snapshot.hasData) {
-                      final allLegalInfos = snapshot.data as Iterable<CloudLegalInfo>;
+                      final allLegalInfos =
+                          snapshot.data as Iterable<CloudLegalInfo>;
                       return LegalInfoListView(
                         legalInfos: allLegalInfos,
                         onLongPress: (legalInfo) async {
-                          bool isDeleted = await showDeleteDialog(
-                            context: context,
-                            title: 'Delete Legal Info',
-                            description: 'Do you want to delete this legal info?',
-                          );
-                          if(isDeleted) {
+                          bool isDeleted = userEmail == adminEmail
+                              ? await showConfirmationDialog(
+                                  context: context,
+                                  title: 'Delete Legal Info',
+                                  description:
+                                      'Do you want to delete this legal info?',
+                                )
+                              : false;
+                          if (isDeleted) {
                             _cloudStorage.deleteLegalInfo(
-                              documentId: legalInfo.documentId);
+                                documentId: legalInfo.documentId);
                           }
                         },
                       );
                     } else {
-                      return const Center(child: Text('No Legal Information found.'));
+                      return const Center(
+                          child: Text('No Legal Information found.'));
                     }
                   default:
                     return const Center(child: CircularProgressIndicator());

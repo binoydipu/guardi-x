@@ -6,7 +6,7 @@ import 'package:guardix/service/cloud/model/cloud_report.dart';
 import 'package:guardix/service/cloud/cloud_storage_exceptions.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/utilities/decorations/input_decoration_template.dart';
-import 'package:guardix/utilities/dialogs/delete_dialog.dart';
+import 'package:guardix/utilities/dialogs/confirmation_dialog.dart';
 import 'package:guardix/utilities/dialogs/error_dialog.dart';
 import 'package:guardix/utilities/dialogs/report_created_dialog.dart';
 import 'package:guardix/utilities/dialogs/update_report_dialog.dart';
@@ -155,14 +155,24 @@ class _EditReportViewState extends State<EditReportView> {
             Icons.arrow_back_ios_new_rounded,
             color: whiteColor,
           ),
-          onPressed: () {
-            Navigator.of(context).pop();
+          onPressed: () async {
+            bool discard = await showConfirmationDialog(
+              context: context,
+              title: 'Discard Changes',
+              description:
+                  'Are you sure you want to discard the updated report? All unsaved changes will be lost.',
+            );
+            if (discard) {
+              if (context.mounted) {
+                Navigator.of(context).pop();
+              }
+            }
           },
         ),
         actions: [
           IconButton(
             onPressed: () async {
-              bool isDeleted = await showDeleteDialog(
+              bool isDeleted = await showConfirmationDialog(
                   context: context,
                   title: 'Delete Report',
                   description: 'Are you sure want to delete this report?');
@@ -276,7 +286,8 @@ class _EditReportViewState extends State<EditReportView> {
                   readOnly: true,
                   onTap: () => _selectDate(context),
                   decoration: buildInputDecoration(
-                    label: 'Date of ${_isNonCrimeReport ? 'Incident' : 'Crime'}',
+                    label:
+                        'Date of ${_isNonCrimeReport ? 'Incident' : 'Crime'}',
                     suffixIcon: const Icon(
                       Icons.calendar_month,
                       color: midnightBlueColor,
@@ -291,7 +302,8 @@ class _EditReportViewState extends State<EditReportView> {
                   readOnly: true,
                   onTap: () => _selectTime(context),
                   decoration: buildInputDecoration(
-                    label: 'Time of ${_isNonCrimeReport ? 'Incident' : 'Crime'}',
+                    label:
+                        'Time of ${_isNonCrimeReport ? 'Incident' : 'Crime'}',
                     suffixIcon: const Icon(
                       Icons.access_time_filled,
                       color: midnightBlueColor,
@@ -304,7 +316,9 @@ class _EditReportViewState extends State<EditReportView> {
                 TextFormField(
                   controller: _locationOfCrime,
                   keyboardType: TextInputType.text,
-                  decoration: buildInputDecoration(label: 'Location of ${_isNonCrimeReport ? 'Incident' : 'Crime'}'),
+                  decoration: buildInputDecoration(
+                      label:
+                          'Location of ${_isNonCrimeReport ? 'Incident' : 'Crime'}'),
                   validator: (value) => _validateNotEmpty(value),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
@@ -314,8 +328,9 @@ class _EditReportViewState extends State<EditReportView> {
                   keyboardType: TextInputType.multiline,
                   maxLines: 5,
                   minLines: 1,
-                  decoration:
-                      buildInputDecoration(label: 'Description of ${_isNonCrimeReport ? 'Incident' : 'Crime'}'),
+                  decoration: buildInputDecoration(
+                      label:
+                          'Description of ${_isNonCrimeReport ? 'Incident' : 'Crime'}'),
                   validator: (value) => _validateNotEmpty(value),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
@@ -415,24 +430,24 @@ class _EditReportViewState extends State<EditReportView> {
 
                             try {
                               _cloudStorage.updateReport(
-                                  documentId: report.documentId,
-                                  victimName: victimName,
-                                  victimAddress: victimAddress,
-                                  victimContact: victimContact,
-                                  witnessName: witnessName,
-                                  witnessContact: witnessContact,
-                                  dateOfCrime: dateOfCrime,
-                                  timeOfCrime: timeOfCrime,
-                                  locationOfCrime: locationOfCrime,
-                                  descriptionOfCrime: descriptionOfCrime,
-                                  injuryType: injuryType,
-                                  policeStation: policeStation!,
-                                  reportStatus: reportStatus!,
-                                  flags: report.flags,
-                                  upvotes: report.upvotes,
-                                  downvotes: report.downvotes,
-                                  userActions: report.userActions,
-                                );
+                                documentId: report.documentId,
+                                victimName: victimName,
+                                victimAddress: victimAddress,
+                                victimContact: victimContact,
+                                witnessName: witnessName,
+                                witnessContact: witnessContact,
+                                dateOfCrime: dateOfCrime,
+                                timeOfCrime: timeOfCrime,
+                                locationOfCrime: locationOfCrime,
+                                descriptionOfCrime: descriptionOfCrime,
+                                injuryType: injuryType,
+                                policeStation: policeStation!,
+                                reportStatus: reportStatus!,
+                                flags: report.flags,
+                                upvotes: report.upvotes,
+                                downvotes: report.downvotes,
+                                userActions: report.userActions,
+                              );
                               bool reportUpdated =
                                   await showReportCreatedDialog(
                                 context,

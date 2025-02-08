@@ -21,10 +21,10 @@ class _OngoingIncidentsViewState extends State<OngoingIncidentsView> {
   String get userEmail => AuthService.firebase().currentUser!.email;
 
   String? _selectedCategory;
-  bool onlyFlagged = false;
-  bool sortByUpvote = false;
-  bool sortByLatest = false;
-  bool _filtersHidden = false;
+  bool _onlyFlagged = false;
+  bool _sortByUpvote = false;
+  bool _sortByLatest = true;
+  bool _filtersHidden = true;
 
   @override
   void initState() {
@@ -121,16 +121,19 @@ class _OngoingIncidentsViewState extends State<OngoingIncidentsView> {
                   Row(
                     children: [
                       Checkbox(
-                        value: onlyFlagged,
+                        value: _onlyFlagged,
                         onChanged: (value) {
                           setState(() {
-                            onlyFlagged = value!;
+                            _onlyFlagged = value!;
                           });
                         },
                       ),
                       const Text(
                         'Select Flagged Reports',
-                        style: TextStyle(fontSize: 14),
+                          style: TextStyle(
+                          color: blackColor,
+                          fontSize: 14,
+                        ),
                       ),
                     ],
                   ),
@@ -139,55 +142,54 @@ class _OngoingIncidentsViewState extends State<OngoingIncidentsView> {
                     const SizedBox(width: 16),
                     const Text(
                       'Sort: ',
-                      style: TextStyle(fontSize: 14),
+                      style: TextStyle(
+                        color: blackColor,
+                        fontSize: 14,
+                      ),
                     ),
                     Checkbox(
-                      value: sortByUpvote,
+                      value: _sortByUpvote,
                       onChanged: (value) {
                         setState(() {
-                          sortByUpvote = value!;
+                          _sortByUpvote = value!;
                         });
                       },
                     ),
                     const Text(
                       'Upvote',
-                      style: TextStyle(fontSize: 14),
+                      style: TextStyle(
+                        color: blackColor,
+                        fontSize: 14,
+                      ),
                     ),
                     Checkbox(
-                      value: sortByLatest,
+                      value: _sortByLatest,
                       onChanged: (value) {
                         setState(() {
-                          sortByLatest = value!;
+                          _sortByLatest = value!;
                         });
                       },
                     ),
                     const Text(
                       'Latest',
-                      style: TextStyle(fontSize: 14),
+                      style: TextStyle(
+                        color: blackColor,
+                        fontSize: 14,
+                      ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 10),
               ],
             ),
-          // const Padding(
-          //   padding: EdgeInsets.only(left: 16.0, right: 16.0),
-          //   child: Text(
-          //     'Ongoing Incidents:',
-          //     style: TextStyle(
-          //       fontSize: 16,
-          //       fontWeight: FontWeight.bold,
-          //     ),
-          //   ),
-          // ),
           const SizedBox(height: 10),
           Expanded(
             child: StreamBuilder(
               stream: _cloudStorage.allCategoryReports(
                 category: _selectedCategory,
-                flag: onlyFlagged,
-                sortByUpvote: sortByUpvote,
-                sortByLatest: sortByLatest,
+                flag: _onlyFlagged,
+                sortByUpvote: _sortByUpvote,
+                sortByLatest: _sortByLatest,
               ),
               builder: (context, snapshot) {
                 switch (snapshot.connectionState) {

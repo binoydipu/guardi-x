@@ -132,7 +132,7 @@ Widget buildButton({
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: whiteColor,
               ),
               textAlign: TextAlign.center,
             ),

@@ -6,6 +6,7 @@ import 'package:guardix/service/auth/auth_service.dart';
 import 'package:guardix/service/cloud/cloud_storage_exceptions.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/utilities/decorations/input_decoration_template.dart';
+import 'package:guardix/utilities/dialogs/confirmation_dialog.dart';
 import 'package:guardix/utilities/dialogs/error_dialog.dart';
 import 'package:guardix/utilities/dialogs/report_created_dialog.dart';
 import 'package:guardix/utilities/dialogs/submit_report_dialog.dart';
@@ -48,6 +49,8 @@ class _ReportFormViewState extends State<ReportFormView> {
   late final String category;
   bool _isInitialized = false;
   bool _isNonCrimeReport = false;
+
+  bool _isAnonymousPost = false;
 
   Future<void> _selectDate(BuildContext context) async {
     DateTime? selectedDate = await showDatePicker(
@@ -175,8 +178,18 @@ class _ReportFormViewState extends State<ReportFormView> {
             Icons.arrow_back_ios_new_rounded,
             color: whiteColor,
           ),
-          onPressed: () {
-            Navigator.of(context).pop();
+          onPressed: () async {
+            bool discard = await showConfirmationDialog(
+              context: context,
+              title: 'Discard Changes',
+              description:
+                  'Are you sure you want to discard the new report? All unsaved changes will be lost.',
+            );
+            if (discard) {
+              if (context.mounted) {
+                Navigator.of(context).pop();
+              }
+            }
           },
         ),
         title: Text(
@@ -275,7 +288,8 @@ class _ReportFormViewState extends State<ReportFormView> {
                   readOnly: true,
                   onTap: () => _selectTime(context),
                   decoration: buildInputDecoration(
-                    label: 'Time of ${_isNonCrimeReport ? 'Incident' : 'Crime'}',
+                    label:
+                        'Time of ${_isNonCrimeReport ? 'Incident' : 'Crime'}',
                     suffixIcon: const Icon(
                       Icons.access_time_filled,
                       color: midnightBlueColor,
@@ -288,7 +302,9 @@ class _ReportFormViewState extends State<ReportFormView> {
                 TextFormField(
                   controller: _locationOfCrime,
                   keyboardType: TextInputType.text,
-                  decoration: buildInputDecoration(label: 'Location of ${_isNonCrimeReport ? 'Incident' : 'Crime'}'),
+                  decoration: buildInputDecoration(
+                      label:
+                          'Location of ${_isNonCrimeReport ? 'Incident' : 'Crime'}'),
                   validator: (value) => _validateNotEmpty(value),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
@@ -298,8 +314,9 @@ class _ReportFormViewState extends State<ReportFormView> {
                   keyboardType: TextInputType.multiline,
                   maxLines: 5,
                   minLines: 1,
-                  decoration:
-                      buildInputDecoration(label: 'Description of ${_isNonCrimeReport ? 'Incident' : 'Crime'}'),
+                  decoration: buildInputDecoration(
+                      label:
+                          'Description of ${_isNonCrimeReport ? 'Incident' : 'Crime'}'),
                   validator: (value) => _validateNotEmpty(value),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
@@ -374,23 +391,44 @@ class _ReportFormViewState extends State<ReportFormView> {
                     ),
                   ),
                 ),
-                SizedBox(
-                  width: double.infinity,
-                  height: 100,
-                  child: GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 5,
+                if (_selectedImages != null && _selectedImages!.isNotEmpty)
+                  SizedBox(
+                    width: double.infinity,
+                    height: 100,
+                    child: GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 5,
+                      ),
+                      itemCount: _selectedImages?.length ?? 0,
+                      itemBuilder: (context, index) {
+                        return Image.file(
+                          File(_selectedImages![index].path),
+                          fit: BoxFit.cover,
+                        );
+                      },
                     ),
-                    itemCount: _selectedImages?.length ?? 0,
-                    itemBuilder: (context, index) {
-                      return Image.file(
-                        File(_selectedImages![index].path),
-                        fit: BoxFit.cover,
-                      );
-                    },
                   ),
+                Row(
+                  children: [
+                    const Text(
+                      'Post Anonymously: ',
+                      style: TextStyle(
+                        color: blackColor,
+                        fontSize: 15,
+                      ),
+                    ),
+                    Checkbox(
+                      value: _isAnonymousPost,
+                      onChanged: (value) {
+                        setState(() {
+                          _isAnonymousPost = value!;
+                        });
+                      },
+                    ),
+                  ],
                 ),
+                const SizedBox(height: 20),
                 Center(
                   child: ElevatedButton(
                     onPressed: () async {
@@ -399,7 +437,8 @@ class _ReportFormViewState extends State<ReportFormView> {
                             await showReportSubmissionDialog(context);
                         if (context.mounted) {
                           if (isSubmitted) {
-                            final ownerEmail = userEmail;
+                            final ownerEmail =
+                                _isAnonymousPost ? 'Anonymous' : userEmail;
                             final victimName = _victimName.text;
                             final victimAddress = _victimAddress.text;
                             final victimContact = _victimContact.text;

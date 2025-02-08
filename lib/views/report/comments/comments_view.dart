@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
+import 'package:guardix/service/auth/auth_constants.dart';
 import 'package:guardix/service/auth/auth_service.dart';
 import 'package:guardix/service/cloud/cloud_storage_exceptions.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/service/cloud/model/cloud_report_comment.dart';
 import 'package:guardix/utilities/decorations/input_decoration_template.dart';
-import 'package:guardix/utilities/dialogs/delete_dialog.dart';
+import 'package:guardix/utilities/dialogs/confirmation_dialog.dart';
 import 'package:guardix/utilities/dialogs/error_dialog.dart';
 import 'package:guardix/views/report/comments/comments_list_view.dart';
 
@@ -22,6 +23,7 @@ class _CommentsViewState extends State<CommentsView> {
   late FirebaseCloudStorage _cloudStorage;
 
   String? get userId => AuthService.firebase().currentUser!.id;
+  String? get userEmail => AuthService.firebase().currentUser!.email;
 
   @override
   void initState() {
@@ -75,6 +77,7 @@ class _CommentsViewState extends State<CommentsView> {
                 const SizedBox(height: 5),
                 ElevatedButton(
                   onPressed: () async {
+                    FocusScope.of(context).unfocus();
                     if (_commentField.text.isNotEmpty) {
                       try {
                         _cloudStorage.addNewComment(
@@ -135,11 +138,15 @@ class _CommentsViewState extends State<CommentsView> {
                       return CommentsListView(
                         reportComments: allReportComments,
                         onLongPress: (reportComment) async {
-                          bool isDeleted = await showDeleteDialog(
-                            context: context,
-                            title: 'Delete Comment',
-                            description: 'Do you want to delete this comment?',
-                          );
+                          bool isDeleted = userId == reportComment.userId ||
+                                  userEmail == adminEmail
+                              ? await showConfirmationDialog(
+                                  context: context,
+                                  title: 'Delete Comment',
+                                  description:
+                                      'Do you want to delete this comment?',
+                                )
+                              : false;
                           if (isDeleted) {
                             try {
                               _cloudStorage.deleteComment(

@@ -2,11 +2,13 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
+import 'package:guardix/service/auth/auth_constants.dart';
+import 'package:guardix/service/auth/auth_service.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/service/cloud/model/cloud_advocate.dart';
 import 'package:guardix/utilities/decorations/banner_text_decoration.dart';
 import 'package:guardix/utilities/decorations/card_decoration.dart';
-import 'package:guardix/utilities/dialogs/delete_dialog.dart';
+import 'package:guardix/utilities/dialogs/confirmation_dialog.dart';
 import 'package:guardix/views/bottom_nav/home/advocate_list_view.dart';
 import 'package:guardix/views/bottom_nav/home/important_locations.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -20,6 +22,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late final FirebaseCloudStorage _cloudStorage;
+  String? get userEmail => AuthService.firebase().currentUser!.email;
 
   final List<Map<String, dynamic>> _banners = [
     {
@@ -53,6 +56,12 @@ class _HomePageState extends State<HomePage> {
       'backgroundColors': [const Color(0xFFFF9800), const Color(0xFFFFEB3B)],
       'textColor': blackColor,
     },
+    {
+      'title': "Emergency Balance",
+      'text': "Keep enough balance for emergencies. A small top-up can help when you need it most!",
+      'backgroundColors': [const Color(0xFF34C759), const Color(0xFF00A86B)],
+      'textColor': Colors.white,
+    }
   ];
 
   void _makePhoneCall(String phoneNumber) async {
@@ -113,7 +122,7 @@ class _HomePageState extends State<HomePage> {
                     enableInfiniteScroll: true,
                     reverse: false,
                     autoPlay: true,
-                    autoPlayInterval: const Duration(seconds: 3),
+                    autoPlayInterval: const Duration(seconds: 4),
                     autoPlayAnimationDuration:
                         const Duration(milliseconds: 800),
                     autoPlayCurve: Curves.fastOutSlowIn,
@@ -253,14 +262,17 @@ class _HomePageState extends State<HomePage> {
                               return AdvocateListView(
                                 advocates: advocates,
                                 onLongPress: (advocate) async {
-                                  bool isDeleted = await showDeleteDialog(
-                                    context: context,
-                                    title: 'Delete Advocate',
-                                    description: 'Do you want to delete this advocate?',
-                                  );
-                                  if(isDeleted) {
+                                  bool isDeleted = userEmail == adminEmail
+                                      ? await showConfirmationDialog(
+                                          context: context,
+                                          title: 'Delete Advocate',
+                                          description:
+                                              'Do you want to delete this advocate?',
+                                        )
+                                      : false;
+                                  if (isDeleted) {
                                     _cloudStorage.deleteAdvocate(
-                                      documentId: advocate.documentId);
+                                        documentId: advocate.documentId);
                                   }
                                 },
                                 onCall: (phoneNumber) =>

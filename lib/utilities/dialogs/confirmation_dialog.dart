@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guardix/utilities/dialogs/generic_dialog.dart';
 
-Future<bool> showDeleteDialog({
+Future<bool> showConfirmationDialog({
   required BuildContext context,
   String? title,
   String? description,

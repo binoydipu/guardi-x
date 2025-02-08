@@ -4,6 +4,7 @@ import 'package:guardix/service/cloud/cloud_storage_exceptions.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/utilities/decorations/input_decoration_template.dart';
 import 'package:guardix/utilities/dialogs/add_advocate_dialog.dart';
+import 'package:guardix/utilities/dialogs/confirmation_dialog.dart';
 import 'package:guardix/utilities/dialogs/error_dialog.dart';
 import 'package:guardix/utilities/dialogs/report_created_dialog.dart';
 
@@ -54,8 +55,18 @@ class _AddLegalInfoState extends State<AddLegalInfo> {
                   Icons.arrow_back_ios_new_rounded,
                   color: whiteColor,
                 ),
-                onPressed: () {
-                  Navigator.of(context).pop();
+                onPressed: () async {
+                  bool discard = await showConfirmationDialog(
+                    context: context,
+                    title: 'Discard Changes',
+                    description:
+                        'Are you sure you want to discard the new legal info? All unsaved changes will be lost.',
+                  );
+                  if (discard) {
+                    if (context.mounted) {
+                      Navigator.of(context).pop();
+                    }
+                  }
                 },
               )
             : null,
@@ -104,15 +115,16 @@ class _AddLegalInfoState extends State<AddLegalInfo> {
                 Center(
                   child: ElevatedButton(
                     onPressed: () async {
+                      FocusScope.of(context).unfocus();
                       if (_formKey.currentState!.validate()) {
                         bool isSubmitted = await showAddAdvocateDialog(context);
                         if (context.mounted) {
                           if (isSubmitted) {
                             try {
                               _cloudStorage.addNewLegalInfo(
-                                  lawTitle: _lawTitle.text,
-                                  lawDescription: _lawDescription.text,
-                                );
+                                lawTitle: _lawTitle.text,
+                                lawDescription: _lawDescription.text,
+                              );
                               bool lawAdded = await showReportCreatedDialog(
                                 context,
                                 'Legal Info added successfully.',

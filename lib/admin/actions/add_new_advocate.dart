@@ -4,6 +4,7 @@ import 'package:guardix/service/cloud/cloud_storage_exceptions.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/utilities/decorations/input_decoration_template.dart';
 import 'package:guardix/utilities/dialogs/add_advocate_dialog.dart';
+import 'package:guardix/utilities/dialogs/confirmation_dialog.dart';
 import 'package:guardix/utilities/dialogs/error_dialog.dart';
 import 'package:guardix/utilities/dialogs/report_created_dialog.dart';
 import 'package:guardix/utilities/validation_utils.dart';
@@ -36,7 +37,7 @@ class _AddNewAdvocateState extends State<AddNewAdvocate> {
   String? _validateEmailAddress(String? value) {
     if (value == null || value.isEmpty) {
       return '*Required Field';
-    } else if(!ValidationUtils.validateEmail(value)) {
+    } else if (!ValidationUtils.validateEmail(value)) {
       return '*Invalid Email Address';
     }
     return null;
@@ -81,8 +82,18 @@ class _AddNewAdvocateState extends State<AddNewAdvocate> {
                   Icons.arrow_back_ios_new_rounded,
                   color: whiteColor,
                 ),
-                onPressed: () {
-                  Navigator.of(context).pop();
+                onPressed: () async {
+                  bool discard = await showConfirmationDialog(
+                    context: context,
+                    title: 'Discard Changes',
+                    description:
+                        'Are you sure you want to discard the new advocate? All unsaved changes will be lost.',
+                  );
+                  if (discard) {
+                    if (context.mounted) {
+                      Navigator.of(context).pop();
+                    }
+                  }
                 },
               )
             : null,
@@ -154,8 +165,7 @@ class _AddNewAdvocateState extends State<AddNewAdvocate> {
                   child: ElevatedButton(
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        bool isSubmitted =
-                            await showAddAdvocateDialog(context);
+                        bool isSubmitted = await showAddAdvocateDialog(context);
                         if (context.mounted) {
                           if (isSubmitted) {
                             try {

@@ -8,7 +8,7 @@ import 'package:guardix/service/cloud/model/cloud_report.dart';
 import 'package:guardix/service/cloud/cloud_storage_exceptions.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/utilities/decorations/report_status_decoration.dart';
-import 'package:guardix/utilities/dialogs/delete_dialog.dart';
+import 'package:guardix/utilities/dialogs/confirmation_dialog.dart';
 import 'package:guardix/utilities/dialogs/error_dialog.dart';
 import 'package:guardix/utilities/dialogs/loading_dialog.dart';
 import 'package:guardix/utilities/dialogs/report_created_dialog.dart';
@@ -152,7 +152,7 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
                     } else if (value == 'Share') {
                       Share.share(report.toString());
                     } else if (value == 'Delete') {
-                      bool isDeleted = await showDeleteDialog(
+                      bool isDeleted = await showConfirmationDialog(
                         context: context,
                         title: 'Delete Report',
                         description: 'Are you sure want to delete this report?',
@@ -294,7 +294,7 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
                       ),
                     ),
                   ),
-                const SizedBox(height: 17),
+                  const SizedBox(height: 17),
                   Text(
                     'Victim Name: ${report.victimName}',
                     style: const TextStyle(
