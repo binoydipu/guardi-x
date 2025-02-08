@@ -473,7 +473,7 @@ class _EditReportViewState extends State<EditReportView> {
                           SnackBar(
                             content: const Text('Fill all required fields'),
                             action: SnackBarAction(
-                              label: 'Undo',
+                              label: 'Ok',
                               onPressed: () {},
                             ),
                           ),

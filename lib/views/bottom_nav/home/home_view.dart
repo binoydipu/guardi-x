@@ -143,7 +143,7 @@ class _HomeViewState extends State<HomeView> {
               const CircleAvatar(
                 radius: 50,
                 backgroundImage:
-                    AssetImage('assets/images/lawyer.png') as ImageProvider,
+                    AssetImage('assets/images/profile_pic.png') as ImageProvider,
               ),
               const SizedBox(height: 10),
               const Text(

@@ -1,11 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/service/auth/auth_service.dart';
 import 'package:guardix/service/auth/auth_user.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
-import 'package:guardix/service/cloud/model/cloud_user.dart';
+import 'package:guardix/utilities/decorations/input_decoration_template.dart';
 import 'package:guardix/utilities/dialogs/confirmation_dialog.dart';
 import 'package:guardix/utilities/validation_utils.dart';
+import 'package:image_picker/image_picker.dart';
 
 class EditProfileView extends StatefulWidget {
   const EditProfileView({super.key});
@@ -22,9 +25,22 @@ class _EditProfileViewState extends State<EditProfileView> {
   late final TextEditingController _password;
 
   late final FirebaseCloudStorage _cloudStorage;
+
   bool _isInitialized = false;
+  late final ImagePicker _imagePicker;
+  XFile? _selectedImage;
 
   final _formKey = GlobalKey<FormState>();
+
+  Future<void> _pickImage() async {
+    final XFile? image =
+        await _imagePicker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _selectedImage = image;
+      });
+    }
+  }
 
   String? _validateNotEmpty(String? value) {
     if (value == null || value.isEmpty) {
@@ -58,14 +74,13 @@ class _EditProfileViewState extends State<EditProfileView> {
     _email = TextEditingController();
     _phone = TextEditingController();
     _password = TextEditingController();
+    _imagePicker = ImagePicker();
     super.initState();
   }
 
   @override
   void didChangeDependencies() {
-    if (!_isInitialized) {
-      
-    }
+    if (!_isInitialized) {}
     super.didChangeDependencies();
   }
 
@@ -109,6 +124,109 @@ class _EditProfileViewState extends State<EditProfileView> {
         ),
         centerTitle: true,
         backgroundColor: midnightBlueColor,
+      ),
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                GestureDetector(
+                  onTap: () => _pickImage(),
+                  child: CircleAvatar(
+                    radius: 70,
+                    backgroundImage: _selectedImage != null
+                        ? FileImage(File(_selectedImage!.path))
+                        : const AssetImage('assets/images/profile_pic.png')
+                            as ImageProvider,
+                    child: _selectedImage == null
+                        ? const Icon(
+                            Icons.camera_alt,
+                            size: 40,
+                            color: Colors.grey,
+                          )
+                        : null,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _name,
+                  keyboardType: TextInputType.text,
+                  decoration: buildInputDecoration(label: 'Name'),
+                  validator: (value) => _validateNotEmpty(value),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                ),
+                const SizedBox(height: 17),
+                TextFormField(
+                  controller: _email,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: buildInputDecoration(label: 'Email Address'),
+                  validator: (value) => _validateEmail(value),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                ),
+                const SizedBox(height: 17),
+                TextFormField(
+                  controller: _phone,
+                  keyboardType: TextInputType.phone,
+                  decoration: buildInputDecoration(label: 'Phone Number'),
+                  validator: (value) => _validateContact(value),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                ),
+                const SizedBox(height: 25),
+                const Text(
+                  'Verify Yourself: ',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: blackColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 17),
+                TextFormField(
+                  controller: _password,
+                  keyboardType: TextInputType.text,
+                  decoration:
+                      buildInputDecoration(label: 'Confirm With Password'),
+                  validator: (value) => _validateNotEmpty(value),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                ),
+                const SizedBox(height: 25),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text('Fill all required fields'),
+                            action: SnackBarAction(
+                              label: 'Ok',
+                              onPressed: () {},
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: midnightBlueColor,
+                    ),
+                    child: const Text(
+                      'Update Profile',
+                      style: TextStyle(
+                        color: whiteColor,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 30),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
