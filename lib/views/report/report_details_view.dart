@@ -3,7 +3,7 @@ import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
 import 'package:guardix/service/auth/auth_constants.dart';
 import 'package:guardix/service/auth/auth_service.dart';
-import 'package:guardix/service/cloud/cloud_report.dart';
+import 'package:guardix/service/cloud/models/cloud_report.dart';
 import 'package:guardix/service/cloud/cloud_storage_exceptions.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/utilities/dialogs/delete_dialog.dart';
@@ -54,55 +54,59 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
                 },
               )
             : null,
-        actions: userEmail == adminEmail || userEmail == report.ownerEmail ? [
-          IconButton(
-            onPressed: () {
-              Navigator.of(context).pushNamed(
-                editReportRoute,
-                arguments: report,
-              );
-            },
-            icon: const Icon(
-              Icons.edit,
-              color: whiteColor,
-            ),
-          ),
-          IconButton(
-            onPressed: () async {
-              bool isDeleted = await showDeleteDialog(
-                  context: context,
-                  title: 'Delete Report',
-                  description: 'Are you sure want to delete this report?');
-              if (context.mounted) {
-                if (isDeleted) {
-                  try {
-                    _cloudStorage.deleteReport(documentId: report.documentId);
-                    bool reportDeleted = await showReportCreatedDialog(
-                      context,
-                      'Report updated successfully.',
+        actions: userEmail == adminEmail || userEmail == report.ownerEmail
+            ? [
+                IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(
+                      editReportRoute,
+                      arguments: report,
                     );
-                    if (reportDeleted) {
-                      if (context.mounted) {
-                        Navigator.of(context).pop();
+                  },
+                  icon: const Icon(
+                    Icons.edit,
+                    color: whiteColor,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () async {
+                    bool isDeleted = await showDeleteDialog(
+                        context: context,
+                        title: 'Delete Report',
+                        description:
+                            'Are you sure want to delete this report?');
+                    if (context.mounted) {
+                      if (isDeleted) {
+                        try {
+                          _cloudStorage.deleteReport(
+                              documentId: report.documentId);
+                          bool reportDeleted = await showReportCreatedDialog(
+                            context,
+                            'Report updated successfully.',
+                          );
+                          if (reportDeleted) {
+                            if (context.mounted) {
+                              Navigator.of(context).pop();
+                            }
+                          }
+                        } on CouldNotDeleteReportException catch (_) {
+                          if (context.mounted) {
+                            await showErrorDialog(
+                              context,
+                              'Could not delete report',
+                            );
+                          }
+                        } on Exception catch (_) {}
                       }
                     }
-                  } on CouldNotDeleteReportException catch (_) {
-                    if (context.mounted) {
-                      await showErrorDialog(
-                        context,
-                        'Could not delete report',
-                      );
-                    }
-                  } on Exception catch (_) {}
-                }
-              }
-            },
-            icon: const Icon(
-              Icons.delete,
-              color: whiteColor,
-            ),
-          ),
-        ] : null,
+                  },
+                  icon: const Icon(
+                    Icons.delete,
+                    color: whiteColor,
+                  ),
+                ),
+              ]
+            : null,
         title: const Text(
           'Report Details',
           style: TextStyle(color: whiteColor),

@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:guardix/service/cloud/cloud_report.dart';
+import 'package:guardix/service/cloud/models/cloud_report.dart';
 import 'package:guardix/service/cloud/cloud_storage_constants.dart';
 import 'package:guardix/service/cloud/cloud_storage_exceptions.dart';
 
@@ -7,6 +7,12 @@ class FirebaseCloudStorage {
   final reports = FirebaseFirestore.instance.collection(reportCollectionName);
 
   final users = FirebaseFirestore.instance.collection(userCollectionName);
+
+  final usersChatRooms = FirebaseFirestore.instance
+      .collection(usersChatRoomCollectionName); // chatrooms of the current user
+
+  final chats = FirebaseFirestore.instance
+      .collection(chatRoomCollectionName); // all chatrooms that has the chats
 
   void createNewUser({
     required String userId,
@@ -152,6 +158,21 @@ class FirebaseCloudStorage {
       throw CouldNotCreateReportException();
     }
   }
+
+  /*Future<Iterable<CloudReport>> getChats() async {
+    try {
+      return await reports
+          .where(
+            
+          )
+          .get()
+          .then(
+            (value) => value.docs.map((doc) => CloudReport.fromSnapshot(doc)),
+          );
+    } catch (e) {
+      throw CouldNotGetAllReportsException();
+    }
+  }*/
 
   static final FirebaseCloudStorage _shared =
       FirebaseCloudStorage._sharedInstance();

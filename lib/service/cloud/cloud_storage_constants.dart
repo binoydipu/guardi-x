@@ -26,3 +26,9 @@ const userIdFieldName = 'user_id';
 const userNameFiellName = 'user_name';
 const userEmailFieldName = 'email';
 const userPhoneFieldName = 'phone';
+
+// Chat Rooms
+const chatRoomCollectionName = 'chat_room';
+
+// Chat Rooms of current user
+const usersChatRoomCollectionName = 'users_chat_room';

@@ -331,9 +331,10 @@ class _RegisterViewState extends State<RegisterView> {
 
                                   AuthService.firebase()
                                       .sendEmailVerification();
-                                                                        String userId =
+                                  String userId =
                                       AuthService.firebase().currentUser!.id;
-                                  FirebaseCloudStorage cloudStorage = FirebaseCloudStorage();
+                                  FirebaseCloudStorage cloudStorage =
+                                      FirebaseCloudStorage();
                                   cloudStorage.createNewUser(
                                       userId: userId,
                                       userName: name,

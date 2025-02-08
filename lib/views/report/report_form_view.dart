@@ -109,7 +109,7 @@ class _ReportFormViewState extends State<ReportFormView> {
   String? _validateContact(String? value) {
     if (value == null || value.isEmpty) {
       return '*Required Field';
-    } else if(!ValidationUtils.validateMobile(value)) {
+    } else if (!ValidationUtils.validateMobile(value)) {
       return '*Invalid Number';
     }
     return null;

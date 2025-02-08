@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
+import 'package:guardix/views/bottom_nav/chat_view.dart';
 import 'package:guardix/views/bottom_nav/home_nav/home_view.dart';
 import 'package:guardix/views/bottom_nav/report_view.dart';
 import 'package:guardix/views/bottom_nav/sos_view.dart';
@@ -16,6 +17,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
   int _selectedIndex = 0;
   static const List<Widget> _widgetOptions = [
     HomeView(),
+    ChatView(),
     ReportView(),
     TrackView(),
     SosView(),
@@ -47,6 +49,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
         },
         destinations: const [
           NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
+          NavigationDestination(icon: Icon(Icons.chat), label: 'Chat'),
           NavigationDestination(
               icon: Icon(Icons.report_gmailerrorred), label: 'Report'),
           NavigationDestination(

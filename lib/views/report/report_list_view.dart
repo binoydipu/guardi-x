@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
-import 'package:guardix/service/cloud/cloud_report.dart';
+import 'package:guardix/service/cloud/models/cloud_report.dart';
 
 typedef ReportCallback = void Function(CloudReport report);
 
