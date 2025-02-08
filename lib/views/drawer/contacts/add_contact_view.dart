@@ -4,7 +4,10 @@ import 'package:flutter_contacts/flutter_contacts.dart';
 
 import 'package:guardix/components/toast.dart';
 import 'package:guardix/constants/colors.dart';
+import 'package:guardix/service/auth/auth_service.dart';
 import 'package:guardix/service/cloud/cloud_storage_constants.dart';
+import 'package:guardix/service/cloud/cloud_storage_exceptions.dart';
+import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 
 import 'package:guardix/utilities/dialogs/contact_not_registered_dialog.dart';
 import 'package:guardix/utilities/dialogs/error_dialog.dart';
@@ -31,6 +34,18 @@ class _AddContactsViewState extends State<AddContactsView> {
   }
 
   Future<void> addToContact(String phone) async {
+////////// Fetching user phone (temporary code). will implement firebase phone number auth. ////////////
+    String userPhone = '';
+    try {
+      String userId = AuthService.firebase().currentUser!.id;
+
+      var user = await FirebaseCloudStorage().getUserData(userId);
+
+      userPhone = user?['phone'] ?? '';
+    } catch (e) {
+      //print('Failed Mr General');
+    }
+////////////////////////////////////////////////////////////////////////
     if (phone.isNotEmpty) {
       try {
         DocumentSnapshot snapshot = await FirebaseFirestore.instance
@@ -39,7 +54,15 @@ class _AddContactsViewState extends State<AddContactsView> {
             .get();
 
         if (snapshot.exists) {
-          //addToChat();
+          try {
+            FirebaseCloudStorage()
+                .addNewChat(fromNumber: userPhone, toNumber: phone);
+          } on CouldNotCreateChats {
+            if (mounted) {
+              showErrorDialog(
+                  context, 'Faild to add the number. Please try again.');
+            }
+          }
         } else {
           bool share = false;
           if (mounted) {
@@ -48,7 +71,7 @@ class _AddContactsViewState extends State<AddContactsView> {
 
           if (mounted) {
             if (share) {
-              sendBackgroundMessage(context, phone, 'Emergency Message');
+              //sendBackgroundMessage(context, phone, 'Emergency Message');
               sendMessage(context, phone,
                   'Download and Install \'Gurdi-X\'\nhttps://github.com/Ashfak-Uzzaman/guardi-x');
             }

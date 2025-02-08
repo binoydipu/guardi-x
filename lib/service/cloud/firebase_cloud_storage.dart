@@ -1,31 +1,136 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:guardix/service/auth/auth_exception.dart';
+import 'package:guardix/service/auth/auth_service.dart';
+import 'package:guardix/service/cloud/models/chat.dart';
+
 import 'package:guardix/service/cloud/models/cloud_report.dart';
 import 'package:guardix/service/cloud/cloud_storage_constants.dart';
 import 'package:guardix/service/cloud/cloud_storage_exceptions.dart';
+import 'package:guardix/service/cloud/models/message.dart';
 
 class FirebaseCloudStorage {
   final reports = FirebaseFirestore.instance.collection(reportCollectionName);
 
   final users = FirebaseFirestore.instance.collection(userCollectionName);
 
-  final usersChatRooms = FirebaseFirestore.instance
-      .collection(usersChatRoomCollectionName); // chatrooms of the current user
+  final trustedContacts = FirebaseFirestore.instance.collection(
+      trustedContactCollectionName); // chatrooms of the current user
 
-  final chats = FirebaseFirestore.instance
+  final chatRooms = FirebaseFirestore.instance
       .collection(chatRoomCollectionName); // all chatrooms that has the chats
 
-  void createNewUser({
-    required String userId,
-    required String userName,
-    required String email,
-    required String phone,
+  final chats = FirebaseFirestore.instance.collection(chatsCollectionName);
+
+  Stream<DocumentSnapshot<Map<String, dynamic>>> getChatsStream(
+      String trustedContactDocId) {
+    return trustedContacts.doc(trustedContactDocId).snapshots();
+  }
+
+  // send message
+  Future<void> buildChat(
+      String senderPhone, String receiverPhone, message) async {
+    // construct chat room ID for the two users (sorted to ensure uniqueness)
+    List<String> ids = [senderPhone, receiverPhone];
+
+    ids.sort(); // used sneder and receiver phone number to generate id as they are the user_id in 'users' database to make chatroom id unique.
+    String chatRoomID = ids.join('_');
+    DocumentReference chatRoomReference = chatRooms.doc(chatRoomID);
+    DocumentReference chatReference = chats.doc(chatRoomID);
+    final Timestamp timestamp = Timestamp.now();
+    //print('$senderPhone $receiverPhone');
+
+    Message newMessage = Message(
+      senderPhone: senderPhone,
+      receiverPhone: receiverPhone,
+      message: message,
+      timestamp: timestamp,
+    );
+
+    Chat chat = Chat(
+        chatRoomReference: chatRoomReference,
+        senderPhone: senderPhone,
+        lastMessage: message,
+        timestamp: timestamp);
+
+    try {
+      chatRoomReference
+          .collection(chatRoomMessageCollectionName)
+          .add(newMessage.toMap());
+    } catch (e) {
+      throw CouldNotSendMessage();
+    }
+
+    try {
+      chats.doc(chatRoomID).set(chat.toMap());
+    } catch (e) {
+      throw CouldNotUpdateChat();
+    }
+
+    try {
+      addTrustedContact(chatRoomID, chatReference);
+    } catch (e) {
+      throw CouldNotAddContact();
+    }
+  }
+
+  Future<void> addTrustedContact(
+      String chatRoomId, DocumentReference chatRoomReference) async {
+    final String userId = AuthService.firebase().currentUser!.id;
+
+    DocumentSnapshot docSnapshot = await trustedContacts.doc(userId).get();
+
+    if (docSnapshot.exists) {
+      await trustedContacts.doc(userId).update({
+        'chats_reference': FieldValue.arrayUnion(
+            [chatRoomReference]), // Add chatRoomId to array
+      });
+    } else {
+      await trustedContacts.doc(userId).set({
+        'chats_reference': FieldValue.arrayUnion(
+            [chatRoomReference]), // Add chatRoomId to array
+      });
+    }
+  }
+
+  void addNewChat({
+    required String fromNumber,
+    required String toNumber,
   }) async {
     try {
-      await users.doc(userId).set({
-        userIdFieldName: userId,
-        userNameFiellName: userName,
+      const message = 'Hello.\n I am added you to my trusted contact. Thanks';
+      buildChat(fromNumber, toNumber, message);
+    } catch (e) {
+      throw CouldNotCreateChats();
+    }
+  }
+
+  Future<Map<String, dynamic>?> getUserData(String userId) async {
+    try {
+      QuerySnapshot querySnapshot =
+          await users.where(userIdFieldName, isEqualTo: userId).get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        var userDoc = querySnapshot.docs.first;
+        return userDoc.data() as Map<String, dynamic>;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      throw UserNotFoundAuthException();
+    }
+  }
+
+  void createNewUser(
+      {required String userName,
+      required String email,
+      required String phone,
+      required bool isAdmin}) async {
+    try {
+      await users.add({
+        userNameFieldName: userName,
         userEmailFieldName: email,
         userPhoneFieldName: phone,
+        userIsAdminFieldName: isAdmin,
       });
     } catch (e) {
       throw CouldNotAddUserException();

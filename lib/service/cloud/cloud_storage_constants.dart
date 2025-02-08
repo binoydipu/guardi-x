@@ -23,12 +23,22 @@ const reportStatusFieldName = 'report_status';
 // Users
 const userCollectionName = 'Users';
 const userIdFieldName = 'user_id';
-const userNameFiellName = 'user_name';
+const userNameFieldName = 'user_name';
 const userEmailFieldName = 'email';
 const userPhoneFieldName = 'phone';
+const userIsAdminFieldName = 'is_admin';
 
 // Chat Rooms
 const chatRoomCollectionName = 'chat_room';
+const chatRoomMessageCollectionName = 'messages';
+const senderPhoneFieldName = 'senderID';
+const receiverPhoneFieldName = 'receiverID';
+const messageFieldName = 'message';
+const timestampFieldName = 'timestamp';
 
-// Chat Rooms of current user
-const usersChatRoomCollectionName = 'users_chat_room';
+// trusted contacts of current user
+const trustedContactCollectionName = 'trusted_contacts';
+
+//  chats
+const chatsCollectionName = 'chats';
+const chatRoomReferenceFieldName = 'chat_room_reference';

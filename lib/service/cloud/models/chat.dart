@@ -1,26 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:guardix/service/cloud/cloud_storage_constants.dart';
 
-class Message {
+class Chat {
+  final DocumentReference chatRoomReference;
   final String senderPhone;
 
-  final String receiverPhone;
-  final String message;
+  final String lastMessage;
   final Timestamp timestamp;
 
-  Message({
+  Chat({
+    required this.chatRoomReference,
     required this.senderPhone,
-    required this.receiverPhone,
-    required this.message,
+    required this.lastMessage,
     required this.timestamp,
   });
 
 // convert to a map
   Map<String, dynamic> toMap() {
     return {
+      chatRoomReferenceFieldName: chatRoomReference,
       senderPhoneFieldName: senderPhone,
-      receiverPhoneFieldName: receiverPhone,
-      messageFieldName: message,
+      messageFieldName: lastMessage,
       timestampFieldName: timestamp,
     };
   }

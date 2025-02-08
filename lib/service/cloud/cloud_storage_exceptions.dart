@@ -13,3 +13,11 @@ class CouldNotDeleteReportException extends CloudStorageExceptions {}
 class CouldNotAddUserException extends CloudStorageExceptions {}
 
 class CouldNotGetChatRoomsException extends CloudStorageExceptions {}
+
+class CouldNotCreateChats extends CloudStorageExceptions {}
+
+class CouldNotSendMessage extends CloudStorageExceptions {}
+
+class CouldNotAddContact extends CloudStorageExceptions {}
+
+class CouldNotUpdateChat extends CloudStorageExceptions {}

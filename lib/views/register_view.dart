@@ -331,36 +331,39 @@ class _RegisterViewState extends State<RegisterView> {
 
                                   AuthService.firebase()
                                       .sendEmailVerification();
-                                  String userId =
-                                      AuthService.firebase().currentUser!.id;
                                   FirebaseCloudStorage cloudStorage =
                                       FirebaseCloudStorage();
                                   cloudStorage.createNewUser(
-                                      userId: userId,
                                       userName: name,
                                       email: email,
-                                      phone: phone);
-                                  // ignore: use_build_context_synchronously
-                                  Navigator.of(context)
-                                      .pushNamed(verifyEmailRoute);
+                                      phone: phone,
+                                      isAdmin: false);
+
+                                  if (context.mounted) {
+                                    Navigator.of(context)
+                                        .pushNamed(verifyEmailRoute);
+                                  }
                                 } on EmailAlreadyInUseAuthException catch (_) {
-                                  await showErrorDialog(
-                                    // ignore: use_build_context_synchronously
-                                    context,
-                                    'Email is already in use',
-                                  );
+                                  if (context.mounted) {
+                                    await showErrorDialog(
+                                      context,
+                                      'Email is already in use',
+                                    );
+                                  }
                                 } on InvalidEmailAuthException catch (_) {
-                                  await showErrorDialog(
-                                    // ignore: use_build_context_synchronously
-                                    context,
-                                    'Invalid Email',
-                                  );
+                                  if (context.mounted) {
+                                    await showErrorDialog(
+                                      context,
+                                      'Invalid Email',
+                                    );
+                                  }
                                 } on GenericAuthException catch (_) {
-                                  await showErrorDialog(
-                                    // ignore: use_build_context_synchronously
-                                    context,
-                                    'Failed to register',
-                                  );
+                                  if (context.mounted) {
+                                    await showErrorDialog(
+                                      context,
+                                      'Failed to register',
+                                    );
+                                  }
                                 }
                               }
                             }
