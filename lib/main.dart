@@ -7,8 +7,8 @@ import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
 import 'package:guardix/service/auth/auth_constants.dart';
 import 'package:guardix/views/bottom_nav/home/edit_profile_view.dart';
+import 'package:guardix/views/forgot_password_view.dart';
 import 'package:guardix/views/incidents/ongoing_incidents_view.dart';
-
 import 'package:guardix/views/report/category_selection_view.dart';
 import 'package:guardix/views/report/comments/comments_view.dart';
 import 'package:guardix/views/report/edit_report_view.dart';
@@ -54,6 +54,7 @@ class MyApp extends StatelessWidget {
         loginRoute: (context) => const LoginView(),
         registerRoute: (context) => const RegisterView(),
         verifyEmailRoute: (context) => const VerifyEmailView(),
+        forgotPasswordRoute: (context) => const ForgotPasswordView(),
         initializeRout: (context) => const InitializeView(),
         navigationMenuRoute: (context) => const NavigationMenu(),
         homeRoute: (context) => const HomeView(),
@@ -98,7 +99,14 @@ class InitializeView extends StatelessWidget {
             }
 
           default:
-            return const CircularProgressIndicator();
+            return Container(
+              width: double.infinity,
+              height: double.infinity,
+              color: whiteColor,
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
         }
       },
     );

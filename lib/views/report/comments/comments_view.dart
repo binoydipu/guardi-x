@@ -5,6 +5,7 @@ import 'package:guardix/service/auth/auth_service.dart';
 import 'package:guardix/service/cloud/cloud_storage_exceptions.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/service/cloud/model/cloud_report_comment.dart';
+import 'package:guardix/service/cloud/model/cloud_user.dart';
 import 'package:guardix/utilities/decorations/input_decoration_template.dart';
 import 'package:guardix/utilities/dialogs/confirmation_dialog.dart';
 import 'package:guardix/utilities/dialogs/error_dialog.dart';
@@ -24,12 +25,23 @@ class _CommentsViewState extends State<CommentsView> {
 
   String? get userId => AuthService.firebase().currentUser!.id;
   String? get userEmail => AuthService.firebase().currentUser!.email;
+  CloudUser? cloudUser;
 
   @override
   void initState() {
     _commentField = TextEditingController();
     _cloudStorage = FirebaseCloudStorage();
+    _getUser();
     super.initState();
+  }
+
+  Future<void> _getUser() async {
+    try {
+      final user = await _cloudStorage.getUser(userId: userId!);
+      setState(() {
+        cloudUser = user;
+      });
+    } catch (_) {}
   }
 
   @override
@@ -80,12 +92,15 @@ class _CommentsViewState extends State<CommentsView> {
                     FocusScope.of(context).unfocus();
                     if (_commentField.text.isNotEmpty) {
                       try {
-                        _cloudStorage.addNewComment(
-                          reportId: reportId,
-                          userId: userId!,
-                          comment: _commentField.text,
-                        );
-                        _commentField.clear();
+                        _getUser().then((_) {
+                          _cloudStorage.addNewComment(
+                            reportId: reportId,
+                            userId: userId!,
+                            userName: cloudUser!.userName,
+                            comment: _commentField.text,
+                          );
+                          _commentField.clear();
+                        },);
                       } on CouldNotAddCommentException catch (_) {
                         if (context.mounted) {
                           await showErrorDialog(

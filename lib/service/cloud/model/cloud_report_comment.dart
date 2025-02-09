@@ -6,12 +6,14 @@ import 'package:flutter/foundation.dart';
 class CloudReportComment {
   final String commentId;
   final String userId;
+  final String userName;
   final String comment;
   final DateTime createdAt;
 
   const CloudReportComment({
     required this.commentId,
     required this.userId,
+    required this.userName,
     required this.comment,
     required this.createdAt,
   });
@@ -20,6 +22,7 @@ class CloudReportComment {
     QueryDocumentSnapshot<Map<String, dynamic>> snapshot)
     : commentId = snapshot.id,
       userId = snapshot.data()[userIdFieldName] as String? ?? '',
+      userName = snapshot.data()[userNameFieldName] as String? ?? '',
       createdAt = (snapshot.data()[createdAtFieldName] as Timestamp?)?.toDate() ?? DateTime.now(),
       comment = snapshot.data()[commentsFieldName] as String? ?? '';
 }

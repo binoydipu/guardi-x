@@ -204,7 +204,7 @@ class _RegisterViewState extends State<RegisterView> {
                 enableSuggestions: false,
                 autocorrect: false,
                 keyboardType: TextInputType.name,
-                decoration: buildInputDecoration(label: 'Name'),
+                decoration: buildInputDecoration(label: 'Name', prefixIcon: const Icon(Icons.person, color: midnightBlueColor,)),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 1.0, left: 16.0),
@@ -224,7 +224,7 @@ class _RegisterViewState extends State<RegisterView> {
                 enableSuggestions: false,
                 autocorrect: false,
                 keyboardType: TextInputType.emailAddress,
-                decoration: buildInputDecoration(label: 'Email'),
+                decoration: buildInputDecoration(label: 'Email', prefixIcon: const Icon(Icons.email_rounded, color: midnightBlueColor,)),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 1.0, left: 16.0),
@@ -244,7 +244,7 @@ class _RegisterViewState extends State<RegisterView> {
                 enableSuggestions: true,
                 autocorrect: false,
                 keyboardType: TextInputType.phone,
-                decoration: buildInputDecoration(label: 'Mobile Number'),
+                decoration: buildInputDecoration(label: 'Mobile Number', prefixIcon: const Icon(Icons.phone, color: midnightBlueColor,)),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 1.0, left: 16.0),
@@ -264,7 +264,7 @@ class _RegisterViewState extends State<RegisterView> {
                 enableSuggestions: false,
                 autocorrect: false,
                 keyboardType: TextInputType.text,
-                decoration: buildInputDecoration(label: 'Password'),
+                decoration: buildInputDecoration(label: 'Password', prefixIcon: const Icon(Icons.remove_red_eye_rounded, color: midnightBlueColor,)),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 1.0, left: 16.0),
@@ -283,7 +283,7 @@ class _RegisterViewState extends State<RegisterView> {
                 obscureText: true,
                 enableSuggestions: false,
                 autocorrect: false,
-                decoration: buildInputDecoration(label: 'Confirm Password'),
+                decoration: buildInputDecoration(label: 'Confirm Password', prefixIcon: const Icon(Icons.remove_red_eye_rounded, color: midnightBlueColor,)),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 1.0, left: 16.0),

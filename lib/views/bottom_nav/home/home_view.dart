@@ -6,6 +6,7 @@ import 'package:guardix/service/auth/auth_service.dart';
 import 'package:guardix/enums/drawer_action.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/service/cloud/model/cloud_user.dart';
+import 'package:guardix/utilities/dialogs/loading_dialog.dart';
 import 'package:guardix/views/drawer/app_language_view.dart';
 import 'package:guardix/views/drawer/emergency_view.dart';
 import 'package:guardix/views/drawer/location_view.dart';
@@ -28,7 +29,7 @@ class _HomeViewState extends State<HomeView> {
   String? get userEmail => AuthService.firebase().currentUser!.email;
   String? get userId => AuthService.firebase().currentUser!.id;
   late FirebaseCloudStorage _cloudStorage;
-  late CloudUser cloudUser;
+  CloudUser? cloudUser;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -39,9 +40,12 @@ class _HomeViewState extends State<HomeView> {
     super.initState();
   }
 
-  void _getUser() async {
+  Future<void> _getUser() async {
     try {
-      cloudUser = await _cloudStorage.getUser(userId: userId!);
+      final user = await _cloudStorage.getUser(userId: userId!);
+      setState(() {
+        cloudUser = user;
+      });
     } catch (_) {}
   }
 
@@ -75,11 +79,20 @@ class _HomeViewState extends State<HomeView> {
         actions: [
           IconButton(
             onPressed: () {
-              _getUser();
-              _showProfileDrawer(context);
+              final closeDialog = showLoadingDialog(
+                context: context,
+                text: 'Loading..',
+              );
+              _getUser().then((_) {
+                closeDialog();
+                if (context.mounted) {
+                  _showProfileDrawer(context);
+                }
+              });
             },
-            icon: const Icon(Icons.person),
+            icon: const Icon(Icons.account_circle_outlined),
           ),
+          // IconButton(onPressed: () => _handleLogout(), icon: const Icon(Icons.logout),),
         ],
       ),
       drawer: Drawer(
@@ -148,6 +161,9 @@ class _HomeViewState extends State<HomeView> {
   }
 
   void _showProfileDrawer(BuildContext context) {
+    if (cloudUser == null) {
+      return;
+    }
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -168,20 +184,32 @@ class _HomeViewState extends State<HomeView> {
                     as ImageProvider,
               ),
               const SizedBox(height: 10),
-              Text(
-                cloudUser.userName,
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    cloudUser!.userName,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  if (cloudUser!.isAdmin) const SizedBox(width: 5),
+                  if (cloudUser!.isAdmin)
+                    const Icon(
+                      Icons.admin_panel_settings,
+                      color: midnightBlueColor,
+                    ),
+                ],
               ),
               const SizedBox(height: 5),
               Text(
-                cloudUser.email,
+                cloudUser!.email,
                 style: const TextStyle(fontSize: 16, color: Colors.grey),
               ),
               const SizedBox(height: 20),
               ListTile(
                 leading: const Icon(Icons.phone, color: Colors.deepPurple),
-                title: Text(cloudUser.phone),
+                title: Text(cloudUser!.phone),
                 onTap: () {},
               ),
               ListTile(
@@ -192,6 +220,16 @@ class _HomeViewState extends State<HomeView> {
                   Navigator.of(context).pushNamed(editProfileRoute);
                 },
               ),
+              if (cloudUser!.isAdmin)
+                ListTile(
+                  leading: const Icon(Icons.admin_panel_settings,
+                      color: midnightBlueColor),
+                  title: const Text('Admin Panel'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.of(context).pushNamed(adminPanelRoute);
+                  },
+                ),
               ListTile(
                 leading: const Icon(Icons.history, color: Colors.green),
                 title: const Text('Case History'),
@@ -211,7 +249,6 @@ class _HomeViewState extends State<HomeView> {
                 leading: const Icon(Icons.logout, color: Colors.red),
                 title: const Text('Logout'),
                 onTap: () {
-                  Navigator.pop(context); // Close the drawer
                   _handleLogout();
                 },
               ),
@@ -340,15 +377,15 @@ class _HomeViewState extends State<HomeView> {
   }
 
   void _handleLogout() async {
-    bool isLoggedout = await showLogOutDialog(_scaffoldKey.currentContext!);
+    bool isLoggedout = await showLogOutDialog(context);
     if (isLoggedout) {
       await AuthService.firebase().logOut();
-      if (_scaffoldKey.currentContext != null && _scaffoldKey.currentContext!.mounted) {
+      if (context.mounted) {
         Navigator.of(_scaffoldKey.currentContext!).pushNamedAndRemoveUntil(
           welcomeRoute,
           (route) => false,
         );
       }
-    } 
+    }
   }
 }

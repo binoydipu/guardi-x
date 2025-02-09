@@ -2,6 +2,7 @@
 const reportCollectionName = 'reports';
 
 const ownerEmailFieldName = 'user_email';
+const ownerNameFieldName = 'user_name';
 const categoryFieldName = 'report_category';
 
 const victimNameFieldName = 'victim_name';

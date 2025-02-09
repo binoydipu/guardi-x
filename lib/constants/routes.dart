@@ -2,6 +2,7 @@ const welcomeRoute = '/welcome/';
 const loginRoute = '/login/';
 const registerRoute = '/register/';
 const verifyEmailRoute = '/verifyEmail/';
+const forgotPasswordRoute = '/forgot-password/';
 const initializeRout = 'initialize';
 const navigationMenuRoute = '/navigation/';
 const homeRoute = '/home/';

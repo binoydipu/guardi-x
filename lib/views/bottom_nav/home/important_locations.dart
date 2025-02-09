@@ -20,10 +20,10 @@ Widget buildLocations({
   required BuildContext context,
 }) {
   return SizedBox(
-    height: 250,
+    height: 125,
     child: GridView.count(
       scrollDirection: Axis.horizontal,
-      crossAxisCount: 2,
+      crossAxisCount: 1,
       crossAxisSpacing: 10,
       children: [
         buildButton(
@@ -108,7 +108,7 @@ Widget buildButton({
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
-          elevation: 2,
+          elevation: 4,
           shadowColor: color,
           padding: const EdgeInsets.symmetric(
             vertical: 15,

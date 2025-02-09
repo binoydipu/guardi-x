@@ -6,7 +6,7 @@ import 'package:guardix/utilities/decorations/input_decoration_template.dart';
 import 'package:guardix/utilities/dialogs/add_advocate_dialog.dart';
 import 'package:guardix/utilities/dialogs/confirmation_dialog.dart';
 import 'package:guardix/utilities/dialogs/error_dialog.dart';
-import 'package:guardix/utilities/dialogs/report_created_dialog.dart';
+import 'package:guardix/utilities/dialogs/success_dialog.dart';
 
 class AddLegalInfo extends StatefulWidget {
   const AddLegalInfo({super.key});
@@ -125,9 +125,9 @@ class _AddLegalInfoState extends State<AddLegalInfo> {
                                 lawTitle: _lawTitle.text,
                                 lawDescription: _lawDescription.text,
                               );
-                              bool lawAdded = await showReportCreatedDialog(
-                                context,
-                                'Legal Info added successfully.',
+                              bool lawAdded = await showSuccessDialog(
+                                context: context,
+                                text: 'Legal Info added successfully.',
                               );
                               if (lawAdded) {
                                 if (context.mounted) {

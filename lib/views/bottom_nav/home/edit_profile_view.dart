@@ -2,12 +2,15 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
+import 'package:guardix/constants/routes.dart';
 import 'package:guardix/service/auth/auth_service.dart';
 import 'package:guardix/service/auth/auth_user.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/service/cloud/model/cloud_user.dart';
 import 'package:guardix/utilities/decorations/input_decoration_template.dart';
 import 'package:guardix/utilities/dialogs/confirmation_dialog.dart';
+import 'package:guardix/utilities/dialogs/error_dialog.dart';
+import 'package:guardix/utilities/dialogs/success_dialog.dart';
 import 'package:guardix/utilities/validation_utils.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -26,8 +29,6 @@ class _EditProfileViewState extends State<EditProfileView> {
   late final TextEditingController _password;
 
   late final FirebaseCloudStorage _cloudStorage;
-
-  String? get userId => AuthService.firebase().currentUser!.id;
 
   late final ImagePicker _imagePicker;
   XFile? _selectedImage;
@@ -83,10 +84,36 @@ class _EditProfileViewState extends State<EditProfileView> {
   }
 
   void _getUser() async {
-    cloudUser = await _cloudStorage.getUser(userId: userId!);
+    cloudUser = await _cloudStorage.getUser(userId: user!.id);
     _name.text = cloudUser.userName;
     _email.text = cloudUser.email;
     _phone.text = cloudUser.phone;
+  }
+
+  Future<void> _handleUpdate({
+    required String userName,
+    required String phoneNumber,
+  }) async {
+    try {
+      await _cloudStorage.updateUser(
+        userName: userName,
+        phone: phoneNumber,
+      );
+    } catch (_) {}
+  }
+
+  Future<bool> _handleReauthentication({
+    required String password,
+  }) async {
+    try {
+      bool success = await AuthService.firebase().reAuthenticate(
+        email: user!.email,
+        password: password,
+      );
+      return success;
+    } catch (_) {
+      return false;
+    }
   }
 
   @override
@@ -167,15 +194,26 @@ class _EditProfileViewState extends State<EditProfileView> {
                 TextFormField(
                   controller: _name,
                   keyboardType: TextInputType.text,
-                  decoration: buildInputDecoration(label: 'Name'),
+                  decoration: buildInputDecoration(
+                      label: 'Name',
+                      prefixIcon: const Icon(
+                        Icons.person,
+                        color: midnightBlueColor,
+                      )),
                   validator: (value) => _validateNotEmpty(value),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
                 const SizedBox(height: 17),
                 TextFormField(
                   controller: _email,
+                  enabled: false,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: buildInputDecoration(label: 'Email Address'),
+                  decoration: buildInputDecoration(
+                      label: 'Email Address',
+                      prefixIcon: const Icon(
+                        Icons.email_rounded,
+                        color: midnightBlueColor,
+                      )),
                   validator: (value) => _validateEmail(value),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
@@ -183,7 +221,12 @@ class _EditProfileViewState extends State<EditProfileView> {
                 TextFormField(
                   controller: _phone,
                   keyboardType: TextInputType.phone,
-                  decoration: buildInputDecoration(label: 'Phone Number'),
+                  decoration: buildInputDecoration(
+                      label: 'Phone Number',
+                      prefixIcon: const Icon(
+                        Icons.phone,
+                        color: midnightBlueColor,
+                      )),
                   validator: (value) => _validateContact(value),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
@@ -200,8 +243,12 @@ class _EditProfileViewState extends State<EditProfileView> {
                 TextFormField(
                   controller: _password,
                   keyboardType: TextInputType.text,
-                  decoration:
-                      buildInputDecoration(label: 'Confirm With Password'),
+                  decoration: buildInputDecoration(
+                      label: 'Confirm With Password',
+                      prefixIcon: const Icon(
+                        Icons.remove_red_eye_rounded,
+                        color: midnightBlueColor,
+                      )),
                   validator: (value) => _validateNotEmpty(value),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
@@ -210,8 +257,54 @@ class _EditProfileViewState extends State<EditProfileView> {
                   child: ElevatedButton(
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        // TODO: Re-authenticate User
-                        // TODO: Update Profile
+                        bool isConfirmed = await showConfirmationDialog(
+                          context: context,
+                          title: 'Update Profile',
+                          description:
+                              'Are you sure you want to update the changes in your profile?',
+                        );
+                        if (isConfirmed) {
+                          _handleReauthentication(password: _password.text)
+                              .then(
+                            (successful) {
+                              if (successful) {
+                                _handleUpdate(
+                                  userName: _name.text,
+                                  phoneNumber: _phone.text,
+                                ).then(
+                                  (_) {
+                                    if (context.mounted) {
+                                      showSuccessDialog(
+                                        context: context,
+                                        title: 'Profile Updated',
+                                        text: 'Your Profile is updated.',
+                                      ).then(
+                                        (value) {
+                                          if (value) {
+                                            if (context.mounted) {
+                                              Navigator.of(context)
+                                                  .pushNamedAndRemoveUntil(
+                                                navigationMenuRoute,
+                                                (route) => false,
+                                              );
+                                            }
+                                          }
+                                        },
+                                      );
+                                    }
+                                  },
+                                );
+                              } else {
+                                if (context.mounted) {
+                                  showErrorDialog(
+                                    context,
+                                    'Failed to Re-authenticate user.',
+                                  );
+                                }
+                              }
+                            },
+                          );
+                        }
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(

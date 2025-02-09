@@ -68,7 +68,7 @@ class _LoginViewState extends State<LoginView> {
                 enableSuggestions: false,
                 autocorrect: false,
                 keyboardType: TextInputType.emailAddress,
-                decoration: buildInputDecoration(label: 'Email'),
+                decoration: buildInputDecoration(label: 'Email' , prefixIcon: const Icon(Icons.email_rounded, color: midnightBlueColor,)),
               ),
               const SizedBox(height: 20),
               TextField(
@@ -76,14 +76,18 @@ class _LoginViewState extends State<LoginView> {
                 obscureText: true,
                 enableSuggestions: false,
                 autocorrect: false,
-                decoration: buildInputDecoration(label: 'Password'),
+                decoration: buildInputDecoration(label: 'Password', prefixIcon: const Icon(Icons.remove_red_eye_rounded, color: midnightBlueColor,)),
               ),
               const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                    onPressed: () async {},
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(
+                        forgotPasswordRoute,
+                      );
+                    },
                     style: TextButton.styleFrom(
                       textStyle: const TextStyle(
                         fontSize: 22,
@@ -125,7 +129,8 @@ class _LoginViewState extends State<LoginView> {
                           );
                           final user = AuthService.firebase().currentUser;
 
-                          if (user!.email == adminEmail || user.isEmailVerified) {
+                          if (user!.email == adminEmail ||
+                              user.isEmailVerified) {
                             // ignore: use_build_context_synchronously
                             Navigator.of(context).pushNamedAndRemoveUntil(
                               navigationMenuRoute,

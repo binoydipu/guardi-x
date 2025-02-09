@@ -57,7 +57,7 @@ class CommentsListView extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              reportComment.userId,
+                              reportComment.userName,
                               style: const TextStyle(
                                 color: midnightBlueColor,
                                 fontSize: 14,
