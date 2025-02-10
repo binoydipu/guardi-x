@@ -8,6 +8,7 @@ const softBlueColor = Color.fromARGB(255, 164, 190, 231);
 
 // Accent Colors
 const safetyOrangeColor = Color(0xFFFF6F00);
+const safetyOrangeColorLite = Color.fromARGB(255, 244, 131, 44);
 const brightGreenColor = Color(0xFF36D399);
 
 // Neutral Colors

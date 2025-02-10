@@ -38,11 +38,15 @@ const userIsAdminFieldName = 'is_admin';
 // Chat Rooms
 const chatRoomCollectionName = 'chat_room';
 const chatRoomMessageCollectionName = 'messages';
-const senderPhoneFieldName = 'senderID';
-const receiverPhoneFieldName = 'receiverID';
+const senderPhoneFieldName = 'sender_phone';
+const receiverPhoneFieldName = 'receiver_phone';
+const senderNameFieldName = 'sender_name';
+const receiverNameFieldName = 'receiver_name';
 const messageFieldName = 'message';
+const messageCollectionName = 'messages';
 const timestampFieldName = 'timestamp';
-
+const isReadFieldName = 'is_read';
+const isSeenFieldName = 'is_seen';
 // trusted contacts of current user
 const trustedContactCollectionName = 'trusted_contacts';
 
@@ -59,13 +63,11 @@ const advocateEmailFieldName = 'advocate_email';
 const advocatePhoneFieldName = 'advocate_phone';
 const advocateAddressFieldName = 'advocate_address';
 
-
 // Legal Info
 const legalInfoCollectionName = 'legal_info';
 
 const lawTitleFieldName = 'law_title';
 const lawDescriptionFieldName = 'law_description';
-
 
 // Report Comments
 const reportCommentCollectionName = 'report_comment';
@@ -73,5 +75,3 @@ const commentSubCollectionName = 'this_report_comment';
 
 const reportIdFieldName = 'report_id';
 const commentsFieldName = 'comments';
-
-

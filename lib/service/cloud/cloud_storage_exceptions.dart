@@ -34,10 +34,14 @@ class CouldNotDeleteCommentException extends CloudStorageExceptions {}
 
 class CouldNotGetChatRoomsException extends CloudStorageExceptions {}
 
-class CouldNotCreateChats extends CloudStorageExceptions {}
+class CouldNotCreateChatsException extends CloudStorageExceptions {}
 
 class CouldNotSendMessage extends CloudStorageExceptions {}
+
+class CouldNotUpdateMessageStatus extends CloudStorageExceptions {}
 
 class CouldNotAddContact extends CloudStorageExceptions {}
 
 class CouldNotUpdateChat extends CloudStorageExceptions {}
+
+class ContactNotRegisteredException extends CloudStorageExceptions {}

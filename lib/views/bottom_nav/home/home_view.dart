@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guardix/components/toast.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
 import 'package:guardix/service/auth/auth_constants.dart';
@@ -6,6 +7,7 @@ import 'package:guardix/service/auth/auth_service.dart';
 import 'package:guardix/enums/drawer_action.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/service/cloud/model/cloud_user.dart';
+import 'package:guardix/utilities/helpers/local_storage.dart';
 import 'package:guardix/utilities/dialogs/loading_dialog.dart';
 import 'package:guardix/views/drawer/app_language_view.dart';
 import 'package:guardix/views/drawer/emergency_view.dart';
@@ -79,6 +81,7 @@ class _HomeViewState extends State<HomeView> {
         actions: [
           IconButton(
             onPressed: () {
+              LocalStorage.getUserPhone();
               final closeDialog = showLoadingDialog(
                 context: context,
                 text: 'Loading..',
@@ -250,6 +253,7 @@ class _HomeViewState extends State<HomeView> {
                 title: const Text('Logout'),
                 onTap: () {
                   _handleLogout();
+                  LocalStorage.removeUserData();
                 },
               ),
             ],
