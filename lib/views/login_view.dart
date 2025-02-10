@@ -4,8 +4,11 @@ import 'package:guardix/constants/routes.dart';
 import 'package:guardix/service/auth/auth_constants.dart';
 import 'package:guardix/service/auth/auth_exception.dart';
 import 'package:guardix/service/auth/auth_service.dart';
+import 'package:guardix/service/cloud/cloud_storage_constants.dart';
+import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/utilities/decorations/input_decoration_template.dart';
 import 'package:guardix/utilities/dialogs/error_dialog.dart';
+import 'package:guardix/utilities/helpers/local_storage.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -125,13 +128,29 @@ class _LoginViewState extends State<LoginView> {
                           );
                           final user = AuthService.firebase().currentUser;
 
-                          if (user!.email == adminEmail || user.isEmailVerified) {
-                            // ignore: use_build_context_synchronously
-                            Navigator.of(context).pushNamedAndRemoveUntil(
-                              navigationMenuRoute,
-                              (route) =>
-                                  false, // This predicate ensures that all previous routes are removed.
-                            );
+                          if (user!.email == adminEmail ||
+                              user.isEmailVerified) {
+                            String userId = user.id;
+
+                            var userDetails = await FirebaseCloudStorage()
+                                .getUserData(userId: userId);
+
+                            String userPhone =
+                                userDetails?[userPhoneFieldName] ?? '';
+                            String userName =
+                                userDetails?[userNameFieldName] ?? '';
+
+                            //print('userphone = > $userPhone');
+
+                            LocalStorage.saveUserData(userPhone, userName);
+
+                            if (context.mounted) {
+                              Navigator.of(context).pushNamedAndRemoveUntil(
+                                navigationMenuRoute,
+                                (route) =>
+                                    false, // This predicate ensures that all previous routes are removed.
+                              );
+                            }
                           } else {
                             // ignore: use_build_context_synchronously
                             Navigator.of(context).pushNamedAndRemoveUntil(

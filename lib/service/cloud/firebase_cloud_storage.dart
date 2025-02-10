@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:guardix/components/toast.dart';
 import 'package:guardix/service/auth/auth_exception.dart';
 import 'package:guardix/service/auth/auth_service.dart';
 import 'package:guardix/service/cloud/model/chat.dart';
@@ -34,34 +35,101 @@ class FirebaseCloudStorage {
     return trustedContacts.doc(trustedContactDocId).snapshots();
   }
 
-  // send message
-  Future<void> buildChat(
-      String senderPhone, String receiverPhone, message) async {
-    // construct chat room ID for the two users (sorted to ensure uniqueness)
-    List<String> ids = [senderPhone, receiverPhone];
+  Stream<QuerySnapshot> getChatQueryStream(List<dynamic> chatRefs) {
+    return FirebaseFirestore.instance
+        .collection(chatsCollectionName)
+        .where(FieldPath.documentId, whereIn: chatRefs)
+        .orderBy('timestamp', descending: true)
+        .snapshots();
+  }
 
-    ids.sort(); // used sneder and receiver phone number to generate id as they are the user_id in 'users' database to make chatroom id unique.
-    String chatRoomID = ids.join('_');
-    DocumentReference chatRoomReference = chatRooms.doc(chatRoomID);
-    DocumentReference chatReference = chats.doc(chatRoomID);
-    final Timestamp timestamp = Timestamp.now();
-    //print('$senderPhone $receiverPhone');
+/*
+What is batch in Firebase Firestore?
+A batch in Firestore (WriteBatch) is used to perform multiple write operations (update, set, delete) in a single atomic transaction. This means all operations succeed together or fail together, ensuring data consistency and reducing unnecessary reads/writes.
 
-    Message newMessage = Message(
-      senderPhone: senderPhone,
-      receiverPhone: receiverPhone,
-      message: message,
-      timestamp: timestamp,
-    );
+Why Use a Batch?
+Efficiency: Instead of updating each document individually (which triggers multiple writes and network requests), a batch groups them into one network request.
+Atomicity: If any update fails, none of the updates are applied.
+Performance: Reduces Firestore billing cost by minimizing the number of writes.
+ */
+  Future<void> updateMessageStatus(DocumentReference chatRoomReference) async {
+    try {
+      QuerySnapshot querySnapshot = await chatRoomReference
+          .collection(chatRoomMessageCollectionName)
+          .where(isSeenFieldName, isEqualTo: false)
+          .get();
 
+      WriteBatch batch = FirebaseFirestore.instance
+          .batch(); // A batch in Firestore (WriteBatch) is used to perform multiple write operations (update, set, delete) in a single atomic transaction
+      // Instead of updating each document individually batch is efficient.  If any update fails, none of the updates are applied.
+
+      for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+        batch.update(doc.reference, {isSeenFieldName: true});
+      }
+
+      // Commit batch update
+      await batch.commit();
+    } catch (e) {
+      throw CouldNotUpdateMessageStatus();
+    }
+  }
+
+  Future<void> updateChat(
+      String senderPhone,
+      String receiverPhone,
+      String senderName,
+      String receiverName,
+      String message,
+      Timestamp timestamp,
+      String chatRoomId,
+      DocumentReference chatRoomReference,
+      bool isRead) async {
     Chat chat = Chat(
         chatRoomReference: chatRoomReference,
         senderPhone: senderPhone,
+        receiverPhone: receiverPhone,
+        senderName: senderName,
+        receiverName: receiverName,
         lastMessage: message,
-        timestamp: timestamp);
+        timestamp: timestamp,
+        isRead: isRead);
 
     try {
-      chatRoomReference
+      await chats.doc(chatRoomId).set(chat.toMap());
+    } catch (e) {
+      throw CouldNotUpdateChat();
+    }
+  }
+
+  Future<void> sendMessage(
+      String senderPhone,
+      String receiverPhone,
+      String senderName,
+      String receiverName,
+      String message,
+      String chatRoomId,
+      DocumentReference chatRoomReference) async {
+    final Timestamp timestamp = Timestamp.now();
+
+    Message newMessage = Message(
+        senderPhone: senderPhone,
+        receiverPhone: receiverPhone,
+        message: message,
+        timestamp: timestamp,
+        isSeen: false);
+
+    // Chat chat = Chat(
+    //     chatRoomReference: chatRoomReference,
+    //     senderPhone: senderPhone,
+    //     receiverPhone: receiverPhone,
+    //     senderName: senderName,
+    //     receiverName: receiverName,
+    //     lastMessage: message,
+    //     timestamp: timestamp,
+    //     isRead: false);
+
+    try {
+      await chatRoomReference
           .collection(chatRoomMessageCollectionName)
           .add(newMessage.toMap());
     } catch (e) {
@@ -69,21 +137,67 @@ class FirebaseCloudStorage {
     }
 
     try {
-      chats.doc(chatRoomID).set(chat.toMap());
+      updateChat(senderPhone, receiverPhone, senderName, receiverName, message,
+          timestamp, chatRoomId, chatRoomReference, false);
+    } catch (e) {
+      throw CouldNotUpdateChat();
+    }
+  }
+
+  // send message
+  Future<void> buildChat(
+      String senderPhone,
+      String receiverPhone,
+      String senderName,
+      String receiverName,
+      String receiverId,
+      String message,
+      String chatRoomId) async {
+    DocumentReference chatRoomReference = chatRooms.doc(chatRoomId);
+    DocumentReference chatReference = chats.doc(chatRoomId);
+    final Timestamp timestamp = Timestamp.now();
+
+    Message newMessage = Message(
+        senderPhone: senderPhone,
+        receiverPhone: receiverPhone,
+        message: message,
+        timestamp: timestamp,
+        isSeen: false);
+
+    Chat chat = Chat(
+        chatRoomReference: chatRoomReference,
+        senderPhone: senderPhone,
+        receiverPhone: receiverPhone,
+        senderName: senderName,
+        receiverName: receiverName,
+        lastMessage: message,
+        timestamp: timestamp,
+        isRead: false);
+
+    try {
+      await chatRoomReference.collection(chatRoomMessageCollectionName).add(
+          newMessage
+              .toMap()); // Here an exception is given. if I prin the e it shows: package:cloud_firestore_platform_interface/src/internal/pointer.dart': Failed assertion: line 56 pos 12: 'isDocument()': is not true.
+    } catch (e) {
+      throw CouldNotSendMessage();
+    }
+
+    try {
+      await chats.doc(chatRoomId).set(chat.toMap());
     } catch (e) {
       throw CouldNotUpdateChat();
     }
 
     try {
-      addTrustedContact(chatRoomID, chatReference);
+      await addTrustedContact(chatRoomId, receiverId, chatReference);
     } catch (e) {
       throw CouldNotAddContact();
     }
   }
 
-  Future<void> addTrustedContact(
-      String chatRoomId, DocumentReference chatRoomReference) async {
-    final String userId = AuthService.firebase().currentUser!.id;
+  Future<void> addTrustedContact(String chatRoomId, String receiverId,
+      DocumentReference chatRoomReference) async {
+    String userId = AuthService.firebase().currentUser!.id;
 
     DocumentSnapshot docSnapshot = await trustedContacts.doc(userId).get();
 
@@ -94,21 +208,82 @@ class FirebaseCloudStorage {
       });
     } else {
       await trustedContacts.doc(userId).set({
-        'chats_reference': FieldValue.arrayUnion(
-            [chatRoomReference]), // Add chatRoomId to array
+        'chats_reference': FieldValue.arrayUnion([
+          chatRoomReference
+        ]), // Add chatRoomId to array //  I want that if the array already contains thus 'chatRoomReference' not to add again and return false. how?
       });
+
+      userId = receiverId;
+
+      DocumentSnapshot docSnapshot = await trustedContacts.doc(userId).get();
+
+      if (docSnapshot.exists) {
+        await trustedContacts.doc(userId).update({
+          'chats_reference': FieldValue.arrayUnion(
+              [chatRoomReference]), // Add chatRoomId to array
+        });
+      } else {
+        await trustedContacts.doc(userId).set({
+          'chats_reference': FieldValue.arrayUnion(
+              [chatRoomReference]), // Add chatRoomId to array
+        });
+      }
     }
+  }
+
+  Future<bool> isChatReferencePresent(
+      String userId, String chatRoomPath) async {
+    DocumentSnapshot docSnapshot = await trustedContacts.doc(userId).get();
+
+    if (docSnapshot.exists) {
+      List<dynamic> chatsReference = docSnapshot['chats_reference'] ?? [];
+
+      // Converting DocumentReference objects to paths
+      List<String> chatPaths = chatsReference
+          .map((ref) => (ref as DocumentReference).path) // Extract path only
+          .toList();
+/*
+      for (String path in chatPaths) {
+        print(path); // Output: chats/01643216242_01736361622
+      }
+*/
+      return chatPaths.contains(chatRoomPath);
+    }
+
+    return false; // Document does not exist or no chat references
   }
 
   void addNewChat({
     required String fromNumber,
     required String toNumber,
+    required String fromName,
+    required String toName,
+    required String toId,
   }) async {
+    // constructing chat room ID for the two users (sorted to ensure uniqueness)
+    List<String> ids = [fromNumber, toNumber];
+
+    ids.sort(); // used sneder and receiver phone number to generate id as they are the user_id in 'users' database to make chatroom id unique.
+    String chatRoomId = 'chats/${ids.join('_')}';
+    String currentUserId = AuthService.firebase().currentUser!.id;
+
+    bool x = await isChatReferencePresent(currentUserId, chatRoomId);
+
+    if (x) {
+      showToast('This contact is already added');
+      return;
+    }
+
     try {
-      const message = 'Hello.\n I am added you to my trusted contact. Thanks';
-      buildChat(fromNumber, toNumber, message);
+      const message = 'Hello. I added you to my Trusted contact.';
+      chatRoomId = ids.join('_');
+
+      buildChat(
+          fromNumber, toNumber, fromName, toName, toId, message, chatRoomId);
+
+      showToast('Contact added successfully');
     } catch (e) {
-      throw CouldNotCreateChats();
+      throw CouldNotCreateChatsException();
     }
   }
 
@@ -116,17 +291,27 @@ class FirebaseCloudStorage {
     required String userId,
   }) async {
     try {
-      QuerySnapshot querySnapshot =
-          await users.where(userIdFieldName, isEqualTo: userId).get();
+      DocumentSnapshot documentSnapshot = await users.doc(userId).get();
 
-      if (querySnapshot.docs.isNotEmpty) {
-        var userDoc = querySnapshot.docs.first;
-        return userDoc.data() as Map<String, dynamic>;
-      } else {
-        return null;
-      }
+      var userDoc = documentSnapshot.data() as Map<String, dynamic>;
+      return userDoc;
     } catch (e) {
       throw UserNotFoundAuthException();
+    }
+  }
+
+  Future<Map<String, dynamic>?> getUserDataByPhone(
+      {required String phone}) async {
+    // Query Firestore to find the document where 'phone' field matches
+    QuerySnapshot querySnapshot =
+        await users.where(userPhoneFieldName, isEqualTo: phone).get();
+
+    // Check if a matching document exists
+    if (querySnapshot.docs.isNotEmpty) {
+      // Return the first matched document
+      return querySnapshot.docs.first.data() as Map<String, dynamic>;
+    } else {
+      throw UserNotFoundAuthException(); // Handle user not found case
     }
   }
 
@@ -271,7 +456,7 @@ class FirebaseCloudStorage {
     }
   }
 
-    /*Future<Iterable<CloudReport>> getChats() async {
+  /*Future<Iterable<CloudReport>> getChats() async {
     try {
       return await reports
           .where(

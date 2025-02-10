@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guardix/components/toast.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
 import 'package:guardix/service/auth/auth_constants.dart';
@@ -6,6 +7,7 @@ import 'package:guardix/service/auth/auth_service.dart';
 import 'package:guardix/enums/drawer_action.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/service/cloud/model/cloud_user.dart';
+import 'package:guardix/utilities/helpers/local_storage.dart';
 import 'package:guardix/views/drawer/app_language_view.dart';
 import 'package:guardix/views/drawer/emergency_view.dart';
 import 'package:guardix/views/drawer/location_view.dart';
@@ -74,7 +76,8 @@ class _HomeViewState extends State<HomeView> {
         foregroundColor: whiteColor,
         actions: [
           IconButton(
-            onPressed: () {
+            onPressed: () async {
+              LocalStorage.getUserPhone();
               _getUser();
               _showProfileDrawer(context);
             },
@@ -213,6 +216,7 @@ class _HomeViewState extends State<HomeView> {
                 onTap: () {
                   Navigator.pop(context); // Close the drawer
                   _handleLogout();
+                  LocalStorage.removeUserData();
                 },
               ),
             ],
@@ -343,12 +347,13 @@ class _HomeViewState extends State<HomeView> {
     bool isLoggedout = await showLogOutDialog(_scaffoldKey.currentContext!);
     if (isLoggedout) {
       await AuthService.firebase().logOut();
-      if (_scaffoldKey.currentContext != null && _scaffoldKey.currentContext!.mounted) {
+      if (_scaffoldKey.currentContext != null &&
+          _scaffoldKey.currentContext!.mounted) {
         Navigator.of(_scaffoldKey.currentContext!).pushNamedAndRemoveUntil(
           welcomeRoute,
           (route) => false,
         );
       }
-    } 
+    }
   }
 }

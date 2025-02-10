@@ -3,13 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:guardix/components/toast.dart';
 import 'package:guardix/constants/colors.dart';
+import 'package:guardix/service/auth/auth_exception.dart';
 import 'package:guardix/service/auth/auth_service.dart';
 import 'package:guardix/service/cloud/cloud_storage_constants.dart';
 import 'package:guardix/service/cloud/cloud_storage_exceptions.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/utilities/dialogs/contact_not_registered_dialog.dart';
 import 'package:guardix/utilities/dialogs/error_dialog.dart';
-import 'package:guardix/utilities/make_phone_message_email.dart';
+import 'package:guardix/utilities/helpers/local_storage.dart';
+import 'package:guardix/utilities/helpers/make_phone_message_email.dart';
 
 class AddContactsView extends StatefulWidget {
   const AddContactsView({super.key});
@@ -32,52 +34,49 @@ class _AddContactsViewState extends State<AddContactsView> {
   }
 
   Future<void> addToContact(String phone) async {
-////////// Fetching user phone (temporary code). will implement firebase phone number auth. ////////////
-    String userPhone = '';
-    try {
-      String userId = AuthService.firebase().currentUser!.id;
+    String contactName;
+    String contactId;
 
-      var user = await FirebaseCloudStorage().getUserData(userId: userId);
-
-      userPhone = user?['phone'] ?? '';
-    } catch (e) {
-      //print('Failed Mr General');
-    }
-////////////////////////////////////////////////////////////////////////
     if (phone.isNotEmpty) {
+      String userNumber = await LocalStorage.getUserPhone() ?? '';
+      String userName = await LocalStorage.getUserName() ?? '';
+
       try {
-        DocumentSnapshot snapshot = await FirebaseFirestore.instance
-            .collection(userCollectionName)
-            .doc(phone)
-            .get();
+        var user =
+            await FirebaseCloudStorage().getUserDataByPhone(phone: phone);
 
-        if (snapshot.exists) {
-          try {
-            FirebaseCloudStorage()
-                .addNewChat(fromNumber: userPhone, toNumber: phone);
-          } on CouldNotCreateChats {
-            if (mounted) {
-              showErrorDialog(
-                  context, 'Faild to add the number. Please try again.');
-            }
-          }
-        } else {
-          bool share = false;
-          if (mounted) {
-            share = await showContactNotRegistered(context: context);
-          }
+        contactName = user?[userNameFieldName];
+        contactId = user?[userIdFieldName];
 
+        try {
+          FirebaseCloudStorage().addNewChat(
+              fromNumber: userNumber,
+              toNumber: phone,
+              fromName: userName,
+              toName: contactName,
+              toId: contactId);
+        } on CouldNotCreateChatsException {
           if (mounted) {
-            if (share) {
-              //sendBackgroundMessage(context, phone, 'Emergency Message');
-              sendMessage(context, phone,
-                  'Download and Install \'Gurdi-X\'\nhttps://github.com/Ashfak-Uzzaman/guardi-x');
-            }
+            showErrorDialog(
+                context, 'Faild to add the number. Please try again.');
+          }
+        }
+      } on UserNotFoundAuthException {
+        bool share = false;
+        if (mounted) {
+          share = await showContactNotRegistered(context: context);
+        }
+
+        if (mounted) {
+          if (share) {
+            //sendBackgroundMessage(context, phone, 'Emergency Message');
+            sendMessage(context, phone,
+                'Download and Install \'Gurdi-X\'\nhttps://github.com/Ashfak-Uzzaman/guardi-x');
           }
         }
       } catch (e) {
         if (mounted) {
-          showErrorDialog(context, 'Failed to search contact to our database.');
+          showErrorDialog(context, 'An error occured');
         }
       }
     }
@@ -231,6 +230,7 @@ class _AddContactsViewState extends State<AddContactsView> {
                                   String phone = contact.phones.first.number
                                       .replaceAll(RegExp(r'\D'),
                                           ''); // Removes all non-digits
+                                  print(phone);
                                   addToContact(phone);
                                 } catch (e) {
                                   showToast('Empty Contact');

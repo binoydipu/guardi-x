@@ -48,7 +48,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
         },
         destinations: const [
           NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
-          NavigationDestination(icon: Icon(Icons.chat), label: 'Chat'),
+          NavigationDestination(icon: Icon(Icons.wechat), label: 'Chat'),
           NavigationDestination(
               icon: Icon(Icons.report_gmailerrorred), label: 'Report'),
           // NavigationDestination(

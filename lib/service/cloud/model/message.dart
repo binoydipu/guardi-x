@@ -7,12 +7,14 @@ class Message {
   final String receiverPhone;
   final String message;
   final Timestamp timestamp;
+  final bool isSeen;
 
   Message({
     required this.senderPhone,
     required this.receiverPhone,
     required this.message,
     required this.timestamp,
+    required this.isSeen,
   });
 
 // convert to a map
@@ -22,6 +24,7 @@ class Message {
       receiverPhoneFieldName: receiverPhone,
       messageFieldName: message,
       timestampFieldName: timestamp,
+      isSeenFieldName: isSeen,
     };
   }
 }
