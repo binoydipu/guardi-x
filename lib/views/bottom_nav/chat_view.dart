@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/service/auth/auth_service.dart';
-import 'package:guardix/service/cloud/cloud_storage_constants.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/views/chat/chat_list_view.dart';
 
@@ -20,12 +19,23 @@ class _ChatViewState extends State<ChatView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: midnightBlueColor,
+        leading: Navigator.canPop(context)
+            ? IconButton(
+                icon: const Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  color: whiteColor,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            : null,
         title: const Text(
-          "Emergency Messages",
-          style: TextStyle(fontWeight: FontWeight.bold, color: whiteColor),
+          'Emergency Message',
+          style: TextStyle(color: whiteColor),
         ),
         centerTitle: true,
+        backgroundColor: midnightBlueColor,
       ),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseCloudStorage().getChatsStream(trustedContactDocId),

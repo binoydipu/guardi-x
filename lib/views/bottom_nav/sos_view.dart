@@ -62,10 +62,10 @@ class _SosViewState extends State<SosView> {
               child: ElevatedButton(
                 onPressed: () => _makePhoneCall(numbers[index]),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: midnightBlueColor,
-                  elevation: 2,
-                  shadowColor: midnightBlueColor,
-                  foregroundColor: whiteColor,
+                  backgroundColor: const Color.fromARGB(255, 121, 211, 223),
+                  elevation: 5,
+                  shadowColor: Colors.black26,
+                  foregroundColor: blackColor,
                   textStyle: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,

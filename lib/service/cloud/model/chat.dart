@@ -32,7 +32,7 @@ class Chat {
       receiverNameFieldName: receiverName,
       messageFieldName: lastMessage,
       timestampFieldName: timestamp,
-      isReadFieldName: isRead,
+      isChatReadFieldName: isRead,
     };
   }
 }

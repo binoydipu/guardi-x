@@ -75,15 +75,15 @@ Performance: Reduces Firestore billing cost by minimizing the number of writes.
   }
 
   Future<void> updateChat(
-      String senderPhone,
-      String receiverPhone,
-      String senderName,
-      String receiverName,
-      String message,
-      Timestamp timestamp,
-      String chatRoomId,
-      DocumentReference chatRoomReference,
-      bool isRead) async {
+      {required String senderPhone,
+      required String receiverPhone,
+      required String senderName,
+      required String receiverName,
+      required String message,
+      required Timestamp timestamp,
+      required String chatRoomId,
+      required DocumentReference chatRoomReference,
+      required bool isRead}) async {
     Chat chat = Chat(
         chatRoomReference: chatRoomReference,
         senderPhone: senderPhone,
@@ -137,8 +137,16 @@ Performance: Reduces Firestore billing cost by minimizing the number of writes.
     }
 
     try {
-      updateChat(senderPhone, receiverPhone, senderName, receiverName, message,
-          timestamp, chatRoomId, chatRoomReference, false);
+      updateChat(
+          senderPhone: senderPhone,
+          receiverPhone: receiverPhone,
+          senderName: senderName,
+          receiverName: receiverName,
+          message: message,
+          timestamp: timestamp,
+          chatRoomId: chatRoomId,
+          chatRoomReference: chatRoomReference,
+          isRead: false);
     } catch (e) {
       throw CouldNotUpdateChat();
     }

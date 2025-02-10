@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:guardix/admin/actions/add_legal_info.dart';
 import 'package:guardix/admin/actions/add_new_advocate.dart';
 import 'package:guardix/admin/view/admin_panel.dart';
@@ -39,14 +38,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Guardi-X',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: midnightBlueColor),
-        useMaterial3: true,
-        appBarTheme: const AppBarTheme(
-          systemOverlayStyle: SystemUiOverlayStyle(
-            statusBarColor: midnightBlueColor,
-            statusBarBrightness: Brightness.dark,
-          ),
-        ),
+        brightness: Brightness.light,
+        scaffoldBackgroundColor: Colors.grey[50],
+        primaryColor: midnightBlueColor,
       ),
       home: const InitializeView(),
       routes: {

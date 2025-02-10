@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:guardix/constants/colors.dart';
 import 'package:guardix/service/cloud/cloud_storage_constants.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/utilities/helpers/format_timestamp.dart';
@@ -26,7 +27,7 @@ Future<GestureDetector> chatListView(BuildContext context, var chatData) async {
       ? receiverPhone
       : senderPhone;
 
-  bool isNotRead = !chatData.get(isReadFieldName) &&
+  bool isNotRead = !chatData.get(isChatReadFieldName) &&
       (currentUserNumber.compareTo(receiverPhone) == 0);
 
   return GestureDetector(
@@ -42,15 +43,16 @@ Future<GestureDetector> chatListView(BuildContext context, var chatData) async {
         FirebaseCloudStorage().updateMessageStatus(chatRoomReference);
 
         FirebaseCloudStorage().updateChat(
-            senderPhone,
-            receiverPhone,
-            senderName,
-            receiverName,
-            message,
-            timestamp,
-            chatRoomId,
-            chatRoomReference,
-            true);
+          senderPhone: senderPhone,
+          receiverPhone: receiverPhone,
+          senderName: senderName,
+          receiverName: receiverName,
+          message: message,
+          timestamp: timestamp,
+          chatRoomId: chatRoomId,
+          chatRoomReference: chatRoomReference,
+          isRead: true,
+        );
       }
       if (context.mounted) {
         Navigator.push(
@@ -63,6 +65,8 @@ Future<GestureDetector> chatListView(BuildContext context, var chatData) async {
               chatPersonName: chatPersonName,
               currentUserNumber: currentUserNumber,
               chatPersonNumber: number,
+              chatLastMessage: message,
+              timestamp: timestamp,
             ),
           ),
         );
@@ -70,56 +74,78 @@ Future<GestureDetector> chatListView(BuildContext context, var chatData) async {
     },
     child: Container(
       decoration: BoxDecoration(
-        color: Colors.blue[50],
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        // border: Border.all(
-        //   color: Colors.white,
-        //   width: 1.0,
-        // ),
         boxShadow: const [
-          // Add this
           BoxShadow(
-            color: Color.fromARGB(255, 233, 236, 241), // Shadow color
-            spreadRadius: 2,
-            blurRadius: 2,
-            offset: Offset(0, 3),
+            color: Color.fromARGB(20, 0, 0, 0),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: Offset(0, 2),
           ),
         ],
       ),
-      margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 25),
-      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+      padding: const EdgeInsets.all(16),
       child: Row(
         children: [
-          const Icon(Icons.person),
-          const SizedBox(width: 20),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.blue[50],
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.person,
+              color: Colors.blue,
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   chatPersonName,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.black87,
+                  ),
                 ),
+                const SizedBox(height: 4),
+                // Last message
                 Text(
                   message,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 15),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.black54,
+                  ),
                 ),
               ],
             ),
           ),
-
-          Icon(
-            Icons.emergency,
-            size: 22,
-            color: isNotRead ? Colors.red : Colors.grey,
-          ), // Add your icon here
-          const SizedBox(width: 10),
-          Text(
-            time,
-            style: TextStyle(
-                fontSize: 13.0, color: isNotRead ? Colors.red : Colors.grey),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Icon(
+                Icons.emergency,
+                size: 18,
+                color: isNotRead ? brightGreenColor : Colors.transparent,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                time,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: isNotRead ? brightGreenColor : Colors.grey[600],
+                ),
+              ),
+            ],
           ),
         ],
       ),
