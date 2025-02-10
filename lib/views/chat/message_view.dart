@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:guardix/components/toast.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/service/cloud/cloud_storage_constants.dart';
@@ -79,6 +80,17 @@ class _MessageViewState extends State<MessageView> {
     }
   }
 
+  void _makePhoneCall(String phoneNumber) async {
+    final Uri phoneUri = Uri(
+      scheme: 'tel',
+      path: phoneNumber,
+    );
+
+    if (await canLaunchUrl(phoneUri)) {
+      await launchUrl(phoneUri);
+    } else {}
+  }
+
   // Function to scroll to the bottom
   void _scrollToBottom() {
     if (_scrollController.hasClients) {
@@ -90,42 +102,50 @@ class _MessageViewState extends State<MessageView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Navigator.canPop(context)
-            ? IconButton(
-                icon: const Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  color: whiteColor,
-                ),
-                onPressed: () {
-                  FirebaseCloudStorage().updateMessageStatus(widget.chatRoomDocRef);
+        leading: Row(
+          children: [
+            IconButton(
+              icon: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: whiteColor,
+              ),
+              onPressed: () {
+                FirebaseCloudStorage().updateMessageStatus(widget.chatRoomDocRef);
 
-                  FirebaseCloudStorage().updateChat(
-                    senderPhone: widget.currentUserNumber,
-                    receiverPhone: widget.chatPersonNumber,
-                    senderName: widget.currentUserName,
-                    receiverName: widget.chatPersonName,
-                    message: widget.chatLastMessage,
-                    timestamp: widget.timestamp,
-                    chatRoomId: widget.chatRoomId,
-                    chatRoomReference: widget.chatRoomDocRef,
-                    isRead: true,
-                  );
-                  Navigator.of(context).pop();
-                },
-              )
-            : null,
+                FirebaseCloudStorage().updateChat(
+                  senderPhone: widget.currentUserNumber,
+                  receiverPhone: widget.chatPersonNumber,
+                  senderName: widget.currentUserName,
+                  receiverName: widget.chatPersonName,
+                  message: widget.chatLastMessage,
+                  timestamp: widget.timestamp,
+                  chatRoomId: widget.chatRoomId,
+                  chatRoomReference: widget.chatRoomDocRef,
+                  isRead: true,
+                );
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ),
         title: Text(
           widget.chatPersonName,
-          style: const TextStyle(color: whiteColor),
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(color: whiteColor, fontSize: 18,),
         ),
-        centerTitle: true,
-        actions: const [
-          Padding(
-            padding: EdgeInsets.only(right: 20.0),
-            child: CircleAvatar(
-              backgroundColor: softBlueColor,
-              radius: 16,
-              child: Icon(Icons.person, color: Colors.white),
+        centerTitle: false,
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const FaIcon(
+              FontAwesomeIcons.video, 
+              size: 20, 
+              color: whiteColor,
+            ),
+          ),
+          IconButton(
+            onPressed: () => _makePhoneCall(widget.chatPersonNumber), 
+            icon: const Icon(Icons.phone, color: whiteColor,
             ),
           ),
         ],
@@ -133,7 +153,6 @@ class _MessageViewState extends State<MessageView> {
       ),
       body: Column(
         children: [
-          const SizedBox(height: 10),
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: widget.chatRoomDocRef
@@ -149,6 +168,18 @@ class _MessageViewState extends State<MessageView> {
                 }
 
                 final messages = snapshot.data!.docs;
+
+                // print('receiver -> $receiver');
+
+                // // Scroll to bottom when new messages arrive
+                // WidgetsBinding.instance.addPostFrameCallback((_) {
+                //   if (receiver.compareTo(widget.currentUserNumber) == 0) {
+                //     print('hola');
+                //     FirebaseCloudStorage()
+                //         .updateMessageStatus(widget.chatRoomDocRef);
+                //   }
+                // _scrollToBottom();
+                // });
 
                 // Scroll to bottom when new messages arrive
                 WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -213,7 +244,7 @@ class _MessageViewState extends State<MessageView> {
                     icon: const Icon(
                       Icons.camera_alt_rounded,
                       color: Colors.blue,
-                      size: 28.0,
+                      size: 30.0,
                     ),
                     onPressed: () {
                       showImageSourceDialog(

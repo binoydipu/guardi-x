@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/views/bottom_nav/chat_view.dart';
 import 'package:guardix/views/bottom_nav/home/home_view.dart';
@@ -47,13 +48,24 @@ class _NavigationMenuState extends State<NavigationMenu> {
           });
         },
         destinations: const [
-          NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
-          NavigationDestination(icon: Icon(Icons.wechat), label: 'Chat'),
+          NavigationDestination(icon: Icon(
+              Icons.home_outlined,
+              size: 32,
+              color: blackColor,
+            ), label: 'Home',),
           NavigationDestination(
-              icon: Icon(Icons.report_gmailerrorred), label: 'Report'),
+            icon: FaIcon(
+              FontAwesomeIcons.comment,
+              size: 26,
+              color: blackColor,
+            ),
+            label: 'Chat',
+          ),
+          NavigationDestination(
+              icon: Icon(Icons.report_gmailerrorred, color: blackColor,), label: 'Report'),
           // NavigationDestination(
           //     icon: Icon(Icons.manage_search), label: 'Track'),
-          NavigationDestination(icon: Icon(Icons.sos), label: 'SOS'),
+          NavigationDestination(icon: Icon(Icons.sos, color: blackColor,), label: 'SOS'),
         ],
       ),
       body: _widgetOptions[_selectedIndex],

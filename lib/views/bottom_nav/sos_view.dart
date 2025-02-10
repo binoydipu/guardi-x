@@ -55,37 +55,37 @@ class _SosViewState extends State<SosView> {
         backgroundColor: midnightBlueColor,
       ),
       body: ListView.builder(
-          itemCount: 6,
-          itemBuilder: (BuildContext context, int index) {
-            return Padding(
-              padding: const EdgeInsets.fromLTRB(16, 5, 16, 16),
-              child: ElevatedButton(
-                onPressed: () => _makePhoneCall(numbers[index]),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 121, 211, 223),
-                  elevation: 5,
-                  shadowColor: Colors.black26,
-                  foregroundColor: blackColor,
-                  textStyle: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 12,
-                    horizontal: 12,
-                  ),
-                  minimumSize: const Size.fromHeight(70),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
+        itemCount: 6,
+        itemBuilder: (BuildContext context, int index) {
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(16, 5, 16, 16),
+            child: ElevatedButton(
+              onPressed: () => _makePhoneCall(numbers[index]),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 175, 206, 255),
+                elevation: 5,
+                shadowColor: Colors.black26,
+                foregroundColor: blackColor,
+                textStyle: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
-                child: Text(
-                  services[index],
-                  textAlign: TextAlign.center,
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 12,
                 ),
+                minimumSize: const Size.fromHeight(70),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)),
               ),
-            );
-          },
-        ),
+              child: Text(
+                services[index],
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }

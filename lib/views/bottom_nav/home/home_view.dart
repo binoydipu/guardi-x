@@ -81,16 +81,20 @@ class _HomeViewState extends State<HomeView> {
           IconButton(
             onPressed: () {
               LocalStorage.getUserPhone();
-              final closeDialog = showLoadingDialog(
-                context: context,
-                text: 'Loading..',
-              );
-              _getUser().then((_) {
-                closeDialog();
-                if (context.mounted) {
-                  _showProfileDrawer(context);
-                }
-              });
+              if(cloudUser != null) {
+                _showProfileDrawer(context);
+              } else {
+                final closeDialog = showLoadingDialog(
+                  context: context,
+                  text: 'Loading..',
+                );
+                _getUser().then((_) {
+                  closeDialog();
+                  if (context.mounted) {
+                    _showProfileDrawer(context);
+                  }
+                });
+              }
             },
             icon: const Icon(Icons.account_circle_outlined),
           ),

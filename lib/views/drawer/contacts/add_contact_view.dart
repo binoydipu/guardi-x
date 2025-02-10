@@ -187,13 +187,23 @@ class _AddContactsViewState extends State<AddContactsView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: const BackButton(color: Colors.white),
-        backgroundColor: midnightBlueColor,
+        leading: Navigator.canPop(context)
+            ? IconButton(
+                icon: const Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  color: whiteColor,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            : null,
         title: const Text(
-          "Your Contacts",
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          'Your Contacts',
+          style: TextStyle(color: whiteColor),
         ),
         centerTitle: true,
+        backgroundColor: midnightBlueColor,
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -228,7 +238,10 @@ class _AddContactsViewState extends State<AddContactsView> {
                                   String phone = contact.phones.first.number
                                       .replaceAll(RegExp(r'\D'),
                                           ''); // Removes all non-digits
-                                  print(phone);
+                                  if (phone.startsWith('88')) {
+                                    phone =
+                                        phone.substring(2, phone.length);
+                                  }
                                   addToContact(phone);
                                 } catch (e) {
                                   showToast('Empty Contact');
