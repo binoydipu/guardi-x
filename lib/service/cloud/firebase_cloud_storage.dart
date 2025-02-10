@@ -344,6 +344,7 @@ Performance: Reduces Firestore billing cost by minimizing the number of writes.
   void addNewComment({
     required String reportId,
     required String userId,
+    required String userName,
     required String comment,
   }) async {
     try {
@@ -352,6 +353,7 @@ Performance: Reduces Firestore billing cost by minimizing the number of writes.
           .collection(commentSubCollectionName)
           .add({
         userIdFieldName: userId,
+        userNameFieldName: userName,
         commentsFieldName: comment,
         createdAtFieldName: FieldValue.serverTimestamp(),
       });
@@ -433,6 +435,21 @@ Performance: Reduces Firestore billing cost by minimizing the number of writes.
       return CloudUser.fromDocSnapshot(doc);
     } catch (e) {
       throw CouldNotGetUserException();
+    }
+  }
+
+  Future<void> updateUser({
+    required String userName,
+    required String phone,
+  }) async {
+    try {
+      String userId = AuthService.firebase().currentUser!.id;
+      await users.doc(userId).update({
+        userNameFieldName: userName,
+        userPhoneFieldName: phone,
+      });
+    } catch (e) {
+      throw CouldNotUpdateUserException();
     }
   }
 
@@ -677,6 +694,7 @@ Performance: Reduces Firestore billing cost by minimizing the number of writes.
 
   void createNewReport({
     required String ownerEmail,
+    required String ownerName,
     required String category,
     required String victimName,
     required String victimAddress,
@@ -697,6 +715,7 @@ Performance: Reduces Firestore billing cost by minimizing the number of writes.
     try {
       await reports.add({
         ownerEmailFieldName: ownerEmail,
+        ownerNameFieldName: ownerName,
         categoryFieldName: category,
         victimNameFieldName: victimName,
         victimAddressFieldName: victimAddress,

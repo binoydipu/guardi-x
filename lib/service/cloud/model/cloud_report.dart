@@ -9,6 +9,7 @@ class CloudReport {
   final String category;
 
   final String ownerEmail;
+  final String ownerName;
 
   final String victimName;
   final String victimAddress;
@@ -35,6 +36,7 @@ class CloudReport {
     required this.documentId,
     required this.category,
     required this.ownerEmail,
+    required this.ownerName,
     required this.victimName,
     required this.victimAddress,
     required this.victimContact,
@@ -57,6 +59,7 @@ class CloudReport {
       : documentId = snapshot.id,
         category = snapshot.data()[categoryFieldName],
         ownerEmail = snapshot.data()[ownerEmailFieldName] as String,
+        ownerName = snapshot.data()[ownerNameFieldName] as String? ?? 'Anonymous',
         victimName = snapshot.data()[victimNameFieldName] as String,
         victimAddress = snapshot.data()[victimAddressFieldName] as String,
         victimContact = snapshot.data()[victimContactFieldName] as String,
@@ -82,6 +85,7 @@ class CloudReport {
       : documentId = snapshot.id,
         category = snapshot.data()?[categoryFieldName] ?? '',
         ownerEmail = snapshot.data()?[ownerEmailFieldName] as String? ?? '',
+        ownerName = snapshot.data()?[ownerNameFieldName] as String? ?? 'Anonymous',
         victimName = snapshot.data()?[victimNameFieldName] as String? ?? '',
         victimAddress =
             snapshot.data()?[victimAddressFieldName] as String? ?? '',
@@ -114,7 +118,7 @@ class CloudReport {
     📌 $category Report:
     ---------------------------
     🔹 Category: $category
-    📧 Reported by: $ownerEmail
+    📧 Reported by: $ownerName
     🕒 Posted on: ${formatDateTime(createdAt)}
 
     👤 Victim Information:

@@ -11,7 +11,7 @@ import 'package:guardix/utilities/decorations/report_status_decoration.dart';
 import 'package:guardix/utilities/dialogs/confirmation_dialog.dart';
 import 'package:guardix/utilities/dialogs/error_dialog.dart';
 import 'package:guardix/utilities/dialogs/loading_dialog.dart';
-import 'package:guardix/utilities/dialogs/report_created_dialog.dart';
+import 'package:guardix/utilities/dialogs/success_dialog.dart';
 import 'package:guardix/utilities/helpers/format_date_time.dart';
 import 'package:guardix/utilities/helpers/format_number.dart';
 import 'package:share_plus/share_plus.dart';
@@ -162,9 +162,9 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
                           try {
                             _cloudStorage.deleteReport(
                                 documentId: report.documentId);
-                            bool reportDeleted = await showReportCreatedDialog(
-                              context,
-                              'Report updated successfully.',
+                            bool reportDeleted = await showSuccessDialog(
+                              context: context,
+                              text: 'Report updated successfully.',
                             );
                             if (reportDeleted) {
                               if (context.mounted) {
@@ -267,12 +267,39 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Text(
-                    'Posted By: ${report.ownerEmail}',
-                    style: const TextStyle(
-                      fontSize: 15,
-                      color: blackColor,
-                      fontWeight: FontWeight.bold,
+                  RichText(
+                    text: TextSpan(
+                      style: const TextStyle(
+                        fontSize: 15,
+                        color: blackColor,
+                      ),
+                      children: [
+                        const TextSpan(
+                          text: 'Posted By: ',
+                        ),
+                        TextSpan(
+                          text: report.ownerName,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  RichText(
+                    text: TextSpan(
+                      style: const TextStyle(
+                        fontSize: 15,
+                        color: blackColor,
+                      ),
+                      children: [
+                        const TextSpan(
+                          text: 'Email: ',
+                        ),
+                        TextSpan(
+                          text: report.ownerEmail,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 10),

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:guardix/utilities/dialogs/generic_dialog.dart';
 
-Future<bool> showReportCreatedDialog(
-  BuildContext context,
-  String text,
-) async {
+Future<bool> showSuccessDialog({
+  required BuildContext context,
+  required String text,
+  String? title,
+}) async {
   return showGenericDialog(
     context: context,
-    title: 'Success',
+    title: title ?? 'Success',
     content: text,
     optionsBuilder: () => {
       'OK': true,

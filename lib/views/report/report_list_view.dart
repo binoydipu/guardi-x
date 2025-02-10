@@ -141,11 +141,21 @@ class ReportListView extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    'Posted By: ${report.ownerEmail}',
-                    style: const TextStyle(
-                      color: blackColor,
-                      fontSize: 13,
+                  RichText(
+                    text: TextSpan(
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: blackColor,
+                      ),
+                      children: [
+                        const TextSpan(
+                          text: 'Posted By: ',
+                        ),
+                        TextSpan(
+                          text: report.ownerName,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 8),

@@ -15,13 +15,13 @@ Widget buildCard({
       gradient: const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Colors.blue, Colors.black],
+        colors: [Color.fromARGB(255, 245, 245, 245), Color.fromARGB(255, 206, 244, 249)], 
       ),
       boxShadow: const [
         BoxShadow(
           color: Colors.black26,
-          blurRadius: 6.0,
-          offset: Offset(4.0, 4.0),
+          blurRadius: 4.0,
+          offset: Offset(2.0, 2.0),
         ),
       ],
     ),
@@ -37,16 +37,16 @@ Widget buildCard({
             Icon(
               icon,
               size: 45,
-              color: whiteColor,
+              color: blackColor,
             ),
             const SizedBox(height: 5),
             Text(
               text,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                color: whiteColor,
+                color: blackColor,
                 fontSize: 14,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ],

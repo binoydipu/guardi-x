@@ -32,6 +32,10 @@ InputDecoration buildInputDecoration({
       ),
       borderRadius: BorderRadius.circular(10),
     ),
+    disabledBorder: OutlineInputBorder(
+      borderSide: BorderSide.none,
+      borderRadius: BorderRadius.circular(10),
+    ),
     focusedErrorBorder: OutlineInputBorder(
       borderSide: const BorderSide(
         color: crimsonRedColor,

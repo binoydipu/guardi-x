@@ -5,10 +5,11 @@ import 'package:guardix/constants/routes.dart';
 import 'package:guardix/service/auth/auth_service.dart';
 import 'package:guardix/service/cloud/cloud_storage_exceptions.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
+import 'package:guardix/service/cloud/model/cloud_user.dart';
 import 'package:guardix/utilities/decorations/input_decoration_template.dart';
 import 'package:guardix/utilities/dialogs/confirmation_dialog.dart';
 import 'package:guardix/utilities/dialogs/error_dialog.dart';
-import 'package:guardix/utilities/dialogs/report_created_dialog.dart';
+import 'package:guardix/utilities/dialogs/success_dialog.dart';
 import 'package:guardix/utilities/dialogs/submit_report_dialog.dart';
 import 'package:guardix/utilities/validation_utils.dart';
 import 'package:guardix/views/report/report_constants.dart';
@@ -23,6 +24,8 @@ class ReportFormView extends StatefulWidget {
 
 class _ReportFormViewState extends State<ReportFormView> {
   String get userEmail => AuthService.firebase().currentUser!.email;
+  String get userId => AuthService.firebase().currentUser!.id;
+  CloudUser? cloudUser;
 
   late final FirebaseCloudStorage _cloudStorage;
 
@@ -51,6 +54,15 @@ class _ReportFormViewState extends State<ReportFormView> {
   bool _isNonCrimeReport = false;
 
   bool _isAnonymousPost = false;
+
+  Future<void> _getUser() async {
+    try {
+      final user = await _cloudStorage.getUser(userId: userId);
+      setState(() {
+        cloudUser = user;
+      });
+    } catch (_) {}
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     DateTime? selectedDate = await showDatePicker(
@@ -124,6 +136,7 @@ class _ReportFormViewState extends State<ReportFormView> {
   @override
   void initState() {
     _cloudStorage = FirebaseCloudStorage();
+    _getUser();
     _victimName = TextEditingController();
     _victimAddress = TextEditingController();
     _victimContact = TextEditingController();
@@ -137,7 +150,6 @@ class _ReportFormViewState extends State<ReportFormView> {
     _selectedPoliceStation = policeStationList[0];
     _imagePicker = ImagePicker();
     _evidenceImage = TextEditingController();
-
     super.initState();
   }
 
@@ -437,61 +449,73 @@ class _ReportFormViewState extends State<ReportFormView> {
                             await showReportSubmissionDialog(context);
                         if (context.mounted) {
                           if (isSubmitted) {
-                            final ownerEmail =
-                                _isAnonymousPost ? 'Anonymous' : userEmail;
-                            final victimName = _victimName.text;
-                            final victimAddress = _victimAddress.text;
-                            final victimContact = _victimContact.text;
-                            final witnessName = _witnessName.text;
-                            final witnessContact = _witnessContact.text;
+                            _getUser().then(
+                              (_) async {
+                                final ownerEmail =
+                                    _isAnonymousPost ? 'Anonymous' : userEmail;
+                                final ownerName = _isAnonymousPost
+                                    ? 'Anonymous'
+                                    : cloudUser!.userName;
+                                final victimName = _victimName.text;
+                                final victimAddress = _victimAddress.text;
+                                final victimContact = _victimContact.text;
+                                final witnessName = _witnessName.text;
+                                final witnessContact = _witnessContact.text;
 
-                            final dateOfCrime = _dateOfCrime.text;
-                            final timeOfCrime = _timeOfCrime.text;
-                            final locationOfCrime = _locationOfCrime.text;
-                            final descriptionOfCrime = _descriptionOfCrime.text;
-                            final injuryType = _injuryType.text;
+                                final dateOfCrime = _dateOfCrime.text;
+                                final timeOfCrime = _timeOfCrime.text;
+                                final locationOfCrime = _locationOfCrime.text;
+                                final descriptionOfCrime =
+                                    _descriptionOfCrime.text;
+                                final injuryType = _injuryType.text;
 
-                            try {
-                              _cloudStorage.createNewReport(
-                                ownerEmail: ownerEmail,
-                                category: category,
-                                victimName: victimName,
-                                victimAddress: victimAddress,
-                                victimContact: victimContact,
-                                witnessName: witnessName,
-                                witnessContact: witnessContact,
-                                dateOfCrime: dateOfCrime,
-                                timeOfCrime: timeOfCrime,
-                                locationOfCrime: locationOfCrime,
-                                descriptionOfCrime: descriptionOfCrime,
-                                injuryType: injuryType,
-                                policeStation: _selectedPoliceStation!,
-                                reportStatus: 'Pending',
-                                flags: 0,
-                                upvotes: 0,
-                                downvotes: 0,
-                              );
-                              bool reportCreated =
-                                  await showReportCreatedDialog(
-                                context,
-                                'Report created successfully.',
-                              );
-                              if (reportCreated) {
-                                if (context.mounted) {
-                                  Navigator.of(context).pushNamedAndRemoveUntil(
-                                    navigationMenuRoute,
-                                    (route) => false,
+                                try {
+                                  _cloudStorage.createNewReport(
+                                    ownerEmail: ownerEmail,
+                                    ownerName: ownerName,
+                                    category: category,
+                                    victimName: victimName,
+                                    victimAddress: victimAddress,
+                                    victimContact: victimContact,
+                                    witnessName: witnessName,
+                                    witnessContact: witnessContact,
+                                    dateOfCrime: dateOfCrime,
+                                    timeOfCrime: timeOfCrime,
+                                    locationOfCrime: locationOfCrime,
+                                    descriptionOfCrime: descriptionOfCrime,
+                                    injuryType: injuryType,
+                                    policeStation: _selectedPoliceStation!,
+                                    reportStatus: 'Pending',
+                                    flags: 0,
+                                    upvotes: 0,
+                                    downvotes: 0,
                                   );
-                                }
-                              }
-                            } on CouldNotCreateReportException catch (_) {
-                              if (context.mounted) {
-                                await showErrorDialog(
-                                  context,
-                                  'Could not create report',
-                                );
-                              }
-                            } on Exception catch (_) {}
+                                  if (context.mounted) {
+                                    bool reportCreated =
+                                        await showSuccessDialog(
+                                      context: context,
+                                      text: 'Report created successfully.',
+                                    );
+                                    if (reportCreated) {
+                                      if (context.mounted) {
+                                        Navigator.of(context)
+                                            .pushNamedAndRemoveUntil(
+                                          navigationMenuRoute,
+                                          (route) => false,
+                                        );
+                                      }
+                                    }
+                                  }
+                                } on CouldNotCreateReportException catch (_) {
+                                  if (context.mounted) {
+                                    await showErrorDialog(
+                                      context,
+                                      'Could not create report',
+                                    );
+                                  }
+                                } on Exception catch (_) {}
+                              },
+                            );
                           }
                         }
                       } else {

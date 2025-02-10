@@ -6,7 +6,7 @@ import 'package:guardix/utilities/decorations/input_decoration_template.dart';
 import 'package:guardix/utilities/dialogs/add_advocate_dialog.dart';
 import 'package:guardix/utilities/dialogs/confirmation_dialog.dart';
 import 'package:guardix/utilities/dialogs/error_dialog.dart';
-import 'package:guardix/utilities/dialogs/report_created_dialog.dart';
+import 'package:guardix/utilities/dialogs/success_dialog.dart';
 import 'package:guardix/utilities/validation_utils.dart';
 
 class AddNewAdvocate extends StatefulWidget {
@@ -176,10 +176,9 @@ class _AddNewAdvocateState extends State<AddNewAdvocate> {
                                 advocatePhone: _advocatePhone.text,
                                 advocateAddress: _advocateAddress.text,
                               );
-                              bool reportCreated =
-                                  await showReportCreatedDialog(
-                                context,
-                                'Advocate added successfully.',
+                              bool reportCreated = await showSuccessDialog(
+                                context: context,
+                                text: 'Advocate added successfully.',
                               );
                               if (reportCreated) {
                                 if (context.mounted) {

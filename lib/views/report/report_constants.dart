@@ -29,11 +29,13 @@ final List<String> categoryList = [
   
   // Drug Abuse
   'Drug Abuse',
+  'Others',
 ];
 
 
 final List<String> policeStationList = [
   '',
+  'None',
   'Balagong, Sylhet',
   'Bianabazar, Sylhet',
   'Bishanath, Sylhet',

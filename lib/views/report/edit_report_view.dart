@@ -8,7 +8,7 @@ import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/utilities/decorations/input_decoration_template.dart';
 import 'package:guardix/utilities/dialogs/confirmation_dialog.dart';
 import 'package:guardix/utilities/dialogs/error_dialog.dart';
-import 'package:guardix/utilities/dialogs/report_created_dialog.dart';
+import 'package:guardix/utilities/dialogs/success_dialog.dart';
 import 'package:guardix/utilities/dialogs/update_report_dialog.dart';
 import 'package:guardix/utilities/validation_utils.dart';
 import 'package:guardix/views/report/report_constants.dart';
@@ -180,9 +180,9 @@ class _EditReportViewState extends State<EditReportView> {
                 if (isDeleted) {
                   try {
                     _cloudStorage.deleteReport(documentId: report.documentId);
-                    bool reportDeleted = await showReportCreatedDialog(
-                      context,
-                      'Report updated successfully.',
+                    bool reportDeleted = await showSuccessDialog(
+                      context: context,
+                      text: 'Report updated successfully.',
                     );
                     if (reportDeleted) {
                       if (context.mounted) {
@@ -448,10 +448,9 @@ class _EditReportViewState extends State<EditReportView> {
                                 downvotes: report.downvotes,
                                 userActions: report.userActions,
                               );
-                              bool reportUpdated =
-                                  await showReportCreatedDialog(
-                                context,
-                                'Report updated successfully.',
+                              bool reportUpdated = await showSuccessDialog(
+                                context: context,
+                                text: 'Report updated successfully.',
                               );
                               if (reportUpdated) {
                                 if (context.mounted) {
