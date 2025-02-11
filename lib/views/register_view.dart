@@ -6,6 +6,7 @@ import 'package:guardix/service/auth/auth_service.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/utilities/decorations/input_decoration_template.dart';
 import 'package:guardix/utilities/dialogs/error_dialog.dart';
+import 'package:guardix/utilities/helpers/local_storage.dart';
 import 'package:guardix/utilities/validation_utils.dart';
 
 class RegisterView extends StatefulWidget {
@@ -204,7 +205,12 @@ class _RegisterViewState extends State<RegisterView> {
                 enableSuggestions: false,
                 autocorrect: false,
                 keyboardType: TextInputType.name,
-                decoration: buildInputDecoration(label: 'Name', prefixIcon: const Icon(Icons.person, color: midnightBlueColor,)),
+                decoration: buildInputDecoration(
+                    label: 'Name',
+                    prefixIcon: const Icon(
+                      Icons.person,
+                      color: midnightBlueColor,
+                    )),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 1.0, left: 16.0),
@@ -224,7 +230,12 @@ class _RegisterViewState extends State<RegisterView> {
                 enableSuggestions: false,
                 autocorrect: false,
                 keyboardType: TextInputType.emailAddress,
-                decoration: buildInputDecoration(label: 'Email', prefixIcon: const Icon(Icons.email_rounded, color: midnightBlueColor,)),
+                decoration: buildInputDecoration(
+                    label: 'Email',
+                    prefixIcon: const Icon(
+                      Icons.email_rounded,
+                      color: midnightBlueColor,
+                    )),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 1.0, left: 16.0),
@@ -244,7 +255,12 @@ class _RegisterViewState extends State<RegisterView> {
                 enableSuggestions: true,
                 autocorrect: false,
                 keyboardType: TextInputType.phone,
-                decoration: buildInputDecoration(label: 'Mobile Number', prefixIcon: const Icon(Icons.phone, color: midnightBlueColor,)),
+                decoration: buildInputDecoration(
+                    label: 'Mobile Number',
+                    prefixIcon: const Icon(
+                      Icons.phone,
+                      color: midnightBlueColor,
+                    )),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 1.0, left: 16.0),
@@ -264,7 +280,12 @@ class _RegisterViewState extends State<RegisterView> {
                 enableSuggestions: false,
                 autocorrect: false,
                 keyboardType: TextInputType.text,
-                decoration: buildInputDecoration(label: 'Password', prefixIcon: const Icon(Icons.remove_red_eye_rounded, color: midnightBlueColor,)),
+                decoration: buildInputDecoration(
+                    label: 'Password',
+                    prefixIcon: const Icon(
+                      Icons.remove_red_eye_rounded,
+                      color: midnightBlueColor,
+                    )),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 1.0, left: 16.0),
@@ -283,7 +304,12 @@ class _RegisterViewState extends State<RegisterView> {
                 obscureText: true,
                 enableSuggestions: false,
                 autocorrect: false,
-                decoration: buildInputDecoration(label: 'Confirm Password', prefixIcon: const Icon(Icons.remove_red_eye_rounded, color: midnightBlueColor,)),
+                decoration: buildInputDecoration(
+                    label: 'Confirm Password',
+                    prefixIcon: const Icon(
+                      Icons.remove_red_eye_rounded,
+                      color: midnightBlueColor,
+                    )),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 1.0, left: 16.0),
@@ -331,7 +357,7 @@ class _RegisterViewState extends State<RegisterView> {
 
                                   AuthService.firebase()
                                       .sendEmailVerification();
-                                      
+
                                   FirebaseCloudStorage cloudStorage =
                                       FirebaseCloudStorage();
                                   cloudStorage.createNewUser(
@@ -340,6 +366,14 @@ class _RegisterViewState extends State<RegisterView> {
                                     phone: phone,
                                     isAdmin: false,
                                   );
+
+                                  FirebaseCloudStorage().addNewChat(
+                                      fromNumber: phone,
+                                      toNumber: '01869519491',
+                                      fromName: name,
+                                      toName: 'Guardi-X',
+                                      toId: '01869519491');
+
                                   // ignore: use_build_context_synchronously
                                   Navigator.of(context)
                                       .pushNamed(verifyEmailRoute);

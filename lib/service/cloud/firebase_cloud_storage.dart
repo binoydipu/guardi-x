@@ -121,20 +121,21 @@ Performance: Reduces Firestore billing cost by minimizing the number of writes.
     );
 
     Chat chat = Chat(
-      chatRoomReference: chatRoomReference,
-      senderPhone: senderPhone,
-      receiverPhone: receiverPhone,
-      senderName: senderName,
-      receiverName: receiverName,
-      lastMessage: message,
-      timestamp: timestamp,
-      isRead: false,
-    );
+        chatRoomReference: chatRoomReference,
+        senderPhone: senderPhone,
+        receiverPhone: receiverPhone,
+        senderName: senderName,
+        receiverName: receiverName,
+        lastMessage: message,
+        timestamp: timestamp,
+        isRead: false);
+
 
     try {
       await chatRoomReference
           .collection(chatRoomMessageCollectionName)
           .add(newMessage.toMap());
+
       await chats.doc(chatRoomId).set(chat.toMap());
     } catch (e) {
       throw CouldNotSendMessage();

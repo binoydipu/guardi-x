@@ -47,7 +47,6 @@ class _MessageViewState extends State<MessageView> {
   late final ImagePicker _imagePicker;
   // ignore: unused_field
   XFile? _selectedImage;
-  // bool _isTextFieldEmpty = true;
 
   Future<void> _pickImage({
     required ImageSource source,
@@ -112,6 +111,10 @@ class _MessageViewState extends State<MessageView> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.isRead);
+    _lastMessage = widget.chatLastMessage;
+    _lastMessageTime = widget.timestamp;
+
     return Scaffold(
       appBar: AppBar(
         leading: Row(
@@ -172,6 +175,21 @@ class _MessageViewState extends State<MessageView> {
                 }
 
                 final messages = snapshot.data!.docs;
+
+
+                // print('receiver -> $receiver');
+
+                // // Scroll to bottom when new messages arrive
+                // WidgetsBinding.instance.addPostFrameCallback((_) {
+                //   if (receiver.compareTo(widget.currentUserNumber) == 0) {
+                //     print('hola');
+                //     FirebaseCloudStorage()
+                //         .updateMessageStatus(widget.chatRoomDocRef);
+                //   }
+                // _scrollToBottom();
+                // });
+
+                // Scroll to bottom when new messages arrive
 
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   _scrollToBottom();
@@ -314,6 +332,8 @@ class _MessageViewState extends State<MessageView> {
                             widget.chatRoomId,
                             widget.chatRoomDocRef,
                           );
+                          _lastMessage = _messageController.text;
+                          _lastMessageTime = Timestamp.now();
                           _messageController.clear();
                           _scrollToBottom();
                         }

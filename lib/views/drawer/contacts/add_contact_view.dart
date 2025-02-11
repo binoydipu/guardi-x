@@ -238,10 +238,12 @@ class _AddContactsViewState extends State<AddContactsView> {
                                   String phone = contact.phones.first.number
                                       .replaceAll(RegExp(r'\D'),
                                           ''); // Removes all non-digits
+
                                   if (phone.startsWith('88')) {
                                     phone =
                                         phone.substring(2, phone.length);
                                   }
+
                                   addToContact(phone);
                                 } catch (e) {
                                   showToast('Empty Contact');
