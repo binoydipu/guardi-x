@@ -5,8 +5,6 @@ class AppLanguageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: const Text('App Language View'),
-    );
+    return const Text('App Language View');
   }
 }

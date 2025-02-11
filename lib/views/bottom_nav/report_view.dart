@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
+import 'package:guardix/views/report/report_constants.dart' show reportDisclaimer;
 
 class ReportView extends StatefulWidget {
   const ReportView({super.key});
@@ -15,7 +16,7 @@ class _ReportViewState extends State<ReportView> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Report an Incident',
+          'Report Incident',
           style: TextStyle(color: whiteColor),
         ),
         centerTitle: true,
@@ -28,7 +29,7 @@ class _ReportViewState extends State<ReportView> {
           children: [
             const Center(
               child: Text(
-                'Welcome to Crime Catagory Selection Page',
+                'Welcome to Report an Incident Page',
                 style: TextStyle(
                   color: blackColor,
                   fontSize: 16,
@@ -50,7 +51,8 @@ class _ReportViewState extends State<ReportView> {
                     ),
                   ),
                   Text(
-                    'By proceeding, you acknowledge that the information you provide is accurate to the best of your knowledge. False or misleading reports may lead to legal consequences. Guardi-X is not liable for the authenticity of user-submitted data and serves only as a platform to facilitate reporting. For immediate assistance, please contact your local law enforcement authorities.',
+                    reportDisclaimer,
+                    textAlign: TextAlign.justify,
                     style: TextStyle(
                       color: blackColor,
                       fontSize: 12,

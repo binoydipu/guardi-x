@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
 import 'package:guardix/service/auth/auth_constants.dart';
@@ -8,12 +9,10 @@ import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/service/cloud/model/cloud_user.dart';
 import 'package:guardix/utilities/helpers/local_storage.dart';
 import 'package:guardix/utilities/dialogs/loading_dialog.dart';
+import 'package:guardix/views/bottom_nav/sos_view.dart';
 import 'package:guardix/views/drawer/app_language_view.dart';
-import 'package:guardix/views/drawer/emergency_view.dart';
-import 'package:guardix/views/drawer/location_view.dart';
 import 'package:guardix/views/drawer/notification_view.dart';
 import 'package:guardix/views/drawer/settings_view.dart';
-import 'package:guardix/views/drawer/contacts/contacts_view.dart';
 import 'package:guardix/views/bottom_nav/home_page.dart';
 import 'package:guardix/views/drawer/legal_info/legal_info_view.dart';
 import 'package:guardix/utilities/dialogs/logout_dialog.dart';
@@ -56,16 +55,12 @@ class _HomeViewState extends State<HomeView> {
 
     if (currentPage == DrawerAction.home) {
       container = const HomePage();
-    } else if (currentPage == DrawerAction.contacts) {
-      container = const ContactsView();
     } else if (currentPage == DrawerAction.legalInfo) {
       container = const LegalInfoView();
+    } else if (currentPage == DrawerAction.sos) {
+      container = const SosView();
     } else if (currentPage == DrawerAction.notification) {
       container = const NotificationView();
-    } else if (currentPage == DrawerAction.location) {
-      container = const LocationView();
-    } else if (currentPage == DrawerAction.emergency) {
-      container = const EmergencyView();
     } else if (currentPage == DrawerAction.language) {
       container = const AppLanguageView();
     } else if (currentPage == DrawerAction.settings) {
@@ -75,30 +70,57 @@ class _HomeViewState extends State<HomeView> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: const FaIcon(
+              FontAwesomeIcons.bars,
+              size: 22,
+            ),
+            onPressed: () {
+              Scaffold.of(context).openDrawer();
+            },
+          ),
+        ),
         backgroundColor: midnightBlueColor,
         foregroundColor: whiteColor,
         actions: [
-          IconButton(
-            onPressed: () {
-              LocalStorage.getUserPhone();
-              if(cloudUser != null) {
-                _showProfileDrawer(context);
-              } else {
-                final closeDialog = showLoadingDialog(
-                  context: context,
-                  text: 'Loading..',
-                );
-                _getUser().then((_) {
-                  closeDialog();
-                  if (context.mounted) {
-                    _showProfileDrawer(context);
-                  }
-                });
-              }
-            },
-            icon: const Icon(Icons.account_circle_outlined),
+          Padding(
+            padding: const EdgeInsets.only(right: 10.0),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(15),
+              onTap: () {
+                LocalStorage.getUserPhone();
+                if (cloudUser != null) {
+                  _showProfileDrawer(context);
+                } else {
+                  final closeDialog = showLoadingDialog(
+                    context: context,
+                    text: 'Loading..',
+                  );
+                  _getUser().then((_) {
+                    closeDialog();
+                    if (context.mounted) {
+                      _showProfileDrawer(context);
+                    }
+                  });
+                }
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: whiteColor,
+                    width: 2,
+                  ),
+                ),
+                child: const CircleAvatar(
+                  radius: 15,
+                  backgroundImage: AssetImage('assets/images/profile_pic.png')
+                      as ImageProvider,
+                ),
+              ),
+            ),
           ),
-          // IconButton(onPressed: () => _handleLogout(), icon: const Icon(Icons.logout),),
         ],
       ),
       drawer: Drawer(
@@ -106,6 +128,34 @@ class _HomeViewState extends State<HomeView> {
         child: SingleChildScrollView(
           child: Column(
             children: [
+              Container(height: 50, color: midnightBlueColor),
+              Container(
+                padding: const EdgeInsets.all(16),
+                color: midnightBlueColor,
+                child: const Row(
+                  children: [
+                    SizedBox(width: 10),
+                    // CircleAvatar(
+                    //   backgroundImage: AssetImage('assets/icon/icon.png'),
+                    //   radius: 24,
+                    // ),
+                    FaIcon(
+                      FontAwesomeIcons.shieldHalved,
+                      size: 35,
+                      color: whiteColor,
+                    ),
+                    SizedBox(width: 16),
+                    Text(
+                      'Guardi-X',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               drawerList(),
               const Divider(color: softBlueColor),
               userEmail == adminEmail
@@ -269,10 +319,10 @@ class _HomeViewState extends State<HomeView> {
   Widget drawerList() {
     return Container(
       color: whiteColor,
-      padding: const EdgeInsets.only(top: 60),
+      padding: const EdgeInsets.only(top: 10),
       child: Column(
         children: [
-          menuItem(1, 'Home', Icons.home,
+          menuItem(1, 'Home', Icons.home, 25,
               currentPage == DrawerAction.home ? true : false),
           const Row(
             children: [
@@ -291,10 +341,10 @@ class _HomeViewState extends State<HomeView> {
               ),
             ],
           ),
-          menuItem(2, 'Contacts', Icons.contact_emergency,
-              currentPage == DrawerAction.contacts ? true : false),
-          menuItem(3, 'Legal Information', Icons.info,
+          menuItem(2, 'Legal Information', FontAwesomeIcons.scaleBalanced, 20,
               currentPage == DrawerAction.legalInfo ? true : false),
+          menuItem(3, 'SOS Emergency', Icons.sos_rounded, 24,
+              currentPage == DrawerAction.sos ? true : false),
           const Row(
             children: [
               Padding(
@@ -312,22 +362,19 @@ class _HomeViewState extends State<HomeView> {
               ),
             ],
           ),
-          menuItem(4, 'Notification', Icons.notifications,
+          menuItem(4, 'Notification', FontAwesomeIcons.solidBell, 20,
               currentPage == DrawerAction.notification ? true : false),
-          menuItem(5, 'Locations', Icons.location_on,
-              currentPage == DrawerAction.location ? true : false),
-          menuItem(6, 'Emergency', Icons.emergency,
-              currentPage == DrawerAction.emergency ? true : false),
-          menuItem(7, 'App Language', Icons.language,
+          menuItem(5, 'App Language', FontAwesomeIcons.language, 20,
               currentPage == DrawerAction.language ? true : false),
-          menuItem(8, 'Settings', Icons.settings,
+          menuItem(6, 'Settings', Icons.settings, 23,
               currentPage == DrawerAction.settings ? true : false),
         ],
       ),
     );
   }
 
-  Widget menuItem(int id, String title, IconData icon, bool selected) {
+  Widget menuItem(
+      int id, String title, IconData icon, double iconSize, bool selected) {
     return Material(
       color: selected ? lightGreyColor : Colors.transparent,
       child: InkWell(
@@ -337,18 +384,14 @@ class _HomeViewState extends State<HomeView> {
             if (id == 1) {
               currentPage = DrawerAction.home;
             } else if (id == 2) {
-              currentPage = DrawerAction.contacts;
-            } else if (id == 3) {
               currentPage = DrawerAction.legalInfo;
+            } else if (id == 3) {
+              currentPage = DrawerAction.sos;
             } else if (id == 4) {
               currentPage = DrawerAction.notification;
             } else if (id == 5) {
-              currentPage = DrawerAction.location;
-            } else if (id == 6) {
-              currentPage = DrawerAction.emergency;
-            } else if (id == 7) {
               currentPage = DrawerAction.language;
-            } else if (id == 8) {
+            } else if (id == 6) {
               currentPage = DrawerAction.settings;
             }
           });
@@ -362,7 +405,7 @@ class _HomeViewState extends State<HomeView> {
                 flex: 1,
                 child: Icon(
                   icon,
-                  size: 22,
+                  size: iconSize,
                   color: midnightBlueColor,
                 ),
               ),

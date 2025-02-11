@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
       title: 'Guardi-X',
       theme: ThemeData(
         brightness: Brightness.light,
-        scaffoldBackgroundColor: Colors.grey[50],
+        scaffoldBackgroundColor: appBackgroundColor,
         primaryColor: midnightBlueColor,
       ),
       home: const InitializeView(),

@@ -40,8 +40,19 @@ class AdvocateListView extends StatelessWidget {
                 maxWidth: 200,
               ),
               decoration: BoxDecoration(
-                color: softBlueColor,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(16.0),
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color.fromARGB(255, 245, 245, 245), Color.fromARGB(255, 206, 244, 249)], 
+                ),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 4.0,
+                    offset: Offset(2.0, 2.0),
+                  ),
+                ],
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

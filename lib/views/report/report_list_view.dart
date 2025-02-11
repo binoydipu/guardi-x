@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
 import 'package:guardix/service/auth/auth_service.dart';
@@ -239,8 +240,9 @@ class ReportListView extends StatelessWidget {
                             arguments: report.documentId,
                           );
                         },
-                        icon: const Icon(
-                          Icons.comment,
+                        icon: const FaIcon(
+                          FontAwesomeIcons.comment,
+                          size: 22,
                           color: midnightBlueColor,
                         ),
                       ),

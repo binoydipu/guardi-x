@@ -35,25 +35,25 @@ class _SosViewState extends State<SosView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: Navigator.canPop(context)
-            ? IconButton(
-                icon: const Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  color: whiteColor,
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              )
-            : null,
-        title: const Text(
-          'SOS Emergency',
-          style: TextStyle(color: whiteColor),
-        ),
-        centerTitle: true,
-        backgroundColor: midnightBlueColor,
-      ),
+      // appBar: AppBar(
+      //   leading: Navigator.canPop(context)
+      //       ? IconButton(
+      //           icon: const Icon(
+      //             Icons.arrow_back_ios_new_rounded,
+      //             color: whiteColor,
+      //           ),
+      //           onPressed: () {
+      //             Navigator.of(context).pop();
+      //           },
+      //         )
+      //       : null,
+      //   title: const Text(
+      //     'SOS Emergency',
+      //     style: TextStyle(color: whiteColor),
+      //   ),
+      //   centerTitle: true,
+      //   backgroundColor: midnightBlueColor,
+      // ),
       body: ListView.builder(
         itemCount: 6,
         itemBuilder: (BuildContext context, int index) {

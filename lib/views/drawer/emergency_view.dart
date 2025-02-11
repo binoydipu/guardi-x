@@ -5,8 +5,6 @@ class EmergencyView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: const Text('Emergency View'),
-    );
+    return const Text('Emergency View');
   }
 }

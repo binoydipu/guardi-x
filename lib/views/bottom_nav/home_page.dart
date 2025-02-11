@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
 import 'package:guardix/service/auth/auth_constants.dart';
@@ -58,7 +59,8 @@ class _HomePageState extends State<HomePage> {
     },
     {
       'title': "Emergency Balance",
-      'text': "Keep enough balance for emergencies. A small top-up can help when you need it most!",
+      'text':
+          "Keep enough balance for emergencies. A small top-up can help when you need it most!",
       'backgroundColors': [const Color(0xFF34C759), const Color(0xFF00A86B)],
       'textColor': Colors.white,
     }
@@ -196,7 +198,8 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         buildCard(
                           context: context,
-                          icon: Icons.warning,
+                          icon: FontAwesomeIcons.bullhorn,
+                          iconSize: 35,
                           text: 'Want to report a crime?',
                           onTap: () {
                             Navigator.of(context)

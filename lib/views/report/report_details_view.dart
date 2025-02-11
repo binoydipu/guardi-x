@@ -164,7 +164,7 @@ class _ReportDetailsViewState extends State<ReportDetailsView> {
                                 documentId: report.documentId);
                             bool reportDeleted = await showSuccessDialog(
                               context: context,
-                              text: 'Report updated successfully.',
+                              text: 'Report deleted successfully.',
                             );
                             if (reportDeleted) {
                               if (context.mounted) {

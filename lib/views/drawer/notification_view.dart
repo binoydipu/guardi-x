@@ -5,8 +5,6 @@ class NotificationView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: const Text('Notification View'),
-    );
+    return const Text('Notification View');
   }
 }

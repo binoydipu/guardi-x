@@ -33,7 +33,7 @@ class _ChatViewState extends State<ChatView> {
                 MaterialPageRoute(builder: (context) => const AddContactsView()),
               );
             }, 
-            icon: const FaIcon(FontAwesomeIcons.userPlus, size: 22, color: whiteColor,),
+            icon: const FaIcon(FontAwesomeIcons.userPlus, size: 20, color: whiteColor,),
           ),
         ],
         centerTitle: true,

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show Color;
 
 // Primary Colors
 const midnightBlueColor = Color(0xFF003566);
@@ -17,8 +17,9 @@ const lightGreyColor = Color(0xFFE5E5E5);
 const whiteColor = Color(0xFFFFFFFF);
 const blackColor = Color(0xFF000000);
 
-// Error/Warning COlors
+// Error/Warning Colors
 const crimsonRedColor = Color(0xFFFF0033);
 
 // For specific Use
 const textInputFillColor = Color.fromARGB(18, 0, 53, 102);
+const appBackgroundColor = Color.fromARGB(255, 250, 250, 250);

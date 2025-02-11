@@ -37,15 +37,17 @@ class _OngoingIncidentsViewState extends State<OngoingIncidentsView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: whiteColor,
-          ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
+        leading: Navigator.canPop(context)
+            ? IconButton(
+                icon: const Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  color: whiteColor,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            : null,
         title: const Text(
           'Ongoing Incidents',
           style: TextStyle(color: whiteColor),

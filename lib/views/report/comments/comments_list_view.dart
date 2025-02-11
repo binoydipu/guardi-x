@@ -45,11 +45,16 @@ class CommentsListView extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const CircleAvatar(
-                          backgroundColor: softBlueColor,
-                          child: Icon(
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.blue[50],
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
                             Icons.person,
-                            color: Colors.white,
+                            color: Colors.blue,
+                            size: 24,
                           ),
                         ),
                         const SizedBox(width: 10),

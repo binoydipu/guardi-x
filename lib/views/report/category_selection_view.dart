@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
 import 'package:guardix/utilities/decorations/input_decoration_template.dart';
-import 'package:guardix/views/report/report_constants.dart';
+import 'package:guardix/views/report/report_constants.dart' show categoryDisclaimer, categoryList;
+
 
 class CategorySelectionView extends StatefulWidget {
   const CategorySelectionView({super.key});
@@ -12,7 +13,6 @@ class CategorySelectionView extends StatefulWidget {
 }
 
 class _CategorySelectionViewState extends State<CategorySelectionView> {
-
   String? _selectedCategory;
   bool isButtonActive = false;
 
@@ -36,7 +36,7 @@ class _CategorySelectionViewState extends State<CategorySelectionView> {
           },
         ),
         title: const Text(
-          'Crime Report',
+          'Select Category',
           style: TextStyle(color: whiteColor),
         ),
         centerTitle: true,
@@ -60,7 +60,8 @@ class _CategorySelectionViewState extends State<CategorySelectionView> {
               onChanged: (value) {
                 setState(() {
                   _selectedCategory = value;
-                  isButtonActive = (_selectedCategory != null && _selectedCategory?.compareTo('') != 0);
+                  isButtonActive = (_selectedCategory != null &&
+                      _selectedCategory?.compareTo('') != 0);
                 });
               },
               icon: const Icon(
@@ -84,7 +85,8 @@ class _CategorySelectionViewState extends State<CategorySelectionView> {
                     ),
                   ),
                   Text(
-                    'Selecting the right crime Category is vital for accurate reporting and prompt response from law enforcement. Choose the category that best matches your incident to streamline the reporting process and ensure effective handling. Thank you for contributing to community safety and security.',
+                    categoryDisclaimer,
+                    textAlign: TextAlign.justify,
                     style: TextStyle(
                       color: blackColor,
                       fontSize: 12,
@@ -96,13 +98,14 @@ class _CategorySelectionViewState extends State<CategorySelectionView> {
             const SizedBox(height: 20),
             Center(
               child: ElevatedButton(
-                onPressed: isButtonActive 
-                ? () {
-                  Navigator.of(context).pushNamed(
-                    reportFormRoute,
-                    arguments: _selectedCategory,
-                  );
-                } : null,
+                onPressed: isButtonActive
+                    ? () {
+                        Navigator.of(context).pushNamed(
+                          reportFormRoute,
+                          arguments: _selectedCategory,
+                        );
+                      }
+                    : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: midnightBlueColor,
                 ),

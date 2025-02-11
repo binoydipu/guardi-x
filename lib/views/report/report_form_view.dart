@@ -94,6 +94,7 @@ class _ReportFormViewState extends State<ReportFormView> {
   }
 
   Future<void> _pickImages() async {
+    // ignore: unnecessary_nullable_for_final_variable_declarations
     final List<XFile>? images = await _imagePicker.pickMultiImage(limit: 5);
 
     if (images != null && images.isNotEmpty) {
