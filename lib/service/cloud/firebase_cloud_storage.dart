@@ -305,8 +305,9 @@ Performance: Reduces Firestore billing cost by minimizing the number of writes.
 
       buildChat(
           fromNumber, toNumber, fromName, toName, toId, message, chatRoomId);
-
-      showToast('Contact added successfully');
+      if(toId != '0123456789') {
+        showToast('Contact added successfully');
+      }
     } catch (e) {
       throw CouldNotCreateChatsException();
     }

@@ -498,7 +498,7 @@ class _MessageViewState extends State<MessageView> {
             style: TextStyle(
               color: isMe ? Colors.white : Colors.black87,
               decoration: TextDecoration.underline,
-              decorationColor: Colors.grey[200],
+              decorationColor: isMe ? Colors.grey[200] : blackColor,
             ),
             recognizer: TapGestureRecognizer()
               ..onTap = () {
