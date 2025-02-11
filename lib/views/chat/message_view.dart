@@ -111,10 +111,6 @@ class _MessageViewState extends State<MessageView> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.isRead);
-    _lastMessage = widget.chatLastMessage;
-    _lastMessageTime = widget.timestamp;
-
     return Scaffold(
       appBar: AppBar(
         leading: Row(
@@ -332,8 +328,6 @@ class _MessageViewState extends State<MessageView> {
                             widget.chatRoomId,
                             widget.chatRoomDocRef,
                           );
-                          _lastMessage = _messageController.text;
-                          _lastMessageTime = Timestamp.now();
                           _messageController.clear();
                           _scrollToBottom();
                         }

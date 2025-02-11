@@ -6,7 +6,6 @@ import 'package:guardix/service/auth/auth_service.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/utilities/decorations/input_decoration_template.dart';
 import 'package:guardix/utilities/dialogs/error_dialog.dart';
-import 'package:guardix/utilities/helpers/local_storage.dart';
 import 'package:guardix/utilities/validation_utils.dart';
 
 class RegisterView extends StatefulWidget {
