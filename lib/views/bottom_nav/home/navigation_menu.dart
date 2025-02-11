@@ -48,11 +48,16 @@ class _NavigationMenuState extends State<NavigationMenu> {
         },
         destinations: const [
           NavigationDestination(
-            icon: Image(
-              image: AssetImage('assets/icon/home_icon.png'),
-              width: 21,
-              height: 21,
-              fit: BoxFit.contain,
+            // icon: Image(
+            //   image: AssetImage('assets/icon/home_icon.png'),
+            //   width: 21,
+            //   height: 21,
+            //   fit: BoxFit.contain,
+            // ),
+            icon: Icon(
+              Icons.home_outlined,
+              size: 28,
+              color: blackColor,
             ),
             label: 'Home',
           ),
@@ -71,8 +76,8 @@ class _NavigationMenuState extends State<NavigationMenu> {
               label: 'Report'),
           NavigationDestination(
             icon: FaIcon(
-              FontAwesomeIcons.whatsapp,
-              size: 23,
+              FontAwesomeIcons.comments,
+              size: 21,
               color: blackColor,
             ),
             label: 'Chat',

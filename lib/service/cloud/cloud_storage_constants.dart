@@ -46,7 +46,7 @@ const messageFieldName = 'message';
 const messageCollectionName = 'messages';
 const timestampFieldName = 'timestamp';
 const isChatReadFieldName = 'is_read';
-const isSeenFieldName = 'is_seen';
+const isMessageSeenFieldName = 'is_seen';
 // trusted contacts of current user
 const trustedContactCollectionName = 'trusted_contacts';
 

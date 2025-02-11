@@ -24,7 +24,7 @@ class Message {
       receiverPhoneFieldName: receiverPhone,
       messageFieldName: message,
       timestampFieldName: timestamp,
-      isSeenFieldName: isSeen,
+      isMessageSeenFieldName: isSeen,
     };
   }
 }

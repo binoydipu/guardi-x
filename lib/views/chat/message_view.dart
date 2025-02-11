@@ -19,6 +19,7 @@ class MessageView extends StatefulWidget {
   final String chatPersonNumber;
   final String chatLastMessage;
   final Timestamp timestamp;
+  final bool isRead;
 
   const MessageView({
     required this.chatRoomId,
@@ -29,6 +30,7 @@ class MessageView extends StatefulWidget {
     required this.chatPersonNumber,
     required this.chatLastMessage,
     required this.timestamp,
+    required this.isRead,
     super.key,
   });
 
@@ -110,19 +112,6 @@ class _MessageViewState extends State<MessageView> {
                 color: whiteColor,
               ),
               onPressed: () {
-                FirebaseCloudStorage().updateMessageStatus(widget.chatRoomDocRef);
-
-                FirebaseCloudStorage().updateChat(
-                  senderPhone: widget.currentUserNumber,
-                  receiverPhone: widget.chatPersonNumber,
-                  senderName: widget.currentUserName,
-                  receiverName: widget.chatPersonName,
-                  message: widget.chatLastMessage,
-                  timestamp: widget.timestamp,
-                  chatRoomId: widget.chatRoomId,
-                  chatRoomReference: widget.chatRoomDocRef,
-                  isRead: true,
-                );
                 Navigator.of(context).pop();
               },
             ),
@@ -131,21 +120,26 @@ class _MessageViewState extends State<MessageView> {
         title: Text(
           widget.chatPersonName,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(color: whiteColor, fontSize: 18,),
+          style: const TextStyle(
+            color: whiteColor,
+            fontSize: 18,
+          ),
         ),
         centerTitle: false,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () async {},
             icon: const FaIcon(
-              FontAwesomeIcons.video, 
-              size: 20, 
+              FontAwesomeIcons.video,
+              size: 20,
               color: whiteColor,
             ),
           ),
           IconButton(
-            onPressed: () => _makePhoneCall(widget.chatPersonNumber), 
-            icon: const Icon(Icons.phone, color: whiteColor,
+            onPressed: () => _makePhoneCall(widget.chatPersonNumber),
+            icon: const Icon(
+              Icons.phone,
+              color: whiteColor,
             ),
           ),
         ],
@@ -169,33 +163,7 @@ class _MessageViewState extends State<MessageView> {
 
                 final messages = snapshot.data!.docs;
 
-                // print('receiver -> $receiver');
-
-                // // Scroll to bottom when new messages arrive
-                // WidgetsBinding.instance.addPostFrameCallback((_) {
-                //   if (receiver.compareTo(widget.currentUserNumber) == 0) {
-                //     print('hola');
-                //     FirebaseCloudStorage()
-                //         .updateMessageStatus(widget.chatRoomDocRef);
-                //   }
-                // _scrollToBottom();
-                // });
-
-                // Scroll to bottom when new messages arrive
                 WidgetsBinding.instance.addPostFrameCallback((_) {
-                  // FirebaseCloudStorage()
-                  //     .updateMessageStatus(widget.chatRoomDocRef);
-                  // FirebaseCloudStorage().updateChat(
-                  //   senderPhone: widget.currentUserNumber,
-                  //   receiverPhone: widget.chatPersonNumber,
-                  //   senderName: widget.currentUserName,
-                  //   receiverName: widget.chatPersonName,
-                  //   message: widget.chatLastMessage,
-                  //   timestamp: widget.timestamp,
-                  //   chatRoomId: widget.chatRoomId,
-                  //   chatRoomReference: widget.chatRoomDocRef,
-                  //   isRead: true,
-                  // );
                   _scrollToBottom();
                 });
 
@@ -384,10 +352,13 @@ class _MessageViewState extends State<MessageView> {
                       width: 4), // Spacing between timestamp and icon
                   if (isMe)
                     Icon(
-                      data[isSeenFieldName] ? Icons.done_all : Icons.done,
+                      data[isMessageSeenFieldName]
+                          ? Icons.done_all
+                          : Icons.done,
                       size: 16,
-                      color:
-                          data[isSeenFieldName] ? Colors.white : Colors.white70,
+                      color: data[isMessageSeenFieldName]
+                          ? const Color.fromARGB(255, 0, 255, 64)
+                          : whiteColor,
                     ),
                 ],
               ),

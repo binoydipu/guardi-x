@@ -67,6 +67,7 @@ Future<GestureDetector> chatListView(BuildContext context, var chatData) async {
               chatPersonNumber: number,
               chatLastMessage: message,
               timestamp: timestamp,
+              isRead: !isNotRead,
             ),
           ),
         );

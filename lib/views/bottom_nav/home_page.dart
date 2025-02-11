@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
       'title': "Stay Alert",
       'text':
           "Report suspicious activities immediately to keep your community safe.",
-      'backgroundColors': [Colors.blue, Colors.black],
+      'backgroundColors': [Colors.blue, const Color.fromARGB(177, 0, 0, 0)],
       'textColor': whiteColor,
     },
     {
