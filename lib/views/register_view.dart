@@ -368,10 +368,10 @@ class _RegisterViewState extends State<RegisterView> {
 
                                   FirebaseCloudStorage().addNewChat(
                                       fromNumber: phone,
-                                      toNumber: '01869519491',
+                                      toNumber: '0123456789',
                                       fromName: name,
                                       toName: 'Guardi-X',
-                                      toId: '012345679');
+                                      toId: '0123456789');
 
                                   // ignore: use_build_context_synchronously
                                   Navigator.of(context)

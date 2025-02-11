@@ -64,14 +64,14 @@ class _OngoingIncidentsViewState extends State<OngoingIncidentsView> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _filtersHidden
-                  ? const SizedBox(width: 10) 
-                  : const Text(
-                    'Filter by Category',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                    ? const SizedBox(width: 10)
+                    : const Text(
+                        'Filter by Category',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                 TextButton(
                   onPressed: () {
                     setState(() {
@@ -90,7 +90,7 @@ class _OngoingIncidentsViewState extends State<OngoingIncidentsView> {
               ],
             ),
           ),
-          if (!_filtersHidden) 
+          if (!_filtersHidden)
             Column(
               children: [
                 const SizedBox(height: 10),
@@ -132,7 +132,7 @@ class _OngoingIncidentsViewState extends State<OngoingIncidentsView> {
                       ),
                       const Text(
                         'Select Flagged Reports',
-                          style: TextStyle(
+                        style: TextStyle(
                           color: blackColor,
                           fontSize: 14,
                         ),
@@ -154,6 +154,9 @@ class _OngoingIncidentsViewState extends State<OngoingIncidentsView> {
                       onChanged: (value) {
                         setState(() {
                           _sortByUpvote = value!;
+                          if (_sortByLatest && _sortByUpvote) {
+                            _sortByLatest = false;
+                          }
                         });
                       },
                     ),
@@ -169,6 +172,9 @@ class _OngoingIncidentsViewState extends State<OngoingIncidentsView> {
                       onChanged: (value) {
                         setState(() {
                           _sortByLatest = value!;
+                          if (_sortByLatest && _sortByUpvote) {
+                            _sortByUpvote = false;
+                          }
                         });
                       },
                     ),
