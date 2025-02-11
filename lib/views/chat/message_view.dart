@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:guardix/components/toast.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/service/cloud/cloud_storage_constants.dart';
@@ -45,6 +47,7 @@ class _MessageViewState extends State<MessageView> {
   late final ImagePicker _imagePicker;
   // ignore: unused_field
   XFile? _selectedImage;
+  // bool _isTextFieldEmpty = true;
 
   Future<void> _pickImage({
     required ImageSource source,
@@ -61,6 +64,13 @@ class _MessageViewState extends State<MessageView> {
   void initState() {
     super.initState();
     _messageController = TextEditingController();
+    // _messageController.addListener(
+    //   () {
+    //     setState(() {
+    //       _isTextFieldEmpty = _messageController.text.isEmpty;
+    //     });
+    //   },
+    // );
     _scrollController = ScrollController();
     _imagePicker = ImagePicker();
   }
@@ -128,7 +138,7 @@ class _MessageViewState extends State<MessageView> {
         centerTitle: false,
         actions: [
           IconButton(
-            onPressed: () async {},
+            onPressed: () {},
             icon: const FaIcon(
               FontAwesomeIcons.video,
               size: 20,
@@ -173,8 +183,27 @@ class _MessageViewState extends State<MessageView> {
                   itemBuilder: (context, index) {
                     var data = messages[index].data() as Map<String, dynamic>;
                     final String message = data[messageFieldName];
-                    bool isLink = message.startsWith('http://') ||
-                        message.startsWith('https://');
+                    // bool isLink = message.startsWith('http://') ||
+                    //     message.startsWith('https://');
+
+                    RegExp urlRegex = RegExp(r'(https?:\/\/|www\.)\S+');
+                    Iterable<Match> matches = urlRegex.allMatches(message);
+                    bool isLink = false;
+                    int? startIndex, endIndex;
+                    for (final match in matches) {
+                      // ignore: unused_local_variable
+                      String url = match.group(0)!; // The matched URL
+                      isLink = true;
+                      startIndex = match.start; // The start index of the URL
+                      endIndex =
+                          match.end; // The end index of the URL (exclusive)
+                      // print(url);
+                      // print(isLink);
+                      // print(startIndex);
+                      // print(endIndex);
+                      break;
+                    }
+
                     bool isMe =
                         widget.currentUserNumber == data[senderPhoneFieldName];
 
@@ -183,7 +212,8 @@ class _MessageViewState extends State<MessageView> {
                           isMe ? Alignment.centerRight : Alignment.centerLeft,
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 8.0),
-                        child: _buildMessageBubble(data, isMe, message, isLink),
+                        child: _buildMessageBubble(
+                            data, isMe, message, isLink, startIndex, endIndex),
                       ),
                     );
                   },
@@ -228,6 +258,26 @@ class _MessageViewState extends State<MessageView> {
                       );
                     },
                   ),
+                  IconButton(
+                    onPressed: () async {
+                      _generateLocationLink().then(
+                        (value) {
+                          if (value != 'error') {
+                            if (_messageController.text.isEmpty) {
+                              _messageController.text = value;
+                            } else {
+                              _messageController.text += ' $value ';
+                            }
+                          }
+                        },
+                      );
+                    },
+                    icon: const FaIcon(
+                      FontAwesomeIcons.locationDot,
+                      color: Colors.blue,
+                      size: 28.0,
+                    ),
+                  ),
                   const SizedBox(width: 5),
                   Expanded(
                     child: TextField(
@@ -236,7 +286,7 @@ class _MessageViewState extends State<MessageView> {
                       minLines: 1,
                       maxLines: 5,
                       decoration: const InputDecoration(
-                        hintText: "Send Emergency Message...",
+                        hintText: "Send Message...",
                         border: InputBorder.none,
                       ),
                     ),
@@ -280,8 +330,8 @@ class _MessageViewState extends State<MessageView> {
   }
 
   // Widget to build message bubbles
-  Widget _buildMessageBubble(
-      Map<String, dynamic> data, bool isMe, String message, bool isLink) {
+  Widget _buildMessageBubble(Map<String, dynamic> data, bool isMe,
+      String message, bool isLink, int? linkStart, int? linkEnds) {
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: ConstrainedBox(
@@ -315,26 +365,7 @@ class _MessageViewState extends State<MessageView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Message text with link detection
-              GestureDetector(
-                onTap: () {
-                  if (isLink) {
-                    try {
-                      _openLink(message);
-                    } catch (e) {
-                      showToast('Can\'t launch URL');
-                    }
-                  }
-                },
-                child: Text(
-                  message,
-                  style: TextStyle(
-                    color: isMe ? Colors.white : Colors.black87,
-                    decoration:
-                        isLink ? TextDecoration.underline : TextDecoration.none,
-                    decorationColor: isMe ? Colors.white : Colors.blue,
-                  ),
-                ),
-              ),
+              _displayMessage(message: message, isLink: isLink, isMe: isMe, linkStart: linkStart, linkEnds: linkEnds),
               const SizedBox(
                   height: 6), // Spacing between message and timestamp
               // Timestamp and read status
@@ -365,6 +396,105 @@ class _MessageViewState extends State<MessageView> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Future<String> _generateLocationLink() async {
+    try {
+      // Get the user's location
+      Position position = await _determinePosition();
+      double latitude = position.latitude;
+      double longitude = position.longitude;
+
+      String url = 'https://www.google.com/maps?q=$latitude,$longitude';
+      return url;
+    } catch (_) {
+      return 'error';
+    }
+  }
+
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled don't continue
+      // accessing the position and request users of the
+      // App to enable the location services.
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied, next time you could try
+        // requesting permissions again (this is also where
+        // Android's shouldShowRequestPermissionRationale
+        // returned true. According to Android guidelines
+        // your App should show an explanatory UI now.
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+
+    // When we reach here, permissions are granted and we can
+    // continue accessing the position of the device.
+    return await Geolocator.getCurrentPosition();
+  }
+
+  Widget _displayMessage({
+    required String message,
+    required bool isLink,
+    required bool isMe,
+    int? linkStart,
+    int? linkEnds,
+  }) {
+    if (!isLink || linkStart == null || linkEnds == null) {
+      return Text(
+        message,
+        style: TextStyle(
+          color: isMe ? Colors.white : Colors.black87,
+          decorationColor: isMe ? Colors.white : Colors.blue,
+        ),
+      );
+    }
+
+    // Splitting the message into three parts: before, link, and after
+    String beforeLink = message.substring(0, linkStart);
+    String linkText = message.substring(linkStart, linkEnds);
+    String afterLink = message.substring(linkEnds);
+
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(
+              text: beforeLink,
+              style: TextStyle(color: isMe ? Colors.white : Colors.black87)),
+          TextSpan(
+            text: linkText,
+            style: TextStyle(
+              color: isMe ? Colors.white : Colors.black87,
+              decoration: TextDecoration.underline,
+              decorationColor: Colors.grey[200],
+            ),
+            recognizer: TapGestureRecognizer()
+              ..onTap = () {
+                _openLink(linkText);
+              },
+          ),
+          TextSpan(
+              text: afterLink,
+              style: TextStyle(color: isMe ? Colors.white : Colors.black87)),
+        ],
       ),
     );
   }

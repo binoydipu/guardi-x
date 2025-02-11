@@ -24,4 +24,11 @@ class ValidationUtils {
   static bool validateMobile(String mobile) {
     return mobileRegex.hasMatch(mobile);
   }
+
+  static const String linkPattern = r'^(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})(\.[a-zA-Z0-9]{2,})?$';
+  static final RegExp linkRegex = RegExp(linkPattern);
+
+  static bool validateLink(String link) {
+    return linkRegex.hasMatch(link);
+  }
 }
