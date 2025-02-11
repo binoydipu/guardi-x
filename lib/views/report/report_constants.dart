@@ -57,3 +57,8 @@ final List<String> reportStatusList = [
     'Closed',
     'Rejected',
   ];
+
+  const categoryDisclaimer =
+    'Selecting the right crime Category is vital for accurate reporting and prompt response from law enforcement. Choose the category that best matches your incident to streamline the reporting process and ensure effective handling. Thank you for contributing to community safety and security.';
+
+const reportDisclaimer = 'By proceeding, you acknowledge that the information you provide is accurate to the best of your knowledge. False or misleading reports may lead to legal consequences. Guardi-X is not liable for the authenticity of user-submitted data and serves only as a platform to facilitate reporting. For immediate assistance, please contact your local law enforcement authorities.';

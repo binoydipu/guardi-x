@@ -4,6 +4,7 @@ import 'package:guardix/constants/colors.dart';
 Widget buildCard({
   required BuildContext context,
   required IconData icon,
+  double? iconSize,
   required String text,
   required VoidCallback onTap,
 }) {
@@ -36,7 +37,7 @@ Widget buildCard({
           children: [
             Icon(
               icon,
-              size: 45,
+              size: iconSize ?? 45,
               color: blackColor,
             ),
             const SizedBox(height: 5),

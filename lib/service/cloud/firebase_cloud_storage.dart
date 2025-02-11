@@ -102,21 +102,23 @@ Performance: Reduces Firestore billing cost by minimizing the number of writes.
   }
 
   Future<void> sendMessage(
-      String senderPhone,
-      String receiverPhone,
-      String senderName,
-      String receiverName,
-      String message,
-      String chatRoomId,
-      DocumentReference chatRoomReference) async {
+    String senderPhone,
+    String receiverPhone,
+    String senderName,
+    String receiverName,
+    String message,
+    String chatRoomId,
+    DocumentReference chatRoomReference,
+  ) async {
     final Timestamp timestamp = Timestamp.now();
 
     Message newMessage = Message(
-        senderPhone: senderPhone,
-        receiverPhone: receiverPhone,
-        message: message,
-        timestamp: timestamp,
-        isSeen: false);
+      senderPhone: senderPhone,
+      receiverPhone: receiverPhone,
+      message: message,
+      timestamp: timestamp,
+      isSeen: false,
+    );
 
     Chat chat = Chat(
         chatRoomReference: chatRoomReference,
@@ -127,6 +129,7 @@ Performance: Reduces Firestore billing cost by minimizing the number of writes.
         lastMessage: message,
         timestamp: timestamp,
         isRead: false);
+
 
     try {
       await chatRoomReference
@@ -140,15 +143,16 @@ Performance: Reduces Firestore billing cost by minimizing the number of writes.
 
     try {
       updateChat(
-          senderPhone: senderPhone,
-          receiverPhone: receiverPhone,
-          senderName: senderName,
-          receiverName: receiverName,
-          message: message,
-          timestamp: timestamp,
-          chatRoomId: chatRoomId,
-          chatRoomReference: chatRoomReference,
-          isRead: false);
+        senderPhone: senderPhone,
+        receiverPhone: receiverPhone,
+        senderName: senderName,
+        receiverName: receiverName,
+        message: message,
+        timestamp: timestamp,
+        chatRoomId: chatRoomId,
+        chatRoomReference: chatRoomReference,
+        isRead: false,
+      );
     } catch (e) {
       throw CouldNotUpdateChat();
     }

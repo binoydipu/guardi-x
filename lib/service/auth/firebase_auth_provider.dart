@@ -22,7 +22,6 @@ class FirebaseAuthProvider implements AuthProvider {
         email: email,
         password: password,
       );
-
       final user = currentUser;
       if (user != null) {
         return user;
@@ -47,7 +46,7 @@ class FirebaseAuthProvider implements AuthProvider {
   @override
   AuthUser? get currentUser {
     final user = FirebaseAuth.instance.currentUser;
-
+    
     if (user != null) {
       return AuthUser.fromFirebase(user);
     } else {

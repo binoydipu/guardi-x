@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/service/auth/auth_service.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/views/chat/chat_list_view.dart';
+import 'package:guardix/views/drawer/contacts/add_contact_view.dart';
 
 class ChatView extends StatefulWidget {
   const ChatView({super.key});
@@ -19,21 +21,21 @@ class _ChatViewState extends State<ChatView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Navigator.canPop(context)
-            ? IconButton(
-                icon: const Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  color: whiteColor,
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              )
-            : null,
         title: const Text(
           'Emergency Message',
           style: TextStyle(color: whiteColor),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AddContactsView()),
+              );
+            }, 
+            icon: const FaIcon(FontAwesomeIcons.userPlus, size: 20, color: whiteColor,),
+          ),
+        ],
         centerTitle: true,
         backgroundColor: midnightBlueColor,
       ),
@@ -47,7 +49,7 @@ class _ChatViewState extends State<ChatView> {
 
           if (!trustedContactSnapshot.hasData ||
               !trustedContactSnapshot.data!.exists) {
-            return const Center(child: Text("Trusted contact not found!"));
+            return const Center(child: Text("No Trusted Contacts"));
           }
 
           List<dynamic> chatRefs =
@@ -67,7 +69,7 @@ class _ChatViewState extends State<ChatView> {
                 }
 
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return const Center(child: Text("No chats available!"));
+                  return const Center(child: Text("No Chats Available!"));
                 }
 
                 List<DocumentSnapshot> chatDocs = snapshot.data!.docs;
