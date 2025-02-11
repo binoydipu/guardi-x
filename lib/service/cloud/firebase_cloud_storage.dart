@@ -56,7 +56,7 @@ Performance: Reduces Firestore billing cost by minimizing the number of writes.
     try {
       QuerySnapshot querySnapshot = await chatRoomReference
           .collection(chatRoomMessageCollectionName)
-          .where(isSeenFieldName, isEqualTo: false)
+          .where(isMessageSeenFieldName, isEqualTo: false)
           .get();
 
       WriteBatch batch = FirebaseFirestore.instance
@@ -64,7 +64,7 @@ Performance: Reduces Firestore billing cost by minimizing the number of writes.
       // Instead of updating each document individually batch is efficient.  If any update fails, none of the updates are applied.
 
       for (QueryDocumentSnapshot doc in querySnapshot.docs) {
-        batch.update(doc.reference, {isSeenFieldName: true});
+        batch.update(doc.reference, {isMessageSeenFieldName: true});
       }
 
       // Commit batch update
@@ -118,20 +118,22 @@ Performance: Reduces Firestore billing cost by minimizing the number of writes.
         timestamp: timestamp,
         isSeen: false);
 
-    // Chat chat = Chat(
-    //     chatRoomReference: chatRoomReference,
-    //     senderPhone: senderPhone,
-    //     receiverPhone: receiverPhone,
-    //     senderName: senderName,
-    //     receiverName: receiverName,
-    //     lastMessage: message,
-    //     timestamp: timestamp,
-    //     isRead: false);
+    Chat chat = Chat(
+        chatRoomReference: chatRoomReference,
+        senderPhone: senderPhone,
+        receiverPhone: receiverPhone,
+        senderName: senderName,
+        receiverName: receiverName,
+        lastMessage: message,
+        timestamp: timestamp,
+        isRead: false);
 
     try {
       await chatRoomReference
           .collection(chatRoomMessageCollectionName)
           .add(newMessage.toMap());
+
+      await chats.doc(chatRoomId).set(chat.toMap());
     } catch (e) {
       throw CouldNotSendMessage();
     }
@@ -206,36 +208,47 @@ Performance: Reduces Firestore billing cost by minimizing the number of writes.
   Future<void> addTrustedContact(String chatRoomId, String receiverId,
       DocumentReference chatRoomReference) async {
     String userId = AuthService.firebase().currentUser!.id;
+    print('userid = $userId');
 
     DocumentSnapshot docSnapshot = await trustedContacts.doc(userId).get();
 
     if (docSnapshot.exists) {
-      await trustedContacts.doc(userId).update({
-        'chats_reference': FieldValue.arrayUnion(
-            [chatRoomReference]), // Add chatRoomId to array
-      });
+      print('hello userid = $userId');
+      try {
+        print('bitor -1');
+        await trustedContacts.doc(userId).update({
+          'chats_reference': FieldValue.arrayUnion(
+              [chatRoomReference]), // Add chatRoomId to array
+        });
+        print('bitor -2');
+      } catch (e) {
+        print('hola $e');
+      }
     } else {
+      print('hi userid = $userId');
       await trustedContacts.doc(userId).set({
         'chats_reference': FieldValue.arrayUnion([
           chatRoomReference
         ]), // Add chatRoomId to array //  I want that if the array already contains thus 'chatRoomReference' not to add again and return false. how?
       });
+    }
+    userId = receiverId;
+    print('userid = $userId');
 
-      userId = receiverId;
+    docSnapshot = await trustedContacts.doc(userId).get();
 
-      DocumentSnapshot docSnapshot = await trustedContacts.doc(userId).get();
-
-      if (docSnapshot.exists) {
-        await trustedContacts.doc(userId).update({
-          'chats_reference': FieldValue.arrayUnion(
-              [chatRoomReference]), // Add chatRoomId to array
-        });
-      } else {
-        await trustedContacts.doc(userId).set({
-          'chats_reference': FieldValue.arrayUnion(
-              [chatRoomReference]), // Add chatRoomId to array
-        });
-      }
+    if (docSnapshot.exists) {
+      print('hello userid = $userId');
+      await trustedContacts.doc(userId).update({
+        'chats_reference': FieldValue.arrayUnion(
+            [chatRoomReference]), // Add chatRoomId to array
+      });
+    } else {
+      print('hi userid = $userId');
+      await trustedContacts.doc(userId).set({
+        'chats_reference': FieldValue.arrayUnion(
+            [chatRoomReference]), // Add chatRoomId to array
+      });
     }
   }
 

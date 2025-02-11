@@ -228,7 +228,7 @@ class _AddContactsViewState extends State<AddContactsView> {
                                   String phone = contact.phones.first.number
                                       .replaceAll(RegExp(r'\D'),
                                           ''); // Removes all non-digits
-                                  print(phone);
+                                  //print(phone);
                                   addToContact(phone);
                                 } catch (e) {
                                   showToast('Empty Contact');
