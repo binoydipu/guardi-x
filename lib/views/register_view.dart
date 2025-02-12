@@ -375,6 +375,7 @@ class _RegisterViewState extends State<RegisterView> {
                                       toId: adminId,
                                       isAdmin: true);
 
+
                                   // ignore: use_build_context_synchronously
                                   Navigator.of(context)
                                       .pushNamed(verifyEmailRoute);
@@ -524,6 +525,3 @@ class _RegisterViewState extends State<RegisterView> {
     );
   }
 }
-
-
-// I gave you a prmpt in this code : "// Hey chat GPT. Listen. I want to make this field to align left. help me.". help to resolve this please.

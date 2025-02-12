@@ -43,11 +43,15 @@ class _HomeViewState extends State<HomeView> {
 
   Future<void> _getUser() async {
     try {
+      print('calling $userId');
       final user = await _cloudStorage.getUser(userId: userId!);
+      print(user);
       setState(() {
         cloudUser = user;
       });
-    } catch (_) {}
+    } catch (e) {
+      print('error: $e');
+    }
   }
 
   @override
@@ -369,6 +373,8 @@ class _HomeViewState extends State<HomeView> {
               currentPage == DrawerAction.language ? true : false),
           menuItem(6, 'Settings', Icons.settings, 23,
               currentPage == DrawerAction.settings ? true : false),
+          menuItem(7, 'Logout', Icons.logout, 24,
+              currentPage == DrawerAction.logout ? true : false),
         ],
       ),
     );
@@ -394,6 +400,8 @@ class _HomeViewState extends State<HomeView> {
               currentPage = DrawerAction.language;
             } else if (id == 6) {
               currentPage = DrawerAction.settings;
+            } else if (id == 7) {
+              _handleLogout();
             }
           });
         },
@@ -433,6 +441,7 @@ class _HomeViewState extends State<HomeView> {
       await LocalStorage.removeUserData();
       await AuthService.firebase().logOut();
       if (context.mounted) {
+        LocalStorage.removeUserData();
         Navigator.of(_scaffoldKey.currentContext!).pushNamedAndRemoveUntil(
           welcomeRoute,
           (route) => false,

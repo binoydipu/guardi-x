@@ -48,7 +48,7 @@ class AboutUsView extends StatelessWidget {
                 const Padding(
                   padding: EdgeInsets.only(top: 5),
                   child: Text(
-                    'Version 1.0',
+                    'Version 1.0.0',
                     style: TextStyle(
                       fontSize: 14,
                       color: blackColor,
