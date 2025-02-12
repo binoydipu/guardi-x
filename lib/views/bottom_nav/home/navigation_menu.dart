@@ -10,7 +10,7 @@ import 'package:guardix/utilities/helpers/shake_detector.dart';
 import 'package:guardix/views/bottom_nav/chat_view.dart';
 import 'package:guardix/views/bottom_nav/home/home_view.dart';
 import 'package:guardix/views/bottom_nav/report_view.dart';
-import 'package:guardix/views/incidents/ongoing_incidents_view.dart';
+import 'package:guardix/views/bottom_nav/sos_view.dart';
 
 class NavigationMenu extends StatefulWidget {
   const NavigationMenu({super.key});
@@ -23,9 +23,9 @@ class _NavigationMenuState extends State<NavigationMenu> {
   int _selectedIndex = 0;
   static const List<Widget> _widgetOptions = [
     HomeView(),
-    OngoingIncidentsView(),
-    ReportView(),
     ChatView(),
+    ReportView(),
+    SosView(),
   ];
 
   late ShakeDetector _shakeDetector;
@@ -120,11 +120,13 @@ class _NavigationMenuState extends State<NavigationMenu> {
             label: 'Home',
           ),
           NavigationDestination(
-              icon: Icon(
-                Icons.live_help_outlined,
-                color: blackColor,
-              ),
-              label: 'Incidents'),
+            icon: FaIcon(
+              FontAwesomeIcons.comments,
+              size: 21,
+              color: blackColor,
+            ),
+            label: 'Chat',
+          ),
           NavigationDestination(
               icon: Icon(
                 Icons.report_gmailerrorred,
@@ -134,11 +136,11 @@ class _NavigationMenuState extends State<NavigationMenu> {
               label: 'Report'),
           NavigationDestination(
             icon: FaIcon(
-              FontAwesomeIcons.comments,
+              Icons.sos_rounded,
               size: 21,
               color: blackColor,
             ),
-            label: 'Chat',
+            label: 'SOS',
           ),
         ],
       ),
