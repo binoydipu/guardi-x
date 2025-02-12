@@ -32,7 +32,7 @@ class LocalStorage {
   // Remove user data (Logout)
   static Future<void> removeUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove('userId');
+    await prefs.remove('userPhone');
     await prefs.remove('userName');
   }
 }
