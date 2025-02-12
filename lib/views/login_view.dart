@@ -69,7 +69,7 @@ class _LoginViewState extends State<LoginView> {
               const SizedBox(height: 70),
               TextField(
                 controller: _email,
-                enableSuggestions: true,
+                enableSuggestions: false,
                 autocorrect: false,
                 keyboardType: TextInputType.emailAddress,
                 decoration: buildInputDecoration(
@@ -160,9 +160,13 @@ class _LoginViewState extends State<LoginView> {
                             List<String> trusedContacts =
                                 await FirebaseCloudStorage()
                                     .getTrustedContacts(userId);
+                            List<String> trustedContactName =
+                                await FirebaseCloudStorage()
+                                    .getTrustedContactsName(
+                                        trusedContacts, userPhone);
 
-                            LocalStorage.saveUserData(
-                                userPhone, userName, false, trusedContacts);
+                            LocalStorage.saveUserData(userPhone, userName,
+                                false, trusedContacts, trustedContactName);
                             //TrustedContacts.updateTrustedContacts();
 
                             if (context.mounted) {
