@@ -58,9 +58,9 @@ class _AddContactsViewState extends State<AddContactsView> {
           List<String> ids = [userNumber, phone];
 
           ids.sort();
-          String chatRoomId = ids.join('_');
+          String chatRoomId = 'chats/${ids.join('_')}';
 
-          LocalStorage.addTrustedContact(chatRoomId);
+          LocalStorage.addTrustedContact(chatRoomId, contactName);
         } on CouldNotCreateChatsException {
           if (mounted) {
             showErrorDialog(

@@ -51,7 +51,16 @@ Why Use a Batch?
 Efficiency: Instead of updating each document individually (which triggers multiple writes and network requests), a batch groups them into one network request.
 Atomicity: If any update fails, none of the updates are applied.
 Performance: Reduces Firestore billing cost by minimizing the number of writes.
+
  */
+
+  Future<DocumentReference> getDocumentReference(
+      String collectionName, String documentId) async {
+    return FirebaseFirestore.instance
+        .collection(collectionName)
+        .doc(documentId);
+  }
+
   Future<void> updateMessageStatus(DocumentReference chatRoomReference) async {
     try {
       QuerySnapshot querySnapshot = await chatRoomReference
@@ -276,6 +285,42 @@ Performance: Reduces Firestore billing cost by minimizing the number of writes.
 
     return false; // Document does not exist or no chat references
   }
+// getTrustedContactsName(tustedContacts);
+
+  Future<List<String>> getTrustedContactsName(
+      List<String> trustedContacts, String userPhone) async {
+    String receiverNumber = '';
+
+    List<String> contactsName = [];
+    for (String items in trustedContacts) {
+      String chatRoomId = items.substring(6);
+      if (chatRoomId.substring(0, 11).compareTo(userPhone) == 0) {
+        receiverNumber = chatRoomId.substring(12);
+      } else {
+        receiverNumber = chatRoomId.substring(0, 11);
+      }
+
+      try {
+        QuerySnapshot snapshot = await users
+            .where(userPhoneFieldName, isEqualTo: receiverNumber)
+            .get();
+
+        if (snapshot.docs.isNotEmpty) {
+          DocumentSnapshot doc = snapshot
+              .docs[0]; // Get the first document (assuming phone is unique)
+          Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
+          String userName = data![userNameFieldName];
+          contactsName.add(userName);
+        } else {
+          showToast('An error Occured.');
+        }
+      } catch (e) {
+        showToast('An error Occured. Check Network Connection');
+      }
+    }
+
+    return contactsName; // Document does not exist or no chat references
+  }
 
   Future<List<String>> getTrustedContacts(String userId) async {
     DocumentSnapshot docSnapshot = await trustedContacts.doc(userId).get();
@@ -291,8 +336,7 @@ Performance: Reduces Firestore billing cost by minimizing the number of writes.
           .toList();
 
       for (String path in chatPaths) {
-        String x = path.substring(6);
-        contacts.add(x); // Output: chats/01643216242_01736361622
+        contacts.add(path); // chats/01643216242_01736361622
       }
     }
 
@@ -323,14 +367,13 @@ Performance: Reduces Firestore billing cost by minimizing the number of writes.
 
     try {
       final message =
-          isAdmin ? '$fromName just created an account' : 'Hello. I added you to my Trusted contact.';
+          isAdmin ? '' : 'Hello. I added you to my Trusted contact.';
       chatRoomId = ids.join('_');
 
       buildChat(
           fromNumber, toNumber, fromName, toName, toId, message, chatRoomId);
 
-
-      if (toId != adminId) {
+      if (toId != '0123456789') {
         showToast('Contact added successfully');
       }
     } catch (e) {
