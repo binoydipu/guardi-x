@@ -6,6 +6,7 @@ import 'package:guardix/service/auth/auth_exception.dart';
 import 'package:guardix/service/cloud/cloud_storage_constants.dart';
 import 'package:guardix/service/cloud/cloud_storage_exceptions.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
+
 import 'package:guardix/utilities/dialogs/contact_not_registered_dialog.dart';
 import 'package:guardix/utilities/dialogs/error_dialog.dart';
 import 'package:guardix/utilities/helpers/local_storage.dart';
@@ -38,7 +39,6 @@ class _AddContactsViewState extends State<AddContactsView> {
     if (phone.isNotEmpty) {
       String userNumber = await LocalStorage.getUserPhone() ?? '';
       String userName = await LocalStorage.getUserName() ?? '';
-
       try {
         var user =
             await FirebaseCloudStorage().getUserDataByPhone(phone: phone);
@@ -52,7 +52,15 @@ class _AddContactsViewState extends State<AddContactsView> {
               toNumber: phone,
               fromName: userName,
               toName: contactName,
-              toId: contactId);
+              toId: contactId,
+              isAdmin: false);
+
+          List<String> ids = [userNumber, phone];
+
+          ids.sort();
+          String chatRoomId = ids.join('_');
+
+          LocalStorage.addTrustedContact(chatRoomId);
         } on CouldNotCreateChatsException {
           if (mounted) {
             showErrorDialog(
@@ -240,8 +248,7 @@ class _AddContactsViewState extends State<AddContactsView> {
                                           ''); // Removes all non-digits
 
                                   if (phone.startsWith('88')) {
-                                    phone =
-                                        phone.substring(2, phone.length);
+                                    phone = phone.substring(2, phone.length);
                                   }
 
                                   addToContact(phone);

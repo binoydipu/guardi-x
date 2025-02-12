@@ -7,6 +7,7 @@ import 'package:guardix/service/auth/auth_service.dart';
 import 'package:guardix/enums/drawer_action.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/service/cloud/model/cloud_user.dart';
+
 import 'package:guardix/utilities/helpers/local_storage.dart';
 import 'package:guardix/utilities/dialogs/loading_dialog.dart';
 import 'package:guardix/views/bottom_nav/sos_view.dart';
@@ -437,6 +438,7 @@ class _HomeViewState extends State<HomeView> {
   void _handleLogout() async {
     bool isLoggedout = await showLogOutDialog(context);
     if (isLoggedout) {
+      await LocalStorage.removeUserData();
       await AuthService.firebase().logOut();
       if (context.mounted) {
         LocalStorage.removeUserData();

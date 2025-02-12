@@ -172,7 +172,6 @@ class _MessageViewState extends State<MessageView> {
 
                 final messages = snapshot.data!.docs;
 
-
                 // print('receiver -> $receiver');
 
                 // // Scroll to bottom when new messages arrive
@@ -379,7 +378,12 @@ class _MessageViewState extends State<MessageView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Message text with link detection
-              _displayMessage(message: message, isLink: isLink, isMe: isMe, linkStart: linkStart, linkEnds: linkEnds),
+              _displayMessage(
+                  message: message,
+                  isLink: isLink,
+                  isMe: isMe,
+                  linkStart: linkStart,
+                  linkEnds: linkEnds),
               const SizedBox(
                   height: 6), // Spacing between message and timestamp
               // Timestamp and read status

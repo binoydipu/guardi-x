@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:guardix/constants/colors.dart';
+import 'package:guardix/service/cloud/cloud_storage_constants.dart';
+import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
+
+import 'package:guardix/utilities/helpers/generate_location_link.dart';
+import 'package:guardix/utilities/helpers/local_storage.dart';
+import 'package:guardix/utilities/helpers/make_phone_message_email.dart';
+
+import 'package:guardix/utilities/helpers/shake_detector.dart';
 import 'package:guardix/views/bottom_nav/chat_view.dart';
 import 'package:guardix/views/bottom_nav/home/home_view.dart';
 import 'package:guardix/views/bottom_nav/report_view.dart';
@@ -21,6 +29,60 @@ class _NavigationMenuState extends State<NavigationMenu> {
     ReportView(),
     ChatView(),
   ];
+
+  late ShakeDetector _shakeDetector;
+
+  @override
+  void initState() {
+    _shakeDetector = ShakeDetector(
+      onShake: () async {
+        //print('shake...');
+
+        bool isEmergency = await LocalStorage.getEmergencyStatus() ?? true;
+
+        if (isEmergency) {
+          List<String> x = await LocalStorage.getTrustedContacts();
+
+          final message =
+              'I need emergency help! I\'m at ${await generateLocationLink()}.';
+          final String userNumber = await LocalStorage.getUserPhone() ?? '';
+          String receiverNumber = '';
+          String senderNumber = '';
+
+// 01643216242_01736361622
+          for (int i = 0; i < x.length; ++i) {
+            //             String senderPhone,
+            // String receiverPhone,
+            // String senderName,
+            // String receiverName,
+            // String message,
+            // String chatRoomId,
+            // DocumentReference chatRoomReference,
+
+            if (x[i].substring(0, 11).compareTo(userNumber) == 0) {
+              receiverNumber = x[i].substring(12);
+              senderNumber = x[i].substring(0, 11);
+            } else {
+              receiverNumber = x[i].substring(0, 11);
+              senderNumber = x[i].substring(12);
+            }
+
+            //FirebaseCloudStorage.sendMessage(receiverNumber, senderNumber);
+            if (receiverNumber.compareTo(adminNumber) == 0) continue;
+            sendBackgroundMessage(receiverNumber, message);
+          }
+        }
+      },
+    );
+    _shakeDetector.startListening();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _shakeDetector.stopListening();
+    super.dispose();
+  }
 
   void _onItemTapped(int index) {
     setState(() {
