@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:guardix/admin/actions/add_legal_info.dart';
 import 'package:guardix/admin/actions/add_new_advocate.dart';
 import 'package:guardix/admin/view/admin_panel.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
 import 'package:guardix/service/auth/auth_constants.dart';
+
 import 'package:guardix/views/bottom_nav/home/edit_profile_view.dart';
 import 'package:guardix/views/forgot_password_view.dart';
 import 'package:guardix/views/incidents/ongoing_incidents_view.dart';
@@ -27,6 +29,10 @@ import 'package:guardix/views/welcome_view.dart';
 
 void main() {
   runApp(const MyApp());
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: midnightBlueColor,
+    statusBarIconBrightness: Brightness.light,
+  ));
 }
 
 class MyApp extends StatelessWidget {

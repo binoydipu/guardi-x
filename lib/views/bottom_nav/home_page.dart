@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:guardix/constants/colors.dart';
@@ -198,8 +199,7 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         buildCard(
                           context: context,
-                          icon: FontAwesomeIcons.bullhorn,
-                          iconSize: 35,
+                          icon: Icons.report,
                           text: 'Want to report a crime?',
                           onTap: () {
                             Navigator.of(context)
@@ -209,7 +209,8 @@ class _HomePageState extends State<HomePage> {
                         const SizedBox(width: 12),
                         buildCard(
                           context: context,
-                          icon: Icons.history,
+                          icon: FontAwesomeIcons.clockRotateLeft,
+                          iconSize: 40,
                           text: 'View Your Case History',
                           onTap: () {
                             Navigator.of(context).pushNamed(trackRoute);

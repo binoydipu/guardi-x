@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:guardix/components/snack_bar.dart';
 import 'package:guardix/components/toast.dart';
-
+import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 void makePhoneCall(BuildContext context, String phoneNumber) async {
@@ -40,16 +40,26 @@ void sendMessage(
   }
 }
 
-void sendBackgroundMessage(
-    BuildContext context, String phone, String message) async {
+Future<void> sendBackgroundMessage(String phone, String message) async {
   const platform = MethodChannel('smsChannel');
+
+  // Request SMS permission
+  var status = await Permission.sms.status;
+  if (!status.isGranted) {
+    status = await Permission.sms.request();
+    if (!status.isGranted) {
+      showToast("SMS permission denied!");
+      return;
+    }
+  }
+
   try {
-    // funtion inside .kt :  private fun sendSMS(phone: String, message: String)  --java-->  private void sendSMS(String phone, String message)
     await platform.invokeMethod('sendSMS', {
       'phone': phone,
       'message': message,
     });
+    //showToast("Emergency SMS sent!");
   } catch (e) {
-    showToast('Error to send emergency SMS');
+    showToast("Failed to send emergency SMS: $e");
   }
 }

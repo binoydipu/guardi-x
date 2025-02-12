@@ -130,7 +130,6 @@ Performance: Reduces Firestore billing cost by minimizing the number of writes.
         timestamp: timestamp,
         isRead: false);
 
-
     try {
       await chatRoomReference
           .collection(chatRoomMessageCollectionName)
@@ -278,12 +277,35 @@ Performance: Reduces Firestore billing cost by minimizing the number of writes.
     return false; // Document does not exist or no chat references
   }
 
+  Future<List<String>> getTrustedContacts(String userId) async {
+    DocumentSnapshot docSnapshot = await trustedContacts.doc(userId).get();
+
+    List<String> contacts = [];
+
+    if (docSnapshot.exists) {
+      List<dynamic> chatsReference = docSnapshot['chats_reference'] ?? [];
+
+      // Converting DocumentReference objects to paths
+      List<String> chatPaths = chatsReference
+          .map((ref) => (ref as DocumentReference).path) // Extract path only
+          .toList();
+
+      for (String path in chatPaths) {
+        String x = path.substring(6);
+        contacts.add(x); // Output: chats/01643216242_01736361622
+      }
+    }
+
+    return contacts; // Document does not exist or no chat references
+  }
+
   void addNewChat({
     required String fromNumber,
     required String toNumber,
     required String fromName,
     required String toName,
     required String toId,
+    required bool isAdmin,
   }) async {
     // constructing chat room ID for the two users (sorted to ensure uniqueness)
     List<String> ids = [fromNumber, toNumber];
@@ -300,12 +322,15 @@ Performance: Reduces Firestore billing cost by minimizing the number of writes.
     }
 
     try {
-      const message = 'Hello. I added you to my Trusted contact.';
+      final message =
+          isAdmin ? '$fromName just created an account' : 'Hello. I added you to my Trusted contact.';
       chatRoomId = ids.join('_');
 
       buildChat(
           fromNumber, toNumber, fromName, toName, toId, message, chatRoomId);
-      if(toId != '0123456789') {
+
+
+      if (toId != adminId) {
         showToast('Contact added successfully');
       }
     } catch (e) {

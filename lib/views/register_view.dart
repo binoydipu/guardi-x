@@ -3,6 +3,7 @@ import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
 import 'package:guardix/service/auth/auth_exception.dart';
 import 'package:guardix/service/auth/auth_service.dart';
+import 'package:guardix/service/cloud/cloud_storage_constants.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/utilities/decorations/input_decoration_template.dart';
 import 'package:guardix/utilities/dialogs/error_dialog.dart';
@@ -368,14 +369,17 @@ class _RegisterViewState extends State<RegisterView> {
 
                                   FirebaseCloudStorage().addNewChat(
                                       fromNumber: phone,
-                                      toNumber: '0123456789',
+                                      toNumber: adminNumber,
                                       fromName: name,
                                       toName: 'Guardi-X',
-                                      toId: '0123456789');
+                                      toId: adminId,
+                                      isAdmin: true);
 
                                   // ignore: use_build_context_synchronously
-                                  Navigator.of(context)
-                                      .pushNamed(verifyEmailRoute);
+                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                                    verifyEmailRoute,
+                                    (route) => false,
+                                  );
                                 } on EmailAlreadyInUseAuthException catch (_) {
                                   if (context.mounted) {
                                     await showErrorDialog(
@@ -522,6 +526,3 @@ class _RegisterViewState extends State<RegisterView> {
     );
   }
 }
-
-
-// I gave you a prmpt in this code : "// Hey chat GPT. Listen. I want to make this field to align left. help me.". help to resolve this please.

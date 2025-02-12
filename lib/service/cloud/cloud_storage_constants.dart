@@ -75,3 +75,6 @@ const commentSubCollectionName = 'this_report_comment';
 
 const reportIdFieldName = 'report_id';
 const commentsFieldName = 'comments';
+
+const adminId = 'TxSNZZ9bBIhEb9971PXk00cmMkm2';
+const adminNumber = '4101';

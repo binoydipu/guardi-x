@@ -2,13 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:guardix/components/toast.dart';
 import 'package:guardix/constants/colors.dart';
 import 'package:guardix/service/cloud/cloud_storage_constants.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/utilities/dialogs/choose_image_source_dialog.dart';
 import 'package:guardix/utilities/helpers/format_timestamp.dart';
+import 'package:guardix/utilities/helpers/generate_location_link.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart'; // Import url_launcher
 
@@ -172,7 +172,6 @@ class _MessageViewState extends State<MessageView> {
 
                 final messages = snapshot.data!.docs;
 
-
                 // print('receiver -> $receiver');
 
                 // // Scroll to bottom when new messages arrive
@@ -274,9 +273,9 @@ class _MessageViewState extends State<MessageView> {
                   ),
                   IconButton(
                     onPressed: () async {
-                      _generateLocationLink().then(
+                      generateLocationLink().then(
                         (value) {
-                          if (value != 'error') {
+                          if (value != 'Error') {
                             if (_messageController.text.isEmpty) {
                               _messageController.text = value;
                             } else {
@@ -379,7 +378,12 @@ class _MessageViewState extends State<MessageView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Message text with link detection
-              _displayMessage(message: message, isLink: isLink, isMe: isMe, linkStart: linkStart, linkEnds: linkEnds),
+              _displayMessage(
+                  message: message,
+                  isLink: isLink,
+                  isMe: isMe,
+                  linkStart: linkStart,
+                  linkEnds: linkEnds),
               const SizedBox(
                   height: 6), // Spacing between message and timestamp
               // Timestamp and read status
@@ -412,57 +416,6 @@ class _MessageViewState extends State<MessageView> {
         ),
       ),
     );
-  }
-
-  Future<String> _generateLocationLink() async {
-    try {
-      // Get the user's location
-      Position position = await _determinePosition();
-      double latitude = position.latitude;
-      double longitude = position.longitude;
-
-      String url = 'https://www.google.com/maps?q=$latitude,$longitude';
-      return url;
-    } catch (_) {
-      return 'error';
-    }
-  }
-
-  Future<Position> _determinePosition() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    // Test if location services are enabled.
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      // Location services are not enabled don't continue
-      // accessing the position and request users of the
-      // App to enable the location services.
-      return Future.error('Location services are disabled.');
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        // Permissions are denied, next time you could try
-        // requesting permissions again (this is also where
-        // Android's shouldShowRequestPermissionRationale
-        // returned true. According to Android guidelines
-        // your App should show an explanatory UI now.
-        return Future.error('Location permissions are denied');
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      // Permissions are denied forever, handle appropriately.
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
-    }
-
-    // When we reach here, permissions are granted and we can
-    // continue accessing the position of the device.
-    return await Geolocator.getCurrentPosition();
   }
 
   Widget _displayMessage({

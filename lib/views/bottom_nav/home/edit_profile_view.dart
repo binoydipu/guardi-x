@@ -220,6 +220,8 @@ class _EditProfileViewState extends State<EditProfileView> {
                 const SizedBox(height: 17),
                 TextFormField(
                   controller: _phone,
+                  enableSuggestions: true,
+                  autocorrect: false,
                   keyboardType: TextInputType.phone,
                   decoration: buildInputDecoration(
                       label: 'Phone Number',
@@ -242,7 +244,9 @@ class _EditProfileViewState extends State<EditProfileView> {
                 const SizedBox(height: 17),
                 TextFormField(
                   controller: _password,
-                  keyboardType: TextInputType.text,
+                  obscureText: true,
+                  enableSuggestions: false,
+                  autocorrect: false,
                   decoration: buildInputDecoration(
                       label: 'Confirm With Password',
                       prefixIcon: const Icon(

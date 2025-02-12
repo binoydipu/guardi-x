@@ -6,6 +6,7 @@ import 'package:guardix/service/auth/auth_exception.dart';
 import 'package:guardix/service/auth/auth_service.dart';
 import 'package:guardix/service/cloud/cloud_storage_constants.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
+
 import 'package:guardix/utilities/decorations/input_decoration_template.dart';
 import 'package:guardix/utilities/dialogs/error_dialog.dart';
 import 'package:guardix/utilities/helpers/local_storage.dart';
@@ -68,10 +69,15 @@ class _LoginViewState extends State<LoginView> {
               const SizedBox(height: 70),
               TextField(
                 controller: _email,
-                enableSuggestions: false,
+                enableSuggestions: true,
                 autocorrect: false,
                 keyboardType: TextInputType.emailAddress,
-                decoration: buildInputDecoration(label: 'Email' , prefixIcon: const Icon(Icons.email_rounded, color: midnightBlueColor,)),
+                decoration: buildInputDecoration(
+                    label: 'Email',
+                    prefixIcon: const Icon(
+                      Icons.email_rounded,
+                      color: midnightBlueColor,
+                    )),
               ),
               const SizedBox(height: 20),
               TextField(
@@ -79,7 +85,12 @@ class _LoginViewState extends State<LoginView> {
                 obscureText: true,
                 enableSuggestions: false,
                 autocorrect: false,
-                decoration: buildInputDecoration(label: 'Password', prefixIcon: const Icon(Icons.remove_red_eye_rounded, color: midnightBlueColor,)),
+                decoration: buildInputDecoration(
+                    label: 'Password',
+                    prefixIcon: const Icon(
+                      Icons.remove_red_eye_rounded,
+                      color: midnightBlueColor,
+                    )),
               ),
               const SizedBox(height: 10),
               Row(
@@ -146,7 +157,13 @@ class _LoginViewState extends State<LoginView> {
 
                             //print('userphone = > $userPhone');
 
-                            LocalStorage.saveUserData(userPhone, userName);
+                            List<String> trusedContacts =
+                                await FirebaseCloudStorage()
+                                    .getTrustedContacts(userId);
+
+                            LocalStorage.saveUserData(
+                                userPhone, userName, false, trusedContacts);
+                            //TrustedContacts.updateTrustedContacts();
 
                             if (context.mounted) {
                               Navigator.of(context).pushNamedAndRemoveUntil(

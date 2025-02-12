@@ -42,8 +42,6 @@ class LegalInfoListView extends StatelessWidget {
                 const SizedBox(height: 5),
                 Text(
                   legalInfo.lawDescription,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 5,
                   textAlign: TextAlign.justify,
                   style: const TextStyle(
                     color: blackColor,

@@ -9,7 +9,6 @@ import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/service/cloud/model/cloud_user.dart';
 import 'package:guardix/utilities/helpers/local_storage.dart';
 import 'package:guardix/utilities/dialogs/loading_dialog.dart';
-import 'package:guardix/views/bottom_nav/sos_view.dart';
 import 'package:guardix/views/drawer/app_language_view.dart';
 import 'package:guardix/views/drawer/notification_view.dart';
 import 'package:guardix/views/drawer/settings_view.dart';
@@ -42,15 +41,11 @@ class _HomeViewState extends State<HomeView> {
 
   Future<void> _getUser() async {
     try {
-      print('calling $userId');
       final user = await _cloudStorage.getUser(userId: userId!);
-      print(user);
       setState(() {
         cloudUser = user;
       });
-    } catch (e) {
-      print('error: $e');
-    }
+    } catch (_) {}
   }
 
   @override
@@ -61,8 +56,6 @@ class _HomeViewState extends State<HomeView> {
       container = const HomePage();
     } else if (currentPage == DrawerAction.legalInfo) {
       container = const LegalInfoView();
-    } else if (currentPage == DrawerAction.sos) {
-      container = const SosView();
     } else if (currentPage == DrawerAction.notification) {
       container = const NotificationView();
     } else if (currentPage == DrawerAction.language) {
@@ -347,8 +340,10 @@ class _HomeViewState extends State<HomeView> {
           ),
           menuItem(2, 'Legal Information', FontAwesomeIcons.scaleBalanced, 20,
               currentPage == DrawerAction.legalInfo ? true : false),
-          menuItem(3, 'SOS Emergency', Icons.sos_rounded, 24,
-              currentPage == DrawerAction.sos ? true : false),
+          // menuItem(3, 'SOS Emergency', Icons.sos_rounded, 24,
+          //     currentPage == DrawerAction.sos ? true : false),
+          menuItem(4, 'Notification', FontAwesomeIcons.solidBell, 20,
+              currentPage == DrawerAction.notification ? true : false),
           const Row(
             children: [
               Padding(
@@ -366,8 +361,6 @@ class _HomeViewState extends State<HomeView> {
               ),
             ],
           ),
-          menuItem(4, 'Notification', FontAwesomeIcons.solidBell, 20,
-              currentPage == DrawerAction.notification ? true : false),
           menuItem(5, 'App Language', FontAwesomeIcons.language, 20,
               currentPage == DrawerAction.language ? true : false),
           menuItem(6, 'Settings', Icons.settings, 23,
@@ -391,8 +384,6 @@ class _HomeViewState extends State<HomeView> {
               currentPage = DrawerAction.home;
             } else if (id == 2) {
               currentPage = DrawerAction.legalInfo;
-            } else if (id == 3) {
-              currentPage = DrawerAction.sos;
             } else if (id == 4) {
               currentPage = DrawerAction.notification;
             } else if (id == 5) {
@@ -437,6 +428,7 @@ class _HomeViewState extends State<HomeView> {
   void _handleLogout() async {
     bool isLoggedout = await showLogOutDialog(context);
     if (isLoggedout) {
+      await LocalStorage.removeUserData();
       await AuthService.firebase().logOut();
       if (context.mounted) {
         LocalStorage.removeUserData();
