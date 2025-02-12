@@ -3,6 +3,7 @@ import 'package:guardix/constants/colors.dart';
 import 'package:guardix/constants/routes.dart';
 import 'package:guardix/service/auth/auth_exception.dart';
 import 'package:guardix/service/auth/auth_service.dart';
+import 'package:guardix/service/cloud/cloud_storage_constants.dart';
 import 'package:guardix/service/cloud/firebase_cloud_storage.dart';
 import 'package:guardix/utilities/decorations/input_decoration_template.dart';
 import 'package:guardix/utilities/dialogs/error_dialog.dart';
@@ -368,10 +369,11 @@ class _RegisterViewState extends State<RegisterView> {
 
                                   FirebaseCloudStorage().addNewChat(
                                       fromNumber: phone,
-                                      toNumber: '01869519491',
+                                      toNumber: adminNumber,
                                       fromName: name,
                                       toName: 'Guardi-X',
-                                      toId: '01869519491');
+                                      toId: adminId,
+                                      isAdmin: true);
 
                                   // ignore: use_build_context_synchronously
                                   Navigator.of(context)
