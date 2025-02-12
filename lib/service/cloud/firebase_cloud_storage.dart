@@ -367,13 +367,13 @@ Performance: Reduces Firestore billing cost by minimizing the number of writes.
 
     try {
       final message =
-          isAdmin ? '' : 'Hello. I added you to my Trusted contact.';
+          isAdmin ? '$fromName just created an account.' : 'Hello. I added you to my Trusted contact.';
       chatRoomId = ids.join('_');
 
       buildChat(
           fromNumber, toNumber, fromName, toName, toId, message, chatRoomId);
 
-      if (toId != '0123456789') {
+      if (toId != adminNumber) {
         showToast('Contact added successfully');
       }
     } catch (e) {
