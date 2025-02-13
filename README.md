@@ -31,20 +31,21 @@
 ---
 ## 📸 Screenshots:
 <p align="center">
-  <img src="assets/screenshots/welcome.png" alt="Welcome View" width="250"/>
-  <img src="assets/screenshots/login.png" alt="Login View" width="250"/>
-  <img src="assets/screenshots/home.jpg" alt="Home View" width="250"/>
+  <img src="assets/screenshots/welcome.png" alt="Welcome View" width="200" style="margin: 10px;"/>
+  <img src="assets/screenshots/login.png" alt="Login View" width="200" style="margin: 10px;"/>
+  <img src="assets/screenshots/home.jpg" alt="Home View" width="200" style="margin: 10px;"/>
 </p>
 <p align="center">
-  <img src="assets/screenshots/profile.jpg" alt="Profile View" width="250"/>
-  <img src="assets/screenshots/report.jpg" alt="Report View" width="250"/>
-  <img src="assets/screenshots/report_form.jpg" alt="Report Form View" width="250"/>
+  <img src="assets/screenshots/profile.jpg" alt="Profile View" width="200" style="margin: 10px;"/>
+  <img src="assets/screenshots/report.jpg" alt="Report View" width="200" style="margin: 10px;"/>
+  <img src="assets/screenshots/report_form.jpg" alt="Report Form View" width="200" style="margin: 10px;"/>
 </p>
 <p align="center">
-  <img src="assets/screenshots/ongoing_incidents.jpg" alt="Ongoing Incidents View" width="250"/>
-  <img src="assets/screenshots/comment.jpg" alt="Comments View" width="250"/>
-  <img src="assets/screenshots/chat.jpg" alt="Chat View" width="250"/>
+  <img src="assets/screenshots/ongoing_incidents.jpg" alt="Ongoing Incidents View" width="200" style="margin: 10px;"/>
+  <img src="assets/screenshots/comment.jpg" alt="Comments View" width="200" style="margin: 10px;"/>
+  <img src="assets/screenshots/chat.jpg" alt="Chat View" width="200" style="margin: 10px;"/>
 </p>
+
 
 ---
 ## 🚀 Installation:
